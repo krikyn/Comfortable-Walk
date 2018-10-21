@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/netcrackers
+    username: postgres
+    password: 12345
+  jpa:
+    generate-ddl: true
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  mustache:
+    expose-request-attributes: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 471475403024-pua37dj6cj7qub8k6vo7d4e9lf0rod6c.apps.googleusercontent.com
+            client-secret: YetnM5EzwEcJvcXma6Ki_SII
+          github:
+            client-id: f8e1a7b9caf3958ae30d
+            client-secret: fc09ac8316d5fbfb3dc13d70eb42429a63013ee2
+#gmail:
+#  client:
+#    clientId: 6725360
+#    clientSecret: LrfTzWytLty7fMhS4wun
+#    accessTokenUri: https://oauth.vk.com/access_token
+#    userAuthorizationUri: https://oauth.vk.com/authorize
+#    tokenName: code
+#    authenticationScheme: query
+#    clientAuthenticationScheme: form
+#    grant-type: authorization_code
+#  resource:
+#    userInfoUri: https://api.vk.com/method/users.get
