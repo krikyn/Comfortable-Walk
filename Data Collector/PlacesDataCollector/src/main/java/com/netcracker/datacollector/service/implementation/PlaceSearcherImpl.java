@@ -8,6 +8,8 @@ import com.google.maps.model.*;
 import com.netcracker.datacollector.service.PlaceSearcher;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Grout on 21.10.2018.
  */
@@ -15,8 +17,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PlaceSearcherImpl implements PlaceSearcher {
 
+    private final LatLng SAINT_PETERSBURG = new LatLng(59.93428020,30.33509860);
+
     private final String apiKey = "AIzaSyD7x_qmEHJ6uDg7zbXBkSLeU3jLGRPaHrA";
-    private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).build();
+    private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey)
+            .queryRateLimit(1).retryTimeout(2, TimeUnit.SECONDS).build();
 
     public PlacesSearchResult findPlaceFromText(final String place) throws Exception {
         FindPlaceFromText response =
@@ -61,4 +66,13 @@ public class PlaceSearcherImpl implements PlaceSearcher {
         return response.results;
     }
 
+    public PlacesSearchResult[] findAllPlacesByType(final String type) throws Exception {
+        PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
+                .radius(18000)
+                .language("ru")
+                .type(PlaceType.valueOf(type))
+                .await();
+
+        return response.results;
+    }
 }
