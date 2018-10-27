@@ -72,7 +72,7 @@ public class LoginController {
 
             ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
-            switch (userInfoEndpointUri){
+            switch (userInfoEndpointUri) {
                 case "https://www.googleapis.com/oauth2/v3/userinfo":
                     model.addAttribute("name", userAttributes.get("name"));
                     model.addAttribute("picture", userAttributes.get("picture"));

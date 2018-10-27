@@ -92,7 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .clientSecret(clientSecret)
                     .build();
         }
-        if (client.equals("github")){
+        if (client.equals("github")) {
             return CommonOAuth2Provider.GITHUB.getBuilder(client)
                     .clientId(clientId)
                     .clientSecret(clientSecret)

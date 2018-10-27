@@ -13,7 +13,7 @@ public class DataConfig {
         this.userRepository = userRepository;
     }
 
-    public static User saveUser(String socialName, Object sub, Object userName, Object picture){
+    public static User saveUser(String socialName, Object sub, Object userName, Object picture) {
         String id = socialName + "_" + sub;
         User user = userRepository.findById(id).orElseGet(() -> {
             User newUser = new User();

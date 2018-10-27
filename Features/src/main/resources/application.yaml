@@ -45,3 +45,4 @@ server:
     key-alias: tomcat
     enabled: true
     enabled-protocols: [TLSv1.2]
+  port: 8443
