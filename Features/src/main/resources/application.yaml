@@ -21,15 +21,27 @@ spring:
           github:
             client-id: f8e1a7b9caf3958ae30d
             client-secret: fc09ac8316d5fbfb3dc13d70eb42429a63013ee2
-#gmail:
-#  client:
-#    clientId: 6725360
-#    clientSecret: LrfTzWytLty7fMhS4wun
-#    accessTokenUri: https://oauth.vk.com/access_token
-#    userAuthorizationUri: https://oauth.vk.com/authorize
-#    tokenName: code
-#    authenticationScheme: query
-#    clientAuthenticationScheme: form
-#    grant-type: authorization_code
-#  resource:
-#    userInfoUri: https://api.vk.com/method/users.get
+#         vk:
+#            client-id: 6725360
+#            client-secret: LrfTzWytLty7fMhS4wun
+#            authorization-grant-type: authorization_code
+#            redirect-uri-template: '{baseUrl}/login/oauth2/code/{registrationId}'
+#            client-name: VK
+#            scope: photos
+#            token-name: code
+#            authentication-scheme: query
+#            client-authentication-scheme: form
+#            grant-type: authorization_code
+#        provider:
+#          vk:
+#            authorization-uri: https://oauth.vk.com/authorize
+#            token-uri: https://oauth.vk.com/access_token
+#            user-info-uri: https://api.vk.com/method/users.get?v=5.87
+server:
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:keystore.p12
+    key-store-password: 123456
+    key-alias: tomcat
+    enabled: true
+    enabled-protocols: [TLSv1.2]
