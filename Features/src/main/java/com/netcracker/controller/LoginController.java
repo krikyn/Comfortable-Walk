@@ -83,6 +83,11 @@ public class LoginController {
                     model.addAttribute("picture", userAttributes.get("avatar_url"));
                     saveUser("github", userAttributes.get("id"), userAttributes.get("login"), userAttributes.get("avatar_url"));
                     break;
+                case "https://graph.facebook.com/me":
+                    model.addAttribute("name", userAttributes.get("name"));
+                    model.addAttribute("picture", userAttributes.get("picture"));
+                    saveUser("facebook", userAttributes.get("id"), userAttributes.get("name"), userAttributes.get("picture"));
+                    break;
             }
         }
 

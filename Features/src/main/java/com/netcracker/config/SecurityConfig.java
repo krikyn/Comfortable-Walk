@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    private static List<String> clients = Arrays.asList("google", "github");
+    private static List<String> clients = Arrays.asList("google", "github", "facebook");
 
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = clients.stream()
@@ -94,6 +94,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         if (client.equals("github")) {
             return CommonOAuth2Provider.GITHUB.getBuilder(client)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .build();
+        }
+        if (client.equals("facebook")) {
+            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
                     .clientId(clientId)
                     .clientSecret(clientSecret)
                     .build();
