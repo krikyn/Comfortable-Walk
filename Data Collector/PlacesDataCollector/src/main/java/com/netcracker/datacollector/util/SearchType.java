@@ -2,20 +2,15 @@ package com.netcracker.datacollector.util;
 
 public enum SearchType {
     AMUSEMENT_PARK,
-    AQUARIUM,
+    BAKERY,
     CAFE,
-    CEMETERY,
-    CHURCH,
-    MOSQUE,
     MUSEUM,
     PARK,
-    PLACE_OF_WORSHIP,
+    PHARMACY,
     RESTAURANT,
-    RV_PARK,
     SHOPPING_MALL,
     STADIUM,
     SUBWAY_STATION,
-    SYNAGOGUE,
     UNIVERSITY,
     ZOO
 

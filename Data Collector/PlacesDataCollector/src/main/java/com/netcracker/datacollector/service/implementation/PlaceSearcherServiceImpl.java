@@ -5,7 +5,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.*;
-import com.netcracker.datacollector.service.PlaceSearcher;
+import com.netcracker.datacollector.service.PlaceSearcherService;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -15,13 +15,13 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
-public class PlaceSearcherImpl implements PlaceSearcher {
+public class PlaceSearcherServiceImpl implements PlaceSearcherService {
 
     private final LatLng SAINT_PETERSBURG = new LatLng(59.93428020,30.33509860);
 
-    private final String apiKey = "AIzaSyD7x_qmEHJ6uDg7zbXBkSLeU3jLGRPaHrA";
-    private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey)
-            .queryRateLimit(1).retryTimeout(2, TimeUnit.SECONDS).build();
+    private final String apiKey = "AIzaSyBw3Bcepmq4q_VtqIohTNDBHPJnMiNw9yY";
+    private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).maxRetries(10)
+            .retryTimeout(20000, TimeUnit.MILLISECONDS).build();
 
     public PlacesSearchResult findPlaceFromText(final String place) throws Exception {
         FindPlaceFromText response =
@@ -66,13 +66,20 @@ public class PlaceSearcherImpl implements PlaceSearcher {
         return response.results;
     }
 
-    public PlacesSearchResult[] findAllPlacesByType(final String type) throws Exception {
-        PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
+    public PlacesSearchResponse findAllPlacesByType(final String type) throws Exception {
+        return PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
                 .radius(18000)
                 .language("ru")
                 .type(PlaceType.valueOf(type))
-                .await();
+                .awaitIgnoreError();
+    }
 
-        return response.results;
+    public PlacesSearchResponse findAllPlacesByType(final String type, final String token) throws Exception {
+        return PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
+                .radius(18000)
+                .language("ru")
+                .type(PlaceType.valueOf(type))
+                .pageToken(token)
+                .awaitIgnoreError();
     }
 }
