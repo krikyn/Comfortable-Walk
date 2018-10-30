@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 @Component
-public class ScheduledPlaceRecalculation {
+public class ScheduledPlaceGrubber {
 
     private final int MILLIS_PER_MINUTE = 60000;
 
@@ -31,14 +31,14 @@ public class ScheduledPlaceRecalculation {
     private SearchType[] searchType = SearchType.values();
 
     @Autowired
-    public ScheduledPlaceRecalculation(PlaceSearcherService searcher, PlaceService placeService) {
+    public ScheduledPlaceGrubber(PlaceSearcherService searcher, PlaceService placeService) {
         this.searcher = searcher;
         this.placeService = placeService;
     }
 
     @Scheduled(fixedDelay = 10 * MILLIS_PER_MINUTE)
     public void recalculatePlacesByType() throws Exception {
-        if(counter > searchType.length) {
+        if(counter > searchType.length-1) {
             counter = 0;
         }
         String placeType = searchType[counter].toString();
@@ -47,14 +47,16 @@ public class ScheduledPlaceRecalculation {
         PlacesSearchResponse resultResponse2;
         PlacesSearchResponse resultResponse3;
         Collections.addAll(resultAll, resultResponse.results);
+        System.out.println("First token: " + resultResponse.nextPageToken);
         if(!resultResponse.nextPageToken.isEmpty()) { //Страшный костыль для сбора информации 60-ти объектов, а не только 20-ти
             Thread.sleep(20000);
             resultResponse2 = searcher.findAllPlacesByType(placeType, resultResponse.nextPageToken);
             if(resultResponse2 != null) { //Костыль intensifies
+                System.out.println("Second token: " + resultResponse2.nextPageToken);
                 Collections.addAll(resultAll, resultResponse2.results);
                 if(resultResponse2.nextPageToken != null) { //Костыль intensifies x2
                     Thread.sleep(20000);
-                    resultResponse3 = searcher.findAllPlacesByType(placeType, resultResponse.nextPageToken);
+                    resultResponse3 = searcher.findAllPlacesByType(placeType, resultResponse2.nextPageToken);
                     if(resultResponse3 != null) { //Костыль intensifies ULTRA COMBOOO
                         Collections.addAll(resultAll, resultResponse3.results);
                     }
