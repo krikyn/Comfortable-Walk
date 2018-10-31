@@ -1,16 +1,19 @@
 public class Cell {
 
     private int value;
-    private fieldCoordinates parent;
+    private FieldCoordinates parent;
     private boolean isClosed;
-    private fieldCoordinates coordinates;
+    private FieldCoordinates fieldCoordinates;
+    private GeoCoordinates geoCoordinates;
 
     private Double fx;
     private Double gx;
     private Double hx;
 
-    Cell(int value){
+    Cell(int value, FieldCoordinates fieldCoordinates, GeoCoordinates geoCoordinates){
         this.value = value;
+        this.fieldCoordinates = fieldCoordinates;
+        this.geoCoordinates = geoCoordinates;
         parent = null;
         isClosed = false;
     }
@@ -19,9 +22,9 @@ public class Cell {
         return isClosed;
     }
 
-    public void updateParameters(fieldCoordinates parent, Double fx, Double gx, Double hx){
+    public void updateParameters(FieldCoordinates parent, Double gx, Double hx){
         this.parent = parent;
-        this.fx = fx;
+        this.fx = gx + hx;
         this.gx = gx;
         this.hx = hx;
     }
@@ -30,8 +33,12 @@ public class Cell {
         return fx;
     }
 
-    public fieldCoordinates getCoordinates() {
-        return coordinates;
+    public FieldCoordinates getFieldCoordinates() {
+        return fieldCoordinates;
+    }
+
+    public GeoCoordinates getGeoCoordinates() {
+        return geoCoordinates;
     }
 
     public void setClosed(boolean closed) {

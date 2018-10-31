@@ -24,22 +24,6 @@ spring:
           facebook:
             client-id: 239256766770163
             client-secret: addd5303463e49f1e7620c3c8d74daed
-#         vk:
-#            client-id: 6725360
-#            client-secret: LrfTzWytLty7fMhS4wun
-#            authorization-grant-type: authorization_code
-#            redirect-uri-template: '{baseUrl}/login/oauth2/code/{registrationId}'
-#            client-name: VK
-#            scope: photos
-#            token-name: code
-#            authentication-scheme: query
-#            client-authentication-scheme: form
-#            grant-type: authorization_code
-#        provider:
-#          vk:
-#            authorization-uri: https://oauth.vk.com/authorize
-#            token-uri: https://oauth.vk.com/access_token
-#            user-info-uri: https://api.vk.com/method/users.get?v=5.87
 server:
   ssl:
     key-store-type: PKCS12
