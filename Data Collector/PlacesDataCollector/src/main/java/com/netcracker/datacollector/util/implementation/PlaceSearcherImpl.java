@@ -1,11 +1,11 @@
-package com.netcracker.datacollector.service.implementation;
+package com.netcracker.datacollector.util.implementation;
 
 import com.google.maps.FindPlaceFromTextRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.*;
-import com.netcracker.datacollector.service.PlaceSearcherService;
+import com.netcracker.datacollector.util.PlaceSearcher;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
-public class PlaceSearcherServiceImpl implements PlaceSearcherService {
+public class PlaceSearcherImpl implements PlaceSearcher {
 
     private final LatLng SAINT_PETERSBURG = new LatLng(59.93428020,30.33509860);
 

@@ -3,10 +3,9 @@ package com.netcracker.datacollector.util;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.netcracker.datacollector.data.model.Place;
-import com.netcracker.datacollector.service.PlaceSearcherService;
 import com.netcracker.datacollector.service.PlaceService;
+import com.netcracker.datacollector.util.enums.PlacesType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
@@ -24,24 +23,24 @@ public class ScheduledPlaceGrubber {
 
     private final int MILLIS_PER_MINUTE = 60000;
 
-    private final PlaceSearcherService searcher;
+    private final PlaceSearcher searcher;
     private final PlaceService placeService;
 
     private int counter = 0;
-    private SearchType[] searchType = SearchType.values();
+    private PlacesType[] placesType = PlacesType.values();
 
     @Autowired
-    public ScheduledPlaceGrubber(PlaceSearcherService searcher, PlaceService placeService) {
+    public ScheduledPlaceGrubber(PlaceSearcher searcher, PlaceService placeService) {
         this.searcher = searcher;
         this.placeService = placeService;
     }
 
-    @Scheduled(fixedDelay = 10 * MILLIS_PER_MINUTE)
-    public void recalculatePlacesByType() throws Exception {
-        if(counter > searchType.length-1) {
+    //@Scheduled(fixedDelay = 10 * MILLIS_PER_MINUTE)
+    public void loadPlaces() throws Exception {
+        if(counter > placesType.length-1) {
             counter = 0;
         }
-        String placeType = searchType[counter].toString();
+        String placeType = placesType[counter].toString();
         List<PlacesSearchResult> resultAll= new ArrayList<>();
         PlacesSearchResponse resultResponse = searcher.findAllPlacesByType(placeType);
         PlacesSearchResponse resultResponse2;

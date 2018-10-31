@@ -1,11 +1,11 @@
-package com.netcracker.datacollector.service;
+package com.netcracker.datacollector.util;
 
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
-public interface PlaceSearcherService {
+public interface PlaceSearcher {
 
     PlacesSearchResult findPlaceFromText(String place) throws Exception;
     PlaceDetails getPlaceDetails(String place) throws Exception;

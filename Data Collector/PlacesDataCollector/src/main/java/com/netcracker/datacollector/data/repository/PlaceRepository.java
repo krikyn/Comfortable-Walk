@@ -3,7 +3,7 @@ package com.netcracker.datacollector.data.repository;
 import com.netcracker.datacollector.data.model.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -11,6 +11,5 @@ import java.util.UUID;
  */
 public interface PlaceRepository extends JpaRepository<Place, UUID> {
 
-    Optional<Place> findByName(String name);
-
+    List<Place> findAllByType(String type);
 }

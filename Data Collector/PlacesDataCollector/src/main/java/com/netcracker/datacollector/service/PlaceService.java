@@ -2,6 +2,7 @@ package com.netcracker.datacollector.service;
 
 import com.netcracker.datacollector.data.model.Place;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,6 +11,7 @@ import java.util.UUID;
 public interface PlaceService {
 
     Place savePlace(Place place);
+    List<Place> loadAllPlacesByType(String type);
     void deletePlace(UUID id);
 
 }
