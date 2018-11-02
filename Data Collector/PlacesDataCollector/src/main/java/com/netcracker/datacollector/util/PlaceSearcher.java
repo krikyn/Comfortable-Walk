@@ -10,6 +10,6 @@ public interface PlaceSearcher {
     PlacesSearchResult findPlaceFromText(String place) throws Exception;
     PlaceDetails getPlaceDetails(String place) throws Exception;
     PlacesSearchResult[] findNearbyPlaces(LatLng location, int radius, String type) throws Exception;
-    PlacesSearchResponse findAllPlacesByType(String type) throws Exception;
-    PlacesSearchResponse findAllPlacesByType(String type, String token) throws Exception;
+    PlacesSearchResponse findAllPlacesByType(String type, LatLng location) throws Exception;
+    PlacesSearchResponse findAllPlacesByType(String type, LatLng location, String token) throws Exception;
 }

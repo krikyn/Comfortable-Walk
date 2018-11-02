@@ -25,13 +25,13 @@ public class PreLoader {
     @Bean
     CommandLineRunner initBaseMap(CityMapService cityMapService, PlaceService placeService) {
         return args -> {
-            if(cityMapService.loadCityMapByType("baseCityMap") == null) {
+            if(cityMapService.loadCityMapByType("baseCityMap1km") == null) {
                 CityMap baseCityMap = new CityMap();
-                baseCityMap.setType("baseCityMap");
+                baseCityMap.setType("baseCityMap1km");
                 baseCityMap.setBaseMap(mapBuilder.buildBaseMap());
                 cityMapService.saveMap(baseCityMap);
             }
-            CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap");
+            /*CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap");
 
             PlacesType[] placesTypes = PlacesType.values();
             for (int i = 0; i < placesTypes.length-1; i++) {
@@ -39,10 +39,10 @@ public class PreLoader {
                 if(cityMapService.loadCityMapByType(placesTypes[i].toString()) == null) {
                     CityMap map = new CityMap();
                     map.setType(placesTypes[i].toString());
-                    map.setGrid(mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 1));
+                    map.setGrid(mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 1)); //Строится карта мест на основе базовой карты
                     cityMapService.saveMap(map);
                 }
-            }
+            }*/
         };
     }
 }

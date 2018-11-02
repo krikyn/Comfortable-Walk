@@ -1,17 +1,24 @@
 package com.netcracker.datacollector.util;
 
+import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
+import com.netcracker.datacollector.data.model.CityMap;
 import com.netcracker.datacollector.data.model.Place;
+import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.datacollector.service.PlaceService;
 import com.netcracker.datacollector.util.enums.PlacesType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.*;
 
 
 /**
@@ -21,50 +28,85 @@ import java.util.List;
 @Component
 public class ScheduledPlaceGrubber {
 
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledPlaceGrubber.class);
     private final int MILLIS_PER_MINUTE = 60000;
 
     private final PlaceSearcher searcher;
     private final PlaceService placeService;
+    private final CityMapService cityMapService;
 
-    private int counter = 0;
+    private Yaml yaml = new Yaml();
+
+    private int placeCounter;
+    private int row;
+    private int col;
     private PlacesType[] placesType = PlacesType.values();
 
     @Autowired
-    public ScheduledPlaceGrubber(PlaceSearcher searcher, PlaceService placeService) {
+    public ScheduledPlaceGrubber(PlaceSearcher searcher, PlaceService placeService, CityMapService cityMapService) {
         this.searcher = searcher;
         this.placeService = placeService;
+        this.cityMapService = cityMapService;
     }
 
-    //@Scheduled(fixedDelay = 10 * MILLIS_PER_MINUTE)
-    public void loadPlaces() throws Exception {
-        if(counter > placesType.length-1) {
-            counter = 0;
+    @Scheduled(fixedDelay = MILLIS_PER_MINUTE)
+    public void getPlacesFromGoogleMaps() throws Exception {
+        FileReader reader = new FileReader("counters.yaml"); //Загрузка значений счётчиков
+        Map<String, Integer> loadedData = yaml.load(reader);
+        reader.close();
+        placeCounter = loadedData.get("placeCounter");
+        row = loadedData.get("row");
+        col = loadedData.get("col");
+        CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap1km"); //Загрузка базовой карты с координатами локаций
+
+        if(placeCounter > placesType.length-1) { //Проверка на выход за пределы списка мест
+            placeCounter = 0;
         }
-        String placeType = placesType[counter].toString();
+        if (col > 19){ //Проверка на выход за предел карты по долготе
+            col = 0;
+        }
+        if (row > 20){ //Проверка на выход за предел карты по широте
+            row = 0;
+        }
+        String placeType = placesType[placeCounter].toString(); //Последовательный выбор мест из списка типов
+        LatLng location = baseMap.getBaseMap()[row][col];
         List<PlacesSearchResult> resultAll= new ArrayList<>();
-        PlacesSearchResponse resultResponse = searcher.findAllPlacesByType(placeType);
-        PlacesSearchResponse resultResponse2;
-        PlacesSearchResponse resultResponse3;
+        PlacesSearchResponse resultResponse = searcher.findAllPlacesByType(placeType, location); //Поиск мест выбранного типа в определённой локации
+        /*PlacesSearchResponse resultResponse2;
+        PlacesSearchResponse resultResponse3;*/
+        System.out.println(resultResponse + placeType + location);
         Collections.addAll(resultAll, resultResponse.results);
-        System.out.println("First token: " + resultResponse.nextPageToken);
-        if(!resultResponse.nextPageToken.isEmpty()) { //Страшный костыль для сбора информации 60-ти объектов, а не только 20-ти
+        if(resultResponse.nextPageToken != null) { //Страшный костыль для сбора информации 60-ти объектов, а не только 20-ти
             Thread.sleep(20000);
-            resultResponse2 = searcher.findAllPlacesByType(placeType, resultResponse.nextPageToken);
-            if(resultResponse2 != null) { //Костыль intensifies
-                System.out.println("Second token: " + resultResponse2.nextPageToken);
-                Collections.addAll(resultAll, resultResponse2.results);
-                if(resultResponse2.nextPageToken != null) { //Костыль intensifies x2
+            resultResponse = searcher.findAllPlacesByType(placeType, location, resultResponse.nextPageToken);
+            if(resultResponse != null) { //Костыль intensifies
+                Collections.addAll(resultAll, resultResponse.results);
+                if(resultResponse.nextPageToken != null) { //Костыль intensifies x2
                     Thread.sleep(20000);
-                    resultResponse3 = searcher.findAllPlacesByType(placeType, resultResponse2.nextPageToken);
-                    if(resultResponse3 != null) { //Костыль intensifies ULTRA COMBOOO
-                        Collections.addAll(resultAll, resultResponse3.results);
+                    resultResponse = searcher.findAllPlacesByType(placeType, location,resultResponse.nextPageToken);
+                    if(resultResponse != null) { //Костыль intensifies ULTRA COMBOOO
+                        Collections.addAll(resultAll, resultResponse.results);
                     }
                 }
             }
         }
+        System.out.println("Quantity of places found: " + resultAll.size());
         savePlaceData(resultAll, placeType);
-        System.out.println("Place data saved. Counter: " + counter);
-        counter++;
+        logger.info("Place grubbed successfully! Place counter: " + placeCounter + " Row: " + row + " Column: " + col);
+        if(row == 20 && col == 19) { //Если карта полностью пройдена, то меняем тип места на следующий
+            placeCounter++;
+        }
+        if(col == 19){ //Если строка полностью пройдена, то переходим на следующую
+            row++;
+        }
+        col++;
+        Map<String, Integer> counters = new HashMap<>();
+        counters.put("placeCounter", placeCounter);
+        counters.put("row", row);
+        counters.put("col", col);
+        FileWriter writer = new FileWriter("counters.yaml");
+        yaml.dump(counters, writer);
+        writer.close();
     }
 
     private void savePlaceData(List<PlacesSearchResult> places, String type) {

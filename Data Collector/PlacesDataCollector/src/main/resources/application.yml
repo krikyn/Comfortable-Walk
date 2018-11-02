@@ -12,3 +12,6 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.lob.non_contextual_creation: true
+
+logging:
+  file: AutoGrubber.log

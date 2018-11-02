@@ -1,5 +1,7 @@
 package com.netcracker.datacollector.controller;
 
+import com.google.maps.model.LatLng;
+import com.google.maps.model.PlacesSearchResult;
 import com.netcracker.datacollector.data.model.CityMap;
 import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.datacollector.util.PlaceSearcher;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -46,11 +49,11 @@ public class DataCollectorController {
         PlacesSearchResult[] result = searcher.findNearbyPlaces(location, radius, placeType);
 
         return ResponseEntity.ok().body(result);
-    }*/
+    }
 
     @GetMapping("/baseMap")
     public ResponseEntity<?> getBaseMap() {
-        CityMap map = loadMapByType("baseCityMap");
+        CityMap map = loadMapByType("baseCityMap1km");
         return ResponseEntity.ok().body(map.getBaseMap());
     }
 
@@ -73,7 +76,7 @@ public class DataCollectorController {
         }
 
         return ResponseEntity.ok().body(map.getGrid());
-    }
+    }*/
 
     private CityMap loadMapByType(String type) {
         return cityMapService.loadCityMapByType(type);
