@@ -19,16 +19,12 @@ public class Place {
 
     @Id
     @NonNull
-    @GeneratedValue
-    private UUID id;
+    @Column(name = "google_place_id")
+    private String googlePlaceId;
 
     @NonNull
     @Column(name = "type")
     private String type;
-
-    @NonNull
-    @Column(name = "google_place_id")
-    private String googlePlaceId;
 
     @NonNull
     @Column(name = "name")

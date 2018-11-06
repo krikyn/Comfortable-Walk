@@ -25,24 +25,40 @@ public class PreLoader {
     @Bean
     CommandLineRunner initBaseMap(CityMapService cityMapService, PlaceService placeService) {
         return args -> {
-            if(cityMapService.loadCityMapByType("baseCityMap") == null) {
+            //Строит и загружает базовые карты размером 1 на 1 км и 50 на 50 м
+            if(cityMapService.loadCityMapByType("baseCityMap1km") == null) {
                 CityMap baseCityMap = new CityMap();
-                baseCityMap.setType("baseCityMap");
-                baseCityMap.setBaseMap(mapBuilder.buildBaseMap());
+                baseCityMap.setType("baseCityMap1km");
+                baseCityMap.setBaseMap(mapBuilder.buildBaseMap(1));
                 cityMapService.saveMap(baseCityMap);
             }
-            CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap");
-
-            PlacesType[] placesTypes = PlacesType.values();
-            for (int i = 0; i < placesTypes.length-1; i++) {
-                List<Place> places = placeService.loadAllPlacesByType(placesTypes[i].toString());
-                if(cityMapService.loadCityMapByType(placesTypes[i].toString()) == null) {
-                    CityMap map = new CityMap();
-                    map.setType(placesTypes[i].toString());
-                    map.setGrid(mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 1));
-                    cityMapService.saveMap(map);
-                }
+            if(cityMapService.loadCityMapByType("baseCityMap50m") == null) {
+                CityMap baseCityMap = new CityMap();
+                baseCityMap.setType("baseCityMap50m");
+                baseCityMap.setBaseMap(mapBuilder.buildBaseMap(20));
+                cityMapService.saveMap(baseCityMap);
             }
+
+            //Строит и загружает потенциальную карту места
+            PlacesType[] placesType = PlacesType.values();
+            CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap50m");
+            /*for (PlacesType place: placesType) {
+                List<Place> places = placeService.loadAllPlacesByType(place.toString());
+                if(cityMapService.loadCityMapByType(place.toString()) == null) {
+                    CityMap map = new CityMap();
+                    int[][] result = mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 20);
+                    map.setType(place.toString());
+                    map.setGrid(result);
+                    cityMapService.saveMap(map);
+                    System.out.println("--------------------------------");
+                    for(int i = 0; i < 420; i++) {
+                        for(int j = 0; j < 400; j++){
+                            System.out.printf("%5d", result[i][j]);
+                        }
+                        System.out.println();
+                    }
+                }
+            }*/
         };
     }
 }

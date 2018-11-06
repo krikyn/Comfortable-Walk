@@ -5,53 +5,184 @@ import com.netcracker.datacollector.data.model.Place;
 import com.netcracker.datacollector.util.MapBuilder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class MapBuilderImpl implements MapBuilder {
-    private LatLng startCoord = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x
+    private LatLng startCoord1km = new LatLng(60.02781, 30.18035);
+    private LatLng startCoord50m = new LatLng(60.0318555, 30.1722815); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
     private double latKm = 0.00899;
     private double lngKm = 0.01793;
+    //private double lat50m = 0.0004495;
+    //private double lng50m = 0.0008965;
 
     @Override
-    public LatLng[][] buildBaseMap() {
-        double lat = startCoord.lat;
-        double lng = startCoord.lng;
-        LatLng[][] map = new LatLng[21][20];
+    public LatLng[][] buildBaseMap(int scale) {
+        double lat;
+        double lng;
+        int maxRow = 21 * scale;
+        int maxCol = 20 * scale;
+        LatLng[][] map = new LatLng[maxRow][maxCol];
+        switch (scale) {
+            case 1:
+                lat = startCoord1km.lat;
+                lng = startCoord1km.lng;
+                break;
+            case 20:
+                lat = startCoord50m.lat;
+                lng = startCoord50m.lng;
+                break;
+            default:
+                lat = startCoord1km.lat;
+                lng = startCoord1km.lng;
+                break;
+        }
 
         for (int i = 0; i < 21; i++) {
             for (int j = 0; j < 20; j++) {
                 if (i == 0 && j == 0) {
-                    map[i][j] = startCoord;
+                    if(scale == 20){
+                        map[i][j] = startCoord50m;
+                    } else {
+                        map[i][j] = startCoord1km;
+                    }
                 } else {
                     map[i][j] = new LatLng(lat, lng);
                 }
                 lng += lngKm;
             }
             lat -= latKm;
-            lng = 30.18035;
+            lng = startCoord1km.lng;
         }
         return map;
     }
 
+    /**
+     *  Строит карту мест на основе базовой карты
+     *  @param baseMap - базовая карта
+     *  @param places - список мест
+     *  @param scale - масштаб (при масштабе 1 - строится карта мест с ячейками 1 на 1 километр,
+     *               при 2 - карта с ячейками 500 на 500 метров и т.д.)
+     **/
     @Override
     public int[][] buildPlaceMap(final LatLng[][] baseMap, final List<Place> places, final int scale) {
-
-        double halfLatKm = (latKm / 2) / scale;
-        double halfLngKm = (lngKm / 2) / scale;
-        int[][] coord = new int[21 * scale][21 * scale];
+        double halfLat = (latKm / 2) / scale;
+        double halfLng = (lngKm / 2) / scale;
+        int row = 21 * scale;
+        int col = 20 * scale;
+        int[][] placeMap = new int[row][col];
 
         for (Place place : places) {
-            for (int i = 0; i < 21; i++) {
-                for (int j = 0; j < 20; j++) {
-                    if ((baseMap[i][j].lat - halfLatKm <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLatKm)   //Проверка попадания места в клетку карты
-                            && (baseMap[i][j].lng - halfLngKm <= place.getLongitude() && place.getLongitude() < baseMap[i][j].lng + halfLngKm)) {
-                        coord[i][j] += 100;
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < col; j++) {
+                    if ((baseMap[i][j].lat - halfLat <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLat)   //Проверка попадания места в клетку карты
+                            && (baseMap[i][j].lng - halfLng <= place.getLongitude() && place.getLongitude() < baseMap[i][j].lng + halfLng)) {
+                        placeMap[i][j] += 100;
                     }
                 }
             }
         }
-        return coord;
+        return placeMap;
     }
 
+    /**
+     * Метод для построения потенциальной карты.
+     * @param placeMap - карта мест, на основе которой будет построен потенциальная карта.
+     * @param scale - масштаб карты (1 - 21 на 20, 2 - 42 на 40 и т.д.)
+     *
+     * */
+    public int[][] buildPotentialMap(final int[][] placeMap, final int scale) {
+        // Границы карты
+        int maxRow = 21 * scale;
+        int maxCol = 20 * scale;
+        // Результат построения
+        int[][] result = new int[maxRow][maxCol];
+
+        // Проход по массиву (карте), если находится ячейка с местом, то относительно этой ячейки строится карта потенциалов
+        for(int i = 0; i < maxRow; i++) {
+            for(int j = 0; j < maxCol; j++) {
+                if(placeMap[i][j] != 0) {
+                    result[i][j] += placeMap[i][j]; // Запись ячейки с местом в результат
+                    List<Integer> values = decreaseFunction(placeMap[i][j]); // На основе значения ячейки, вычисляется диапазон убывания
+                    int maxRadius = values.get(values.size()-1); // Устанавливается радиус убывания
+                    for(int rad = 1; rad < maxRadius; rad++) {
+                        findNeighbours(i, j, maxRow, maxCol, rad, result, values); // Поиск всех соседних ячеек в указанном радиусе
+                    }
+                }
+            }
+        }
+
+        System.out.println("--------------------------------");
+        for(int i = 0; i < maxRow; i++) {
+            for(int j = 0; j < maxCol; j++){
+                System.out.printf("%5d", result[i][j]);
+            }
+            System.out.println();
+        }
+        return result;
+    }
+
+    /**
+     * Функция для вычисления диапазона убывания.
+     * Возвращает список с диапазоном убывания и радиусом.
+     * @param x - Число, на основе которого вычисляется диапазон убывания.
+     *
+     * */
+    private List<Integer> decreaseFunction(int x) {
+        int radius = 0;
+        int resultValue = x;
+        List<Integer> result = new ArrayList<>();
+        while(resultValue != 0) {
+            resultValue += -0.8*resultValue;
+            result.add(resultValue);
+            radius++;
+        }
+        result.add(radius);
+        return result;
+    }
+
+    /**
+     * Функция поиска соседних ячеек в указанном радиусе.
+     * @param cellRow - строка, на которой находится основная ячейка.
+     * @param cellCol - столбец, в которой находится основная ячейка.
+     * @param maxRow - максимум карты по вертикали.
+     * @param maxCol - максимум карты по горизонтали.
+     * @param radius - радиус поиска соседних ячеек.
+     * @param result - карта в которую записывается результат построения.
+     * @param values - список с дипазоном убывания.
+     *
+     * */
+    private void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
+        //Проход по заданному радиусу вокруг основной ячейки
+        for(int rowNum = cellRow-radius; rowNum <= (cellRow+radius); rowNum++) {
+            for(int colNum = cellCol-radius; colNum <= (cellCol+radius); colNum++) {
+                if(!((rowNum == cellRow) &&(colNum == cellCol))) {
+                    if(boundsCheck(rowNum, colNum, maxRow, maxCol)){ //Проверка границ карты
+                        //Запись значений из диапазона убывания во внешний радиус
+                        if((rowNum == cellRow-radius) || (rowNum == cellRow+radius)) {
+                            result[rowNum][colNum] += values.get(radius-1);
+                        } else if(colNum == cellCol-radius || colNum == cellCol+radius) {
+                            result[rowNum][colNum] += values.get(radius-1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Метод для проверки границ карты
+     * @param rowNum - проверяемая строка.
+     * @param colNum - проверямый столбец.
+     * @param maxRow - максимальное значение карты по вертикали.
+     * @param maxCol - максимальное значение карты по горизонтали.
+     *
+     * */
+    private boolean boundsCheck(int rowNum, int colNum, int maxRow, int maxCol) {
+        if(rowNum < 0 || colNum < 0) {
+            return false;
+        }
+        return rowNum < maxRow && colNum < maxCol;
+    }
 }

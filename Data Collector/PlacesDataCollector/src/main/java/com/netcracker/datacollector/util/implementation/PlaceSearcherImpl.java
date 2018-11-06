@@ -66,17 +66,17 @@ public class PlaceSearcherImpl implements PlaceSearcher {
         return response.results;
     }
 
-    public PlacesSearchResponse findAllPlacesByType(final String type) throws Exception {
-        return PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
-                .radius(18000)
+    public PlacesSearchResponse findAllPlacesByType(final String type, final LatLng location) throws Exception {
+        return PlacesApi.nearbySearchQuery(context, location)
+                .radius(707)
                 .language("ru")
                 .type(PlaceType.valueOf(type))
                 .awaitIgnoreError();
     }
 
-    public PlacesSearchResponse findAllPlacesByType(final String type, final String token) throws Exception {
-        return PlacesApi.nearbySearchQuery(context, SAINT_PETERSBURG)
-                .radius(18000)
+    public PlacesSearchResponse findAllPlacesByType(final String type, LatLng location, final String token) throws Exception {
+        return PlacesApi.nearbySearchQuery(context, location)
+                .radius(707)
                 .language("ru")
                 .type(PlaceType.valueOf(type))
                 .pageToken(token)
