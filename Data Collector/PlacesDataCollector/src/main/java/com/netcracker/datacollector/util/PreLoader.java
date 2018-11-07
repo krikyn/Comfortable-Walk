@@ -25,7 +25,6 @@ public class PreLoader {
     @Bean
     CommandLineRunner initBaseMap(CityMapService cityMapService, PlaceService placeService) {
         return args -> {
-<<<<<<< HEAD
             //Строит и загружает базовые карты размером 1 на 1 км и 50 на 50 м
             if(cityMapService.loadCityMapByType("baseCityMap1km") == null) {
                 CityMap baseCityMap = new CityMap();
@@ -39,31 +38,36 @@ public class PreLoader {
                 baseCityMap.setBaseMap(mapBuilder.buildBaseMap(20));
                 cityMapService.saveMap(baseCityMap);
             }
-=======
-            if(cityMapService.loadCityMapByType("baseCityMap1km") == null) {
-                CityMap baseCityMap = new CityMap();
-                baseCityMap.setType("baseCityMap1km");
-                baseCityMap.setBaseMap(mapBuilder.buildBaseMap());
-                cityMapService.saveMap(baseCityMap);
-            }
-            /*CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap");
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
 
-            //Строит и загружает потенциальную карту места
-            PlacesType[] placesType = PlacesType.values();
+            PlacesType place = PlacesType.AMUSEMENT_PARK;
+            if(cityMapService.loadCityMapByType(place.toString()) == null) {
+                CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap50m");
+                List<Place> places = placeService.loadAllPlacesByType(place.toString());
+                CityMap map = new CityMap();
+                int[][] result = mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 20);
+                map.setType(place.toString());
+                map.setGrid(result);
+                cityMapService.saveMap(map);
+                System.out.println("--------------------------------");
+                for(int i = 0; i < 420; i++) {
+                    for(int j = 0; j < 400; j++){
+                        System.out.printf("%5d", result[i][j]);
+                    }
+                    System.out.println();
+                }
+            }
+
+
+            //Строит и загружает карту мест
+            /*PlacesType[] placesType = PlacesType.values();
             CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap50m");
-            /*for (PlacesType place: placesType) {
+            for (PlacesType place: placesType) {
                 List<Place> places = placeService.loadAllPlacesByType(place.toString());
                 if(cityMapService.loadCityMapByType(place.toString()) == null) {
                     CityMap map = new CityMap();
-<<<<<<< HEAD
                     int[][] result = mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 20);
                     map.setType(place.toString());
                     map.setGrid(result);
-=======
-                    map.setType(placesTypes[i].toString());
-                    map.setGrid(mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 1)); //Строится карта мест на основе базовой карты
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
                     cityMapService.saveMap(map);
                     System.out.println("--------------------------------");
                     for(int i = 0; i < 420; i++) {

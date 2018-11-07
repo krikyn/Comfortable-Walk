@@ -10,13 +10,12 @@ import java.util.List;
 
 @Component
 public class MapBuilderImpl implements MapBuilder {
-    private LatLng startCoord1km = new LatLng(60.02781, 30.18035);
-    private LatLng startCoord50m = new LatLng(60.0318555, 30.1722815); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
+    private LatLng startCoord1km = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
+    private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
     private double latKm = 0.00899;
     private double lngKm = 0.01793;
-<<<<<<< HEAD
-    //private double lat50m = 0.0004495;
-    //private double lng50m = 0.0008965;
+    //private double lat50m = 0.0004495; 25m = 0.00022475
+    //private double lng50m = 0.0008965; 25m = 0.00044825
 
     @Override
     public LatLng[][] buildBaseMap(int scale) {
@@ -39,46 +38,32 @@ public class MapBuilderImpl implements MapBuilder {
                 lng = startCoord1km.lng;
                 break;
         }
-=======
-    private double lat50m = 0.0004495;
-    private double lng50m = 0.0008965;
 
-    @Override
-    public LatLng[][] buildBaseMap() {
-        double lat = startCoord1km.lat;
-        double lng = startCoord1km.lng;
-        LatLng[][] map = new LatLng[21][20];
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
-
-        for (int i = 0; i < 21; i++) {
-            for (int j = 0; j < 20; j++) {
+        for (int i = 0; i < maxRow; i++) {
+            for (int j = 0; j < maxCol; j++) {
                 if (i == 0 && j == 0) {
-<<<<<<< HEAD
                     if(scale == 20){
                         map[i][j] = startCoord50m;
                     } else {
                         map[i][j] = startCoord1km;
                     }
-=======
-                    map[i][j] = startCoord1km;
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
                 } else {
                     map[i][j] = new LatLng(lat, lng);
                 }
-                lng += lngKm;
+                lng += lngKm / scale;
             }
-            lat -= latKm;
-            lng = startCoord1km.lng;
+            lat -= latKm / scale;
+            if(scale == 20) {
+                lng = startCoord50m.lng;
+            } else {
+                lng = startCoord1km.lng;
+            }
         }
         return map;
     }
 
     /**
-<<<<<<< HEAD
      *  Строит карту мест на основе базовой карты
-=======
-     *  Строит потенциальную карту мест на основе базовой карты
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
      *  @param baseMap - базовая карта
      *  @param places - список мест
      *  @param scale - масштаб (при масштабе 1 - строится карта мест с ячейками 1 на 1 километр,
@@ -86,13 +71,8 @@ public class MapBuilderImpl implements MapBuilder {
      **/
     @Override
     public int[][] buildPlaceMap(final LatLng[][] baseMap, final List<Place> places, final int scale) {
-<<<<<<< HEAD
         double halfLat = (latKm / 2) / scale;
         double halfLng = (lngKm / 2) / scale;
-=======
-        double halfLatKm = (latKm / 2) / scale;
-        double halfLngKm = (lngKm / 2) / scale;
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
         int row = 21 * scale;
         int col = 20 * scale;
         int[][] placeMap = new int[row][col];
@@ -100,9 +80,11 @@ public class MapBuilderImpl implements MapBuilder {
         for (Place place : places) {
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
-<<<<<<< HEAD
-                    if ((baseMap[i][j].lat - halfLat <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLat)   //Проверка попадания места в клетку карты
+                    /*if ((baseMap[i][j].lat - halfLat <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLat)   //Проверка попадания места в клетку карты
                             && (baseMap[i][j].lng - halfLng <= place.getLongitude() && place.getLongitude() < baseMap[i][j].lng + halfLng)) {
+                        placeMap[i][j] += 100;
+                    }*/
+                    if(cellCheck(baseMap[i][j], place, halfLat, halfLng)){
                         placeMap[i][j] += 100;
                     }
                 }
@@ -136,14 +118,6 @@ public class MapBuilderImpl implements MapBuilder {
                     }
                 }
             }
-        }
-
-        System.out.println("--------------------------------");
-        for(int i = 0; i < maxRow; i++) {
-            for(int j = 0; j < maxCol; j++){
-                System.out.printf("%5d", result[i][j]);
-            }
-            System.out.println();
         }
         return result;
     }
@@ -190,16 +164,10 @@ public class MapBuilderImpl implements MapBuilder {
                         } else if(colNum == cellCol-radius || colNum == cellCol+radius) {
                             result[rowNum][colNum] += values.get(radius-1);
                         }
-=======
-                    if ((baseMap[i][j].lat - halfLatKm <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLatKm)   //Проверка попадания места в клетку карты
-                            && (baseMap[i][j].lng - halfLngKm <= place.getLongitude() && place.getLongitude() < baseMap[i][j].lng + halfLngKm)) {
-                        placeMap[i][j] += 100;
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
                     }
                 }
             }
         }
-<<<<<<< HEAD
     }
 
     /**
@@ -215,29 +183,19 @@ public class MapBuilderImpl implements MapBuilder {
             return false;
         }
         return rowNum < maxRow && colNum < maxCol;
-=======
-        return placeMap;
     }
 
-    private void potentialMapBuilder(final int[][] placeMap, final int scale) {
-        int row = 21 * scale;
-        int col = 20 * scale;
-        int[][] result = new int[row][col];
-
-        for(int i = 0; i < row; i++) {
-            for(int j = 0; j < col; j++) {
-                if(placeMap[i][j] != 0) {
-                    result[i][j] = placeMap[i][j];
-                    for(int x = Math.max(0, i-1); x <= Math.min(i+1, row); x++) {
-                        for(int y = Math.max(0, j-1); j <= Math.min(j+1, col); y++) {
-                            if(x != i || y != j) {
-                                System.out.print("res[" + x + "]" + "[" + y + "]");
-                            }
-                        }
-                    }
-                }
-            }
-        }
->>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
+    /**
+     * Метод для проверки попадания места в ячейку базовой карты
+     * @param baseCell - ячейка базовой карты.
+     * @param place - место которое надо проверить
+     * @param halfLat - расстояние по широте для проверки поподания в ячейку карты.
+     * @param halfLng - расстояние по долготе для проверки попадания в ячейку карты.
+     *
+     * */
+    private boolean cellCheck(LatLng baseCell, Place place, double halfLat, double halfLng) {
+        return (baseCell.lat - halfLat <= place.getLatitude() && place.getLatitude() < baseCell.lat + halfLat)
+                && (baseCell.lng - halfLng <= place.getLongitude() && place.getLongitude() < baseCell.lng + halfLng);
     }
+
 }
