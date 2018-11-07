@@ -1,8 +1,8 @@
-public class geoCoordinates {
+public class GeoCoordinates {
     private Double x;
     private Double y;
 
-    geoCoordinates(Double x, Double y){
+    GeoCoordinates(Double x, Double y){
         this.x = x;
         this.y = y;
     }

@@ -49,7 +49,11 @@ public class ScheduledPlaceGrubber {
         this.cityMapService = cityMapService;
     }
 
+<<<<<<< HEAD
     //@Scheduled(fixedDelay = MILLIS_PER_MINUTE)
+=======
+    @Scheduled(fixedDelay = MILLIS_PER_MINUTE)
+>>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
     public void getPlacesFromGoogleMaps() throws Exception {
         FileReader reader = new FileReader("counters.yaml"); //Загрузка значений счётчиков
         Map<String, Integer> loadedData = yaml.load(reader);
@@ -72,6 +76,7 @@ public class ScheduledPlaceGrubber {
         LatLng location = baseMap.getBaseMap()[row][col];
         List<PlacesSearchResult> resultAll= new ArrayList<>();
         PlacesSearchResponse resultResponse = searcher.findAllPlacesByType(placeType, location); //Поиск мест выбранного типа в определённой локации
+<<<<<<< HEAD
         System.out.println(resultResponse + placeType + location);
         if(resultResponse != null) {
             Collections.addAll(resultAll, resultResponse.results);
@@ -87,6 +92,22 @@ public class ScheduledPlaceGrubber {
                         if(resultResponse != null) { //Костыль intensifies ULTRA COMBOOO
                             Collections.addAll(resultAll, resultResponse.results);
                         }
+=======
+        /*PlacesSearchResponse resultResponse2;
+        PlacesSearchResponse resultResponse3;*/
+        System.out.println(resultResponse + placeType + location);
+        Collections.addAll(resultAll, resultResponse.results);
+        if(resultResponse.nextPageToken != null) { //Страшный костыль для сбора информации 60-ти объектов, а не только 20-ти
+            Thread.sleep(20000);
+            resultResponse = searcher.findAllPlacesByType(placeType, location, resultResponse.nextPageToken);
+            if(resultResponse != null) { //Костыль intensifies
+                Collections.addAll(resultAll, resultResponse.results);
+                if(resultResponse.nextPageToken != null) { //Костыль intensifies x2
+                    Thread.sleep(20000);
+                    resultResponse = searcher.findAllPlacesByType(placeType, location,resultResponse.nextPageToken);
+                    if(resultResponse != null) { //Костыль intensifies ULTRA COMBOOO
+                        Collections.addAll(resultAll, resultResponse.results);
+>>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
                     }
                 }
             }
@@ -101,7 +122,11 @@ public class ScheduledPlaceGrubber {
             row++;
         }
         col++;
+<<<<<<< HEAD
         Map<String, Integer> counters = new HashMap<>(); //Сохраняем значения счётчиков в yaml файл
+=======
+        Map<String, Integer> counters = new HashMap<>();
+>>>>>>> f7f81ff2ab86f41a313299e483995949aba8494e
         counters.put("placeCounter", placeCounter);
         counters.put("row", row);
         counters.put("col", col);

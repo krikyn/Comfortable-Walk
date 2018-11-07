@@ -1,8 +1,8 @@
-public class fieldCoordinates {
+public class FieldCoordinates {
     private int x;
     private int y;
 
-    fieldCoordinates(int x, int y){
+    FieldCoordinates(int x, int y){
         this.x = x;
         this.y = y;
     }
