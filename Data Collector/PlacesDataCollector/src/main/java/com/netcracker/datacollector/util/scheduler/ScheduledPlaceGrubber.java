@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.util;
+package com.netcracker.datacollector.util.scheduler;
 
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
@@ -7,11 +7,11 @@ import com.netcracker.datacollector.data.model.CityMap;
 import com.netcracker.datacollector.data.model.Place;
 import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.datacollector.service.PlaceService;
+import com.netcracker.datacollector.util.PlaceSearcher;
 import com.netcracker.datacollector.util.enums.PlacesType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 

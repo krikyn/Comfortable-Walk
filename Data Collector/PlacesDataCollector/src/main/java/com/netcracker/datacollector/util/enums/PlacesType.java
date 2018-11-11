@@ -1,7 +1,6 @@
 package com.netcracker.datacollector.util.enums;
 
 public enum PlacesType {
-    PARK,
     AMUSEMENT_PARK,
     BAKERY,
     BAR,
@@ -13,6 +12,7 @@ public enum PlacesType {
     LAUNDRY,
     MOVIE_THEATER,
     MUSEUM,
+    PARK,
     PHARMACY,
     POST_OFFICE,
     RESTAURANT,

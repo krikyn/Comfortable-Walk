@@ -80,10 +80,6 @@ public class MapBuilderImpl implements MapBuilder {
         for (Place place : places) {
             for (int i = 0; i < row; i++) {
                 for (int j = 0; j < col; j++) {
-                    /*if ((baseMap[i][j].lat - halfLat <= place.getLatitude() && place.getLatitude() < baseMap[i][j].lat + halfLat)   //Проверка попадания места в клетку карты
-                            && (baseMap[i][j].lng - halfLng <= place.getLongitude() && place.getLongitude() < baseMap[i][j].lng + halfLng)) {
-                        placeMap[i][j] += 100;
-                    }*/
                     if(cellCheck(baseMap[i][j], place, halfLat, halfLng)){
                         placeMap[i][j] += 100;
                     }
@@ -113,7 +109,7 @@ public class MapBuilderImpl implements MapBuilder {
                     result[i][j] += placeMap[i][j]; // Запись ячейки с местом в результат
                     List<Integer> values = decreaseFunction(placeMap[i][j]); // На основе значения ячейки, вычисляется диапазон убывания
                     int maxRadius = values.get(values.size()-1); // Устанавливается радиус убывания
-                    for(int rad = 1; rad < maxRadius; rad++) {
+                    for(int rad = 1; rad <= maxRadius; rad++) {
                         findNeighbours(i, j, maxRow, maxCol, rad, result, values); // Поиск всех соседних ячеек в указанном радиусе
                     }
                 }
@@ -125,19 +121,23 @@ public class MapBuilderImpl implements MapBuilder {
     /**
      * Функция для вычисления диапазона убывания.
      * Возвращает список с диапазоном убывания и радиусом.
-     * @param x - Число, на основе которого вычисляется диапазон убывания.
+     * @param value - Число, на основе которого вычисляется диапазон убывания.
      *
      * */
-    private List<Integer> decreaseFunction(int x) {
-        int radius = 0;
-        int resultValue = x;
+    private static List<Integer> decreaseFunction(int value) {
+        int iter = 0;
+        int resultValue = value;
+        int x = 3;
         List<Integer> result = new ArrayList<>();
-        while(resultValue != 0) {
-            resultValue += -0.8*resultValue;
-            result.add(resultValue);
-            radius++;
+        while(resultValue > 0) {
+            resultValue -= Math.pow(x, 2);
+            if(resultValue > 0) {
+                result.add(resultValue);
+                x++;
+                iter++;
+            }
         }
-        result.add(radius);
+        result.add(iter);
         return result;
     }
 

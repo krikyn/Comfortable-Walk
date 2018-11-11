@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/placesApi")
-public class DataCollectorController {
+public class PlaceCollectorController {
 
     private final PlaceSearcher searcher;
     private final PlaceService placeService;
@@ -21,51 +21,47 @@ public class DataCollectorController {
     private final MapBuilder mapBuilder;
 
     @Autowired
-    public DataCollectorController(PlaceSearcher searcher, PlaceService placeService, CityMapService cityMapService, MapBuilder mapBuilder) {
+    public PlaceCollectorController(PlaceSearcher searcher, PlaceService placeService, CityMapService cityMapService, MapBuilder mapBuilder) {
         this.searcher = searcher;
         this.placeService = placeService;
         this.cityMapService = cityMapService;
         this.mapBuilder = mapBuilder;
     }
 
-    @GetMapping("/baseMap50m")
+    /*@GetMapping("/baseMap50m") Для дебага
     public ResponseEntity<?> getBaseMap50m() {
         CityMap map = loadMapByType("baseCityMap50m");
         return ResponseEntity.ok().body(map.getBaseMap());
-    }
+    }*/
 
     @GetMapping(value = "/placeMap", params = "type")
     public ResponseEntity<?> getPotentialPlaceMap(@RequestParam("type") String type) {
         CityMap map = loadMapByType(type);
-        int [][] placeMap = mapBuilder.buildPotentialMap(map.getGrid(), 20);
-        CityMap savedMap = savePotentialMap(placeMap, type);
-        return ResponseEntity.ok().body(savedMap.getGrid());
+        return ResponseEntity.ok().body(map.getGrid());
     }
 
+    //Для дебага
     @GetMapping("/amusement")
     public ResponseEntity<?> getAmusement() {
-        CityMap basePlaceMap = loadMapByType("AMUSEMENT_PARK");
-        CityMap map = new CityMap();
-        map.setType("POTENTIAL_AMUSEMENT_PARK");
-        map.setGrid(mapBuilder.buildPotentialMap(basePlaceMap.getGrid(), 20));
+        CityMap placeMap = loadMapByType("POTENTIAL_AMUSEMENT_PARK");
         System.out.println("--------------------------------");
         for(int i = 0; i < 420; i++) {
             for(int j = 0; j < 400; j++){
-                System.out.printf("%5d", map.getGrid()[i][j]);
+                System.out.printf("%5d", placeMap.getGrid()[i][j]);
             }
             System.out.println();
         }
-        return ResponseEntity.ok().body(map.getGrid());
+        return ResponseEntity.ok().body(placeMap.getGrid());
     }
 
     private CityMap loadMapByType(String type) {
         return cityMapService.loadCityMapByType(type);
     }
 
-    private CityMap savePotentialMap(int[][] placeMap, String type) {
+    /*private CityMap savePotentialMap(int[][] placeMap, String type) {
         CityMap map = new CityMap();
         map.setGrid(placeMap);
         map.setType("POTENTIAL_" + type);
         return cityMapService.saveMap(map);
-    }
+    }*/
 }
