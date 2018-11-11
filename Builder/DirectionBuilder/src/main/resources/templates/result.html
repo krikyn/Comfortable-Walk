@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>Result</h1>
+    <h2>List of waypoints</h2>
+    <textarea style="width:300px; height:170px" th:text="${coordinate.getPoints()}"></textarea>
+    <a href="/weather">Enter new direction</a>
+</body>
+</html>
