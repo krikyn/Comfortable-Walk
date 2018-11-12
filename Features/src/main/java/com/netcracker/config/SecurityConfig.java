@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessTokenResponseClient(accessTokenResponseClient())
                 .and()
                 .defaultSuccessUrl("/loginSuccess")
-                .failureUrl("/loginFailure");
+                .failureUrl("/loginFailure")
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/");
     }
 
     @Bean
