@@ -7,5 +7,6 @@ import java.util.ArrayList;
 public interface GoogleRouteBuilder {
 
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, GeoCoordinates end);
+    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start,ArrayList<GeoCoordinates> points, GeoCoordinates end);
 
 }
