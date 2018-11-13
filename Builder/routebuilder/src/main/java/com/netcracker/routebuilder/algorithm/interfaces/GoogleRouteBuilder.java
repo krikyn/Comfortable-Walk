@@ -1,0 +1,11 @@
+package com.netcracker.routebuilder.algorithm.interfaces;
+
+import com.netcracker.routebuilder.util.GeoCoordinates;
+
+import java.util.ArrayList;
+
+public interface GoogleRouteBuilder {
+
+    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, GeoCoordinates end);
+
+}
