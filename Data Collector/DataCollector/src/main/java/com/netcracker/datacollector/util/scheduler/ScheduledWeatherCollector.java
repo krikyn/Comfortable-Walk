@@ -28,21 +28,3 @@ public class ScheduledWeatherCollector {
 
     }
 }
-
-/*private final WeatherPotentialMapRepository weatherPotentialMapRepository;
-
-    public Collector(WeatherPotentialMapRepository weatherPotentialMapRepository){
-        this.weatherPotentialMapRepository = weatherPotentialMapRepository;
-    }
-
-    private static final Logger log = LoggerFactory.getLogger(Collector.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-
-    @Scheduled(fixedRate = 60_000)
-    public void collectWeather() {
-        WeatherMapService weatherMapService = new WeatherMapServiceImpl(weatherPotentialMapRepository);
-        WeatherCollector weatherCollector = new WeatherCollector(weatherMapService);
-        weatherCollector.run();
-        log.info("radar data updated {}", dateFormat.format(new Date()));
-
-    }*/
