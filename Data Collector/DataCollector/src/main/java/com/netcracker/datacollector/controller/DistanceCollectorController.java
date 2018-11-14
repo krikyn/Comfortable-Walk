@@ -22,6 +22,7 @@ public class DistanceCollectorController {
     private final SquareRepository squareRepository;
     private final DistanceUtil distanceUtil;
 
+    // daba Можно использовать Lombok и @RequiredArgsConstructor вместо
     @Autowired
     public DistanceCollectorController(SquareRepository squareRepository, DistanceUtil distanceUtil) {
         this.squareRepository = squareRepository;
@@ -31,12 +32,17 @@ public class DistanceCollectorController {
     /**
      *  Сохраняет все возможные расстрояния между квадратами 39х40 (500х500 метров)
      **/
+    // daba Что-то, что пишет в базу - это по умолчанию никак не Get. Помните, что гет-запросы могут предвыполняться браузером
+    // daba Контроллер не должен бросать исключений, это финальная точка для приложения, здесь все ошибки должны обработаться
+    // daba Обычно контроллер управляет вводом-выводом данных. Здесь явная бизнес-логика, лучше выделить это в сервис и вызывать отсюда
     @GetMapping("/save")
     public void saveDestinations() throws InterruptedException, ApiException, IOException {
         ArrayList<String> destinations = distanceUtil.findDestinations();
         String[] arrayOfDestinations = destinations.toArray(new String[0]);
+        // daba Магические цифры во все поля. Всё в константы с именем.
         for (int fromPoint = 0; fromPoint < 1560; fromPoint++) {
             for (int j = 0; j <= arrayOfDestinations.length; j += 25) {
+                // daba Уничтоженный массив
                 String[] destructedArray = Arrays.copyOfRange(arrayOfDestinations, j, j + 25);
                 DistanceMatrixElement[] distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[fromPoint], destructedArray);
 

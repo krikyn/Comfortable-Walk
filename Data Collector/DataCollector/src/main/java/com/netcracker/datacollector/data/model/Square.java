@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+// daba везде таблицы названы во множественном числе, тут в единственном
 @Table(name = "square")
 public class Square {
     @Id

@@ -27,6 +27,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    // daba Почему именно saveAndFlush? Обычный сейв и флаш в конце даст тот же эффект ценой меньших потерь перформанса.
+    // daba Обычно в простых случаях у хибера достаточно оптимальная стратегия флашей, чтобы ему доверять в этом
     public Place savePlace(@NonNull Place place) {
         return placeRepository.saveAndFlush(place);
     }

@@ -17,6 +17,7 @@ public class WeatherMapServiceImpl implements WeatherMapService {
     }
 
     @Override
+    // daba Магический ноль
     public WeatherPotentialMap getMap() {
         return repository.getOne(0);
     }
@@ -28,7 +29,7 @@ public class WeatherMapServiceImpl implements WeatherMapService {
 
     @Override
     public void updateMap(WeatherPotentialMap map) {
-
+        // daba обычный save должен заменить всю эту конструкцию
         if (!repository.existsById(0)){
             loadMap(map);
         } else {

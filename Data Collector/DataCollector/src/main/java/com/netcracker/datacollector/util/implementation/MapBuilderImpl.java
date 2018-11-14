@@ -18,6 +18,7 @@ import java.util.List;
 public class MapBuilderImpl implements MapBuilder {
     private LatLng startCoord1km = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
     private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
+    // daba вроде и не магические константы, а лучше не стало. окей, это широта в километрах. Какая именно? Почему такая? переменную стоит назвать подробнее
     private double latKm = 0.00899;
     private double lngKm = 0.01793;
     //private double lat50m = 0.0004495; 25m = 0.00022475
@@ -52,6 +53,8 @@ public class MapBuilderImpl implements MapBuilder {
         }
 
         for (int i = 0; i < maxRow; i++) {
+            // daba выносим внутренние циклы в отлельный метод. у него есть название, у его переменных есть название (не забываем называть их содержательно)
+            // daba эти названия позволяют больше понимать, что происходит, когда видишь код в первый раз
             for (int j = 0; j < maxCol; j++) {
                 if (i == 0 && j == 0) {
                     if(scale == 20){
@@ -85,6 +88,7 @@ public class MapBuilderImpl implements MapBuilder {
     public int[][] buildPlaceMap(final LatLng[][] baseMap, final List<Place> places, final int scale) {
         double halfLat = (latKm / 2) / scale;
         double halfLng = (lngKm / 2) / scale;
+        // daba щоооо такое 20? откуда 21? названий мне, пожалуйста
         int row = 21 * scale;
         int col = 20 * scale;
         int[][] placeMap = new int[row][col];
@@ -112,6 +116,8 @@ public class MapBuilderImpl implements MapBuilder {
         int maxRow = 21 * scale;
         int maxCol = 20 * scale;
         // Результат построения
+        // daba вот тут вспоминается картинка с мостом и комментарием "это мост". У вас метод build, переменная result
+        // daba коммент вида "результат построения" офигенно раскрывает тонкие особенности этой переменной :)
         int[][] result = new int[maxRow][maxCol];
 
         // Проход по массиву (карте), если находится ячейка с местом, то относительно этой ячейки строится карта потенциалов
@@ -136,9 +142,11 @@ public class MapBuilderImpl implements MapBuilder {
      * @param value - Число, на основе которого вычисляется диапазон убывания.
      *
      * */
+    // daba метод называется обычно с глагола
     private static List<Integer> decreaseFunction(int value) {
         int iter = 0;
         int resultValue = value;
+        // daba переменная i - 20 лет на рынке счётчиков
         int x = 3;
         List<Integer> result = new ArrayList<>();
         while(resultValue > 0) {

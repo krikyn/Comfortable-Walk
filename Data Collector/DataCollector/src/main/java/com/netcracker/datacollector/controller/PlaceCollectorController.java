@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
  * */
 
 @RestController
+// daba Кусок адреса api - это по умолчанию API, писать в название не обязательно
 @RequestMapping("/placesApi")
 public class PlaceCollectorController {
 
     private final CityMapService cityMapService;
 
+    // daba Можно через Lombok
     @Autowired
     public PlaceCollectorController(CityMapService cityMapService) {
         this.cityMapService = cityMapService;
@@ -46,7 +48,9 @@ public class PlaceCollectorController {
     @GetMapping("/amusement")
     public ResponseEntity<?> getAmusement() {
         CityMap placeMap = loadMapByType("POTENTIAL_AMUSEMENT_PARK");
+        // daba Lombok + @Slf4J + log.debug() вместо println
         System.out.println("--------------------------------");
+        // daba Магические цифры
         for(int i = 0; i < 420; i++) {
             for(int j = 0; j < 400; j++){
                 System.out.printf("%5d", placeMap.getGrid()[i][j]);
@@ -56,6 +60,7 @@ public class PlaceCollectorController {
         return ResponseEntity.ok().body(placeMap.getGrid());
     }
 
+    // daba Смысл метода из одной строки?
     private CityMap loadMapByType(String type) {
         return cityMapService.loadCityMapByType(type);
     }

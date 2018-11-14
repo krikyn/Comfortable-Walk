@@ -24,6 +24,7 @@ public class DistanceUtilImpl implements DistanceUtil {
     @Override
     public ArrayList<String> findDestinations() {
         ArrayList<String> list = new ArrayList<>();
+        // daba В начале пути алгоритм стоит посередь ебучего нигде. А чтобы понять, где, надо назвать магические константы
         double currentX = 30.18035;
         double currentY = 60.02781;
         do {
@@ -31,6 +32,9 @@ public class DistanceUtilImpl implements DistanceUtil {
             point.setX(currentX);
             point.setY(currentY);
             list.add(point.toString());
+            // daba следующие две строчки подвесили меня конкретно
+            // daba я понял, что цифры в них разные и охренел
+            // daba Какого хрена тут происходит? :)
             if (currentX > 30.52101) {
                 currentX = 30.18035;
                 currentY = currentY - 0.004495;
@@ -46,6 +50,7 @@ public class DistanceUtilImpl implements DistanceUtil {
      */
     @Override
     public DistanceMatrixElement[] getDistance(String origin, String... addresses) throws InterruptedException, ApiException, IOException {
+        // daba кальцер?
         GeoApiContext distCalcer = new GeoApiContext.Builder()
                 .apiKey(Variables.SECRET_KEY)
                 .build();

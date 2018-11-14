@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PlaceSearcherImpl implements PlaceSearcher {
 
+    // daba вынесите его в настройку через спринговые values
     private final String apiKey = "AIzaSyBw3Bcepmq4q_VtqIohTNDBHPJnMiNw9yY";
     private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).maxRetries(10)
             .retryTimeout(20000, TimeUnit.MILLISECONDS).build();

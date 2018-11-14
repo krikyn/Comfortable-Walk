@@ -9,6 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "weatherMap")
 @Data
+// daba смысл этой аннотации? у сущности нет связей вообще
 @Proxy(lazy=false)
 public class WeatherPotentialMap {
 
@@ -25,6 +26,7 @@ public class WeatherPotentialMap {
     @Column(name = "field")
     int[][] potentialField;
 
+    // daba ломбок сюда, @Data уже есть
     public int[][] getPotentialField() {
         return potentialField;
     }

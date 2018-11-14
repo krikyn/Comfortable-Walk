@@ -41,12 +41,18 @@ public class WeatherCollector {
             URL url = new URL(imageURL);
             image = ImageIO.read(url);
         } catch (IOException ignored) {
+            // daba название переменной исключения очень ироничное, но ёбана врот, простите
+            // daba никогда не игнорьте никакие исключения вообще
+            // daba не знаете, что с ним делать - хотя бы в логи напишите, пусть поддержка потом разбирается
         }
 
         return image;
     }
 
+    // daba название аргумента неинформативно
     private String[] setCurrentImageURLAndURI(String ext) {
+        // daba в настройки, оно же потенциально меняется
+        // daba в реальных проектах хуже нет ситуации, когда в урле стороннего сервиса сменился один символ, а нам надо сделать редеплой на кластер в тыщу экземпляров
         String radarURL = "http://weather.rshu.ru/radar/data/";
         String imageURIPrefix = "P_100_26061_";
         String imageURIPostfix = "_MRL";
@@ -64,6 +70,7 @@ public class WeatherCollector {
         return parameters;
     }
 
+    // daba такие простыни лучше хранить в отдельных настройках, а не в коде
     private void fillWeatherTypes(Map<Integer, Integer> weatherTypes) {
         weatherTypes.put(new Color(208, 208, 208).getRGB(), 0);
         weatherTypes.put(new Color(255, 255, 255).getRGB(), 1);
@@ -83,6 +90,7 @@ public class WeatherCollector {
         weatherTypes.put(new Color(191, 66, 66).getRGB(), 15);
     }
 
+    // daba а нет ли у этой штуки стандартной реализации в какой-нибудь библиотеке?
     private BufferedImage medianFilter(BufferedImage image) {
         BufferedImage imageAfterProcessing = image;
         int[] pixels = new int[9];
@@ -142,15 +150,19 @@ public class WeatherCollector {
                 yandexMap.addPolyline(polygon);
 
             }
+            // daba шо
             System.out.println();
         }
 
         YandexApiUrlBuilder yandexApiUrlBuilder = new YandexApiUrlBuilder();
+        // daba идея говорит, что переменная лишняя. я с ней согласен
         String url = yandexApiUrlBuilder.build(yandexMap);
 
         return url;
     }
 
+    // daba метод в 105 строк. надо побить на куски
+    // daba сначала public-методы, потом private. стиль
     public void run() {
 
         String ext = "PNG";
@@ -159,6 +171,7 @@ public class WeatherCollector {
         String imageURI = parameters[0];
         String imageURL = parameters[1];
 
+        // daba логи (@Slf4J)
         System.out.println("URI: " + imageURI);
         System.out.println("URL: " + imageURL);
 
@@ -222,6 +235,7 @@ public class WeatherCollector {
             ImageIO.write(imageAfterProcessing, ext, fileAfterProcessing);
         } catch (IOException e) {
             System.out.println("Error with writing image after processing from radar: " + e.getMessage());
+            // daba return не нужен здесь?
         }
 
 
