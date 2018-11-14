@@ -31,6 +31,7 @@ public class LoginController {
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
 
+    // daba ломбок
     @Autowired
     public LoginController(ClientRegistrationRepository clientRegistrationRepository, OAuth2AuthorizedClientService authorizedClientService) {
         this.clientRegistrationRepository = clientRegistrationRepository;

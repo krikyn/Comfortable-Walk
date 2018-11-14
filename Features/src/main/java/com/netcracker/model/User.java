@@ -8,6 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Data
+// daba уср не надо, надо юзер :)
 @Table(name = "usr")
 public class User {
     @Id

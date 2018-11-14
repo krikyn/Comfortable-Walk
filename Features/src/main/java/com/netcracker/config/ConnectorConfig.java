@@ -19,6 +19,7 @@ public class ConnectorConfig {
                     @Override
                     protected void postProcessContext(Context context) {
                         SecurityConstraint securityConstraint = new SecurityConstraint();
+                        // daba в константу
                         securityConstraint.setUserConstraint("CONFIDENTIAL");
                         SecurityCollection collection = new SecurityCollection();
                         collection.addPattern("/*");
@@ -31,6 +32,7 @@ public class ConnectorConfig {
     }
 
     private Connector redirectConnector() {
+        // daba Http11NioProtocol.class.getName()
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
         connector.setPort(8081);
