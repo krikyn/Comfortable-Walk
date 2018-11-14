@@ -1,4 +1,4 @@
-package com.example.demo.weather_app.DirectionBuilder.Model;
+package com.netcracker.routebuilder.algorithm.implementation;
 
 import com.netcracker.routebuilder.algorithm.interfaces.GoogleRouteBuilder;
 import com.google.maps.DirectionsApi;
@@ -9,11 +9,10 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
+import com.netcracker.routebuilder.util.implementation.GeoCoordinates;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.ArrayList;
-
 @Component
 public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
     private  final GeoApiContext Gcontext;
@@ -22,13 +21,12 @@ public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
     public GoogleRouteBuilderImpl() {
         Gcontext = new GeoApiContext.Builder().apiKey(APIDirectionKey).build();
     }
-
     //build route without waypoints
     @Override
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, GeoCoordinates end) {
         return  buildDirection(start,end);
     }
-//build route with waypoints
+    //build route with waypoints
     @Override
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, ArrayList<GeoCoordinates> points, GeoCoordinates end) {
         ArrayList<GeoCoordinates> ListPoints=new ArrayList<>();
@@ -36,37 +34,35 @@ public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
         ListPoints.add(start);
         GeoCoordinates starT=start;
         GeoCoordinates enD=end;
-
-            int AllPoints=points.size();
-            int startPosition=0;
-            //devide route by parts
-            while(AllPoints>0){
-                //array of intermediate points(not more maxCountOfWayPoints)
-                LatLng [] latL;
-                int leng_point=0;
-                // if quantity of intermediate points less then 21
-                if(AllPoints/maxCountOfWayPoints<1){
-                    latL =new LatLng[AllPoints%maxCountOfWayPoints] ;
-                    enD=end;
-                }
-                // if quantity of intermediate points more then 21
-                else {
-                    latL =new LatLng[maxCountOfWayPoints] ;
-                    //add endpoint geoposition
-                    enD=points.get(startPosition+latL.length);
-                }
-                //add geoposition for clear array of  intermediate points from String array 'por'
-                for(int i=startPosition;i<startPosition+latL.length;i++){
-
-                    latL[leng_point++]=GeoCoordinatesToLatLang(points.get(i));
-                }
-                //build route
-                buildDirection(starT,latL,enD,ListPoints);
-                startPosition+=latL.length+1;
-                //condition of 'while'
-                AllPoints-=latL.length+1;
-                start=end;
+        int AllPoints=points.size();
+        int startPosition=0;
+        //devide route by parts
+        while(AllPoints>0){
+            //array of intermediate points(not more maxCountOfWayPoints)
+            LatLng [] latL;
+            int leng_point=0;
+            // if quantity of intermediate points less then 21
+            if(AllPoints/maxCountOfWayPoints<1){
+                latL =new LatLng[AllPoints%maxCountOfWayPoints] ;
+                enD=end;
             }
+            // if quantity of intermediate points more then 21
+            else {
+                latL =new LatLng[maxCountOfWayPoints] ;
+                //add endpoint geoposition
+                enD=points.get(startPosition+latL.length);
+            }
+            //add geoposition for clear array of  intermediate points from String array 'por'
+            for(int i=startPosition;i<startPosition+latL.length;i++){
+                latL[leng_point++]=GeoCoordinatesToLatLang(points.get(i));
+            }
+            //build route
+            buildDirection(starT,latL,enD,ListPoints);
+            startPosition+=latL.length+1;
+            //condition of 'while'
+            AllPoints-=latL.length+1;
+            start=end;
+        }
         ListPoints.add(end);
         return ListPoints;
     }
@@ -85,26 +81,20 @@ public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
             DirectionsStep[] Dirstep=result.routes[0].legs[0].steps;
             for (int i=1;i< Dirstep.length;i++) {
                 listPoint.add(LatLangToGeoCoordinates(Dirstep[i].endLocation));
-
             }
             listPoint.add(endPoint);
         }
         catch (ApiException e){
-
         }
         catch (InterruptedException e){
-
         }
         catch (IOException e){
-
         }
         return listPoint;
     }
-
     //standart Google's method of building Routes
     private void  buildDirection(GeoCoordinates StartPoint,LatLng [] waypoints,
-                                                     GeoCoordinates endPoint,ArrayList<GeoCoordinates>Points) {
-
+                                 GeoCoordinates endPoint,ArrayList<GeoCoordinates>Points) {
         if(waypoints.length>21) throw new ArrayIndexOutOfBoundsException("Quantity of waypoints more  than 21");
         try {
             //Standart Google API method
@@ -121,22 +111,15 @@ public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
             }
         }
         catch (ApiException e){
-
         }
         catch (InterruptedException e){
-
         }
         catch (IOException e){
-
         }
     }
-
     private GeoCoordinates LatLangToGeoCoordinates(LatLng point){
         String  [] st =point.toString().split(",");
-
-
         return new GeoCoordinates(Double.valueOf(st[0]),Double.valueOf(st[1]));
-
     }
     //Convert Google LatLang type to Google Waypoints type
     private DirectionsApiRequest.Waypoint [] LatLangsToWaypoints(LatLng [] waypoints){
@@ -146,9 +129,7 @@ public class GoogleRouteBuilderImpl implements GoogleRouteBuilder {
         }
         return lat;
     }
-
     private LatLng GeoCoordinatesToLatLang(GeoCoordinates point){
-
         return new LatLng(point.getX(),point.getY());
     }
 }
