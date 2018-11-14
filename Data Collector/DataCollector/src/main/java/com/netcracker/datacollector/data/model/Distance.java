@@ -6,9 +6,8 @@ import javax.persistence.*;
 
 @Entity
 @Data
-// daba везде таблицы названы во множественном числе, тут в единственном
-@Table(name = "square")
-public class Square {
+@Table(name = "distances")
+public class Distance {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
