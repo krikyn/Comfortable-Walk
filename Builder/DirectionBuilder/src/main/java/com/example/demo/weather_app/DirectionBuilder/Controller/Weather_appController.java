@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+// daba от названия класса немного вытекли глаза :)
 public class Weather_appController {
 
     @GetMapping("/weather")
+    // daba метод называется с глаголом
     public String weatherappForm(Model model) {
         model.addAttribute("direction", new Coordinate());
         return "weather";

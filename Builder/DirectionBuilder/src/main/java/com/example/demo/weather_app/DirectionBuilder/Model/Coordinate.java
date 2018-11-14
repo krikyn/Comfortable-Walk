@@ -15,14 +15,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
+// daba название класса неинформативно
+// daba по названию - это скорее модельная сущность
+// daba по наполнению - всё и сразу
+// daba этот класс надо разбивать. Тут и модель, и сервис, и всё на свете.
 public class Coordinate {
     private  final GeoApiContext Gcontext;
     private final String APIDirectionKey="AIzaSyBXwTfSt74U8zY0mNpULiJEGPv9ZYOgL7U";
+    // daba невероятно информативный комментарий, вносящий ясность :)
+    // daba а вот а том, почему тут именно 21, неплохо бы написать комментарий
     private final int maxCountOfWayPoints=21;//max value of points
     private String StartPoint="";
     private String endPoint="";
     private String waypoints="";//String with intermediate points,that we get from input field
     private ArrayList<LatLng> points; //list of  intermediate points
+    // daba геттеры-сеттеры ломбоком
     public String getWaypoints() {
         return waypoints;
     }
@@ -60,6 +67,7 @@ public class Coordinate {
     // method returns all of intermediate points in String type
     public String getPoints(){
         StringBuffer buffer=new StringBuffer();
+        // daba Collectors.joining и стримы
         for (LatLng p:points){
             buffer.append(p.toString()+"\n");
         }
@@ -79,8 +87,10 @@ public class Coordinate {
                  } else {
                      //build with intermediate points
                      String start=getStartPoint();
+                     // daba этот метод возвращает значение переменной из этого же класса
                      String end=getEndPoint();
                      //get string array of waypoints from user's input
+                     // daba пор?
                      String por[] = waypoints.replaceAll("\\s+", "").split(";");
                      int AllPoints=por.length;
                      int startPosition=0;
@@ -141,13 +151,13 @@ public class Coordinate {
                }
            }
             catch (ApiException e){
-
+                // daba никогда
             }
              catch (InterruptedException e){
-
+                 // daba так
             }
              catch (IOException e){
-
+                 // daba не делайте
             }
         }
     //build route with intermediate points

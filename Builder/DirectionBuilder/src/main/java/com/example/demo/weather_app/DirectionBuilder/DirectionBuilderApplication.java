@@ -2,7 +2,10 @@ package com.example.demo.weather_app.DirectionBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
+// daba название пакета собрало все ошибки в названиях пакетов разом :)
+// daba _ не очень рекомендуется
+// daba с большой называть пакеты тоже не айс
+// daba в целом правила те же, что для переменных и полей
 @SpringBootApplication
 public class DirectionBuilderApplication {
 
