@@ -1,6 +1,6 @@
 package com.netcracker.routebuilder.algorithm.interfaces;
 
-import com.netcracker.routebuilder.util.GeoCoordinates;
+import com.netcracker.routebuilder.util.implementation.GeoCoordinates;
 
 import java.util.ArrayList;
 

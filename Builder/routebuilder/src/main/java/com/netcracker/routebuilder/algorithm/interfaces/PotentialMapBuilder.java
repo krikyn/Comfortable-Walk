@@ -1,12 +1,12 @@
 package com.netcracker.routebuilder.algorithm.interfaces;
 
-import com.netcracker.routebuilder.util.AbstractMap;
-import com.netcracker.routebuilder.util.utils.RouteProperties;
+import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
+import com.netcracker.routebuilder.util.enums.RouteProperties;
 
 import java.util.ArrayList;
 
 public interface PotentialMapBuilder {
 
-    public AbstractMap assemblePotentialMap(ArrayList<RouteProperties> includedProperties);
+    public AbstractPotentialMap assemblePotentialMap(ArrayList<RouteProperties> includedProperties);
 
 }

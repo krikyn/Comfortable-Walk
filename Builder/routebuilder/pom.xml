@@ -16,7 +16,6 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <google.maps.api.version>0.9.0</google.maps.api.version>
     </properties>
 
     <dependencies>
@@ -62,7 +61,7 @@
         <dependency>
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
-            <version>${google.maps.api.version}</version>
+            <version>0.9.0</version>
         </dependency>
 
     </dependencies>
