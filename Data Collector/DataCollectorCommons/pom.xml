@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.netcracker</groupId>
-	<artifactId>data-collector</artifactId>
+	<artifactId>data-collector-commons</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>DataCollector</name>
-	<description>Data collector for places on the cityMap</description>
+	<name>DataCollectorCommons</name>
+	<description>Commons for data collector</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -23,10 +23,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<google.maps.api.version>0.9.0</google.maps.api.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<snake.yaml.version>1.23</snake.yaml.version>
 		<yandex.maps.version>1.0</yandex.maps.version>
-		<start-class>com.netcracker.datacollector.DataCollectorApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -53,43 +50,13 @@
 			<artifactId>yandex-maps-static-api</artifactId>
 			<version>${yandex.maps.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>${snake.yaml.version}</version>
-		</dependency>
 
-		<dependency>
-			<groupId>com.netcracker</groupId>
-			<artifactId>data-collector-commons</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-    </dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
+	</dependencies>
 
 </project>

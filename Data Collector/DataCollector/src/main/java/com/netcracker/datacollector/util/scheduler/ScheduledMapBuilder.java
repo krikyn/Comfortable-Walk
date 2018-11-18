@@ -6,6 +6,7 @@ import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.datacollector.service.PlaceService;
 import com.netcracker.datacollector.util.MapBuilder;
 import com.netcracker.datacollector.util.enums.PlacesType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ScheduledMapBuilder {
 
     private final int MILLIS_PER_MINUTE = 60000;
@@ -20,13 +22,6 @@ public class ScheduledMapBuilder {
     private final MapBuilder mapBuilder;
     private final CityMapService cityMapService;
     private final PlaceService placeService;
-
-    @Autowired
-    public ScheduledMapBuilder(MapBuilder mapBuilder, CityMapService cityMapService, PlaceService placeService) {
-        this.mapBuilder = mapBuilder;
-        this.cityMapService = cityMapService;
-        this.placeService = placeService;
-    }
 
     @Scheduled(fixedDelay = MILLIS_PER_MINUTE * 60)
     public void buildMaps() {
@@ -48,7 +43,7 @@ public class ScheduledMapBuilder {
             CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap50m");
             List<Place> places = placeService.loadAllPlacesByType(place.toString());
             CityMap map = new CityMap();
-            if(places != null) {
+            if(cityMapService.loadCityMapByType("POTENTIAL_" + place.toString()) == null && places != null) {
                 int[][] placeMap = mapBuilder.buildPlaceMap(baseMap.getBaseMap(), places, 20); //Построение карты мест
                 map.setType("POTENTIAL_" + place.toString());
                 map.setGrid(mapBuilder.buildPotentialMap(placeMap, 20)); //Построение и установка потенциальной карты мест

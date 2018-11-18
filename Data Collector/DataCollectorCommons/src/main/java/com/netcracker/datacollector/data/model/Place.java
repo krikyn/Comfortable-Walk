@@ -2,10 +2,9 @@ package com.netcracker.datacollector.data.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Grout on 28.10.2018.
@@ -20,27 +19,26 @@ import java.util.UUID;
 public class Place {
 
     @Id
-    @NonNull
     @Column(name = "google_place_id")
     private String googlePlaceId;
 
-    @NonNull
+    @NotNull
     @Column(name = "type")
     private String type;
 
-    @NonNull
+    @NotNull
     @Column(name = "name")
     private String name;
 
-    @NonNull
+    @NotNull
     @Column(name = "address")
     private String address;
 
-    @NonNull
+    @NotNull
     @Column(name = "latitude")
     private Double latitude;
 
-    @NonNull
+    @NotNull
     @Column(name = "longitude")
     private Double longitude;
 }
