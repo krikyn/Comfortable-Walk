@@ -1,5 +1,6 @@
 package com.netcracker.controller;
 
+import com.netcracker.model.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
@@ -91,6 +92,8 @@ public class LoginController {
                     break;
             }
         }
+
+        model.addAttribute("path", new Path());
 
         return "loginSuccess";
     }
