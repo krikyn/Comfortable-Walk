@@ -1,4 +1,4 @@
-package com.netcracker.model;
+package com.netcracker.data.model;
 
 import lombok.Data;
 
@@ -8,8 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-// daba уср не надо, надо юзер :)
-@Table(name = "usr")
+@Table(name = "user_application")
 public class User {
     @Id
     private String id;

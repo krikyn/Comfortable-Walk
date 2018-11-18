@@ -1,7 +1,7 @@
-package com.netcracker.model;
+package com.netcracker.data.repository;
 
+import com.netcracker.data.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-// daba репка - не часть модели, ей нужен отдельный пакет
 public interface UserRepository extends JpaRepository<User, String> {
 }

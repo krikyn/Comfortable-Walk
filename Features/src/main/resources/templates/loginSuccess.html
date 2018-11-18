@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Comfortable Walk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          type="text/css">
     <link rel="stylesheet" href="/aquamarine.css">
 </head>
 
@@ -34,7 +36,7 @@
         <div class="row">
             <div class="col-md-4" style="">
                 <form id="sendData" action="#" th:action="@{/loginSuccess}" th:object="${path}"
-                      class="mb-2" method="post">
+                      class="mb-2" th:method="post">
                     <h2 class="">Route setup</h2>
                     <div class="form-group"><label><b>Set the points of departure and arrival</b></label>
                         <div class="input-group">
@@ -52,11 +54,21 @@
                             <input type="text" th:field="*{toPoint}" class="form-control">
                         </div>
                     </div>
-                    <!--<div class="form-group"><label><b>Specify route properties</b></label>-->
-                    <!--<div class="custom-control custom-checkbox">-->
-                    <!--<input type="checkbox" class="custom-control-input" id="customCheck1">-->
-                    <!--</div>-->
-                    <!--</div>-->
+                    <label><b>Specify route properties</b></label>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input id="weather" type="checkbox" class="custom-control-input" th:field="*{isBestWeather}" />
+                            <label class="custom-control-label" for="weather">I want the best weather</label>
+                        </div>
+                    </div>
+                    <label><b>What places do you want to visit?</b></label>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" th:field="*{types}" class="form-control">
+                        </div>
+                    </div>
+
+
                     <!--<div class="form-group">-->
                     <!--<select class="custom-select" id="select">-->
                     <!--<option selected="">Open this select menu</option>-->
