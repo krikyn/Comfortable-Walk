@@ -13,6 +13,10 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.lob.non_contextual_creation: true
     show-sql: true
+  radar:
+    radar-url: http://weather.rshu.ru/radar/data/
+    image-uri-prefix: P_100_26061_
+    image-uri-postfix: _MRL
 
 logging:
   file: data_collector.log
