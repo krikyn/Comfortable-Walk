@@ -47,6 +47,7 @@ public class CheckedItemsUtil {
                         i++;
                     }
                 }
+                e.printStackTrace();
             }
         }
         return list;

@@ -12,6 +12,6 @@ public class Path {
     private String fromPoint;
     private String toPoint;
     private List<PlacesType> checkedItems;
-    private String types;
+    private String placeName;
     private Boolean isBestWeather;
 }

@@ -6,6 +6,44 @@
     <title>Comfortable Walk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+    <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#myTags").tagit({
+                allowDuplicates: false,
+                autocomplete: {delay: 0, minLength: 1},
+                itemName: "placeId",
+                fieldName: "placeName",
+                availableTags: [
+                    "AMUSEMENT PARK",
+                    "BAKERY",
+                    "BAR",
+                    "BOOK STORE",
+                    "CAFE",
+                    "CLOTHING STORE",
+                    "ELECTRONICS STORE",
+                    "GROCERY OR SUPERMARKET",
+                    "LAUNDRY",
+                    "MOVIE THEATER",
+                    "MUSEUM",
+                    "PARK",
+                    "PHARMACY",
+                    "POST OFFICE",
+                    "RESTAURANT",
+                    "SHOPPING MALL",
+                    "STADIUM",
+                    "ZOO"
+                ]
+            });
+        });
+    </script>
     <link rel="stylesheet" href="/aquamarine.css">
 </head>
 
@@ -57,15 +95,15 @@
                     <label><b>Specify route properties</b></label>
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
-                            <input id="weather" type="checkbox" class="custom-control-input" th:field="*{isBestWeather}" />
+                            <input id="weather" type="checkbox" class="custom-control-input"
+                                   th:field="*{isBestWeather}"/>
                             <label class="custom-control-label" for="weather">I want the best weather</label>
                         </div>
                     </div>
                     <label><b>What places do you want to visit?</b></label>
                     <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" th:field="*{types}" class="form-control">
-                        </div>
+                        <ul id="myTags">
+                        </ul>
                     </div>
 
 
