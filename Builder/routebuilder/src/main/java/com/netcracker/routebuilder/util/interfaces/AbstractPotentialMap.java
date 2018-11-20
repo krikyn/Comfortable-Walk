@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import static com.netcracker.routebuilder.util.implementation.Utils.recountWithNewScale;
 
-public abstract class AbstractPotentialMap implements Map {
+public abstract class AbstractPotentialMap implements PotentialMap {
     private ArrayList<ArrayList<Integer>> field;
     private int scale;
 

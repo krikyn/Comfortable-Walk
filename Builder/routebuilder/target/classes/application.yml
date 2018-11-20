@@ -1,0 +1,10 @@
+algorithm:
+  maxAllowableIncrease: 3
+  minDistBetweenStartEnd: 100
+  scale: 20
+  distanceType: COMPOSIT
+  normalFactorH: 1
+  normalFactorG: 1
+
+logging:
+  file: algorithm.log

@@ -1,7 +1,7 @@
 package com.netcracker.routebuilder.util.implementation;
 
-import com.netcracker.routebuilder.util.implementation.FieldCoordinates;
-import com.netcracker.routebuilder.util.implementation.GeoCoordinates;
+import com.netcracker.routebuilder.data.bean.FieldCoordinates;
+import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 
 public class Utils {
     public static boolean checkBorders(int x, int y, int scale) {
