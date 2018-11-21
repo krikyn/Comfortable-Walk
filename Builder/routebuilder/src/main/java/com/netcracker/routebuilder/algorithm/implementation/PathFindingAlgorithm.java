@@ -20,35 +20,36 @@ public class PathFindingAlgorithm {
 
     GoogleRouteBuilder googleRouteBuilder;
     AlgorithmParameters params;
-    final private int potentialMapScale = 20; // scale = 20, значит размер каждой клетки 1 км / 20 = 50 метров
+    private final static double lat1KM = 0.00898; //1 км в градусах широты
+    private final static double lon1KM = 0.01440; //1 км в градусах долготы
 
-    ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperties> routeProperties) {
+    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperties> routeProperties) {
         log.info("--Start of the algorithm--");
+        log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
 
-        if (EuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()){
+        if (EuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
             return googleRouteBuilder.buildRoute(startPoint, endPoint);
         }
-
-        final int scale = potentialMapScale;
 
         //количество клеток 1x1 км по Ox и Oy  на нашей потенциальной карте
         final int defaultNumPointsX = 21;
         final int defaultNumPointsY = 20;
 
-        final int numPointsX = Utils.recountWithNewScale(defaultNumPointsX, scale);
-        final int numPointsY = Utils.recountWithNewScale(defaultNumPointsY, scale);
+        final int numPointsX = recountWithNewScale(defaultNumPointsX);
+        final int numPointsY = recountWithNewScale(defaultNumPointsY);
 
-        final FieldCoordinates startCell = Utils.convertGeoToFieldCoordinates(startPoint, scale);
-        final FieldCoordinates endCell = Utils.convertGeoToFieldCoordinates(endPoint, scale);
+        log.info("New potential map size: " + numPointsX + ", " + numPointsY);
+
+        final FieldCoordinates startCell = convertGeoToFieldCoordinates(startPoint);
+        final FieldCoordinates endCell = convertGeoToFieldCoordinates(endPoint);
+
+        log.info("Start cell: " + startCell.getX() + ", " + startCell.getY());
+        log.info("End cell: " + endCell.getX() + ", " + endCell.getY());
 
         ArrayList<ArrayList<Cell>> potentialField = new ArrayList<>();
-
-        potentialFieldInitialization(potentialField, numPointsX, numPointsY, scale);
-
-        fillPotentialField(potentialField, scale, routeProperties);
-
-        //TODO hash and equals for Cell
+        potentialFieldInitialization(potentialField, numPointsX, numPointsY);
+        fillPotentialField(potentialField, routeProperties);
 
         Cell startNode = potentialField.get(startCell.getX()).get(startCell.getY());
         Cell endNode = potentialField.get(endCell.getX()).get(endCell.getY());
@@ -56,14 +57,20 @@ public class PathFindingAlgorithm {
         PriorityQueue<Cell> nodes = new PriorityQueue<>(Comparator.comparing(Cell::getFx));
 
         Cell firstPoint = potentialField.get(startCell.getX()).get(startCell.getY());
-        Double firstPointH = calcGlobalH(startNode, endNode, scale);
+
+        //todo calcGlobalH
+        Double firstPointH = calcDistToDestinationCell(startNode, endNode);
         firstPoint.updateParameters(null, 0d, firstPointH);
 
         nodes.add(firstPoint);
 
+        if (1 == 1) {
+            return null;
+        }
+
         while (!nodes.isEmpty()) {
             Cell curNode = nodes.poll();
-            if (curNode.getFieldCoordinates().equals(endCell)) {
+            if (curNode.getFieldCoordinates().equals(endNode.getFieldCoordinates())) {
                 System.out.println("Нашли");
 
                 ArrayList<GeoCoordinates> route = routeRestoration(curNode);
@@ -87,7 +94,7 @@ public class PathFindingAlgorithm {
 
                         if (!nextCell.isClosed() || tentativeScore < nextCell.getGx()) {
                             nextCell.updateParameters(curNode,
-                                    tentativeScore, calcGlobalH(curNode, endNode, scale));
+                                    tentativeScore, calcDistToDestinationCell(curNode, endNode));
                             if (!nodes.contains(nextCell)) {
                                 nodes.add(nextCell);
                             }
@@ -105,22 +112,22 @@ public class PathFindingAlgorithm {
         return (double) potentialField.get(to.getFieldCoordinates().getX()).get(to.getFieldCoordinates().getY()).getValue();
     }
 
-    private static void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, int scale, ArrayList<RouteProperties> routeProperties) {
-        AbstractPotentialMap assembledMap = new PotentialMapBuilder().assemblePotentialMap(routeProperties);
+    private void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperties> routeProperties) {
+        log.info("start of filling a potential map");
+        AbstractPotentialMap assembledMap = new PotentialMapBuilder(params.getScale()).assemblePotentialMap(routeProperties);
 
         for (int i = 0; i < potentialField.size(); i++) {
             for (int j = 0; j < potentialField.get(i).size(); j++) {
                 potentialField.get(i).get(j).setValue(assembledMap.get(i, j));
             }
         }
+        log.info("potential map filled");
     }
 
-    private static void potentialFieldInitialization(ArrayList<ArrayList<Cell>> potentialField, int x, int y, int scale) {
-        final double lat1km = 0.00899;
-        final double lon1km = 0.01793;
+    private void potentialFieldInitialization(ArrayList<ArrayList<Cell>> potentialField, int x, int y) {
 
-        double lat = lat1km / ((double) scale);
-        double lon = lon1km / ((double) scale);
+        double latStep = lat1KM / (double) params.getScale();
+        double lonStep = lon1KM / (double) params.getScale();
 
         double curX = 30.18035;
         double curY = 60.02781;
@@ -130,16 +137,26 @@ public class PathFindingAlgorithm {
             potentialField.add(new ArrayList<>());
             for (int j = 0; j < y; j++) {
                 potentialField.get(i).add(new Cell(0, new FieldCoordinates(i, j), new GeoCoordinates(curX, curY)));
-                curX += lon;
+                curX += lonStep;
             }
-            curY -= lat;
+            curY -= latStep;
         }
+
+        log.info("Potential map initialized");
     }
 
-    private static Double calcGlobalH(Cell from, Cell to, int scale) {
-        //DistanceMap distanceMap = new DistanceMap(scale);
-        //TODO переделать
-        return EuclideanDist(from, to);
+    private  Double calcDistToDestinationCell (Cell from, Cell to) {
+        switch (params.getDistanceType()){
+            case EUCLIDEAN:
+                return EuclideanDist(from, to);
+            case CHEBYSHEVA:
+                return ChebyshevDist(from, to);
+            case COMPOSIT:
+                return 0d;
+            default:
+                log.error("Wrong distance type in the parameters");
+                return 0d;
+        }
     }
 
     private static Double ChebyshevDist(Cell from, Cell to) {
@@ -148,16 +165,23 @@ public class PathFindingAlgorithm {
                 Math.abs(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY()));
     }
 
+    //ответ в метрах
     private static Double EuclideanDist(Cell from, Cell to) {
-        //TODO переделать
-        return Math.sqrt(Math.pow(from.getFieldCoordinates().getX() - to.getFieldCoordinates().getX(), 2) +
-                Math.pow(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY(),2));
+        return EuclideanDist(from.getGeoCoordinates(), to.getGeoCoordinates());
     }
 
+    //ответ в метрах
     private static Double EuclideanDist(GeoCoordinates from, GeoCoordinates to) {
-        //TODO переделать
-        return Math.sqrt(Math.pow(from.getX() - to.getX(), 2) +
-                Math.pow(from.getY() - to.getY(),2));
+        return Math.sqrt(Math.pow(((from.getX() - to.getX()) / lon1KM) * 1000, 2) +
+                Math.pow(((from.getY() - to.getY()) / lat1KM) * 1000, 2));
+    }
+
+    private Integer recountWithNewScale(int original) {
+        return Utils.recountWithNewScale(original, params.getScale());
+    }
+
+    private FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point) {
+        return Utils.convertGeoToFieldCoordinates(point, params.getScale());
     }
 
     private ArrayList<GeoCoordinates> routeRestoration(Cell curNode) {

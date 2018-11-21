@@ -1,9 +1,16 @@
 package com.netcracker.routebuilder.util.implementation;
 
+import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 
+import java.util.ArrayList;
+
 public class Utils {
+
+    private final static double lat1KM = 0.00898; //1 км в градусах широты
+    private final static double lon1KM = 0.01440; //1 км в градусах долготы
+
     public static boolean checkBorders(int x, int y, int scale) {
 
         assert scale >= 1;
@@ -23,17 +30,16 @@ public class Utils {
     }
 
     public static Integer recountWithNewScale(int original, int scale) {
-        int num = original;
-        for (int i = 0; i < scale / 2; i++) {
-            num = num * 2 - 1;
-        }
-        return num;
+        return (original - 1) * scale + 1;
     }
 
     public static FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point, int scale) {
-        final Double lat1 = 0.00899 / (double) scale;
-        final Double lon1 = 0.01793 / (double) scale;
+        final Double lat1 = lat1KM / (double) scale;
+        final Double lon1 = lon1KM / (double) scale;
 
-        return new FieldCoordinates((int) Math.floor(point.getX() / lat1), (int) Math.floor(point.getY() / lon1));
+        Double fromFieldStartX = point.getX() - 30.18035d;
+        Double fromFieldStartY = 60.02781d - point.getY();
+
+        return new FieldCoordinates((int) Math.floor(fromFieldStartY / lat1), (int) Math.floor(fromFieldStartX / lon1));
     }
 }

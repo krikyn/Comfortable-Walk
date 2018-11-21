@@ -1,5 +1,9 @@
 package com.netcracker.routebuilder.data.bean;
 
+
+import lombok.Data;
+
+@Data
 public class Cell {
 
     private int value;
@@ -31,35 +35,4 @@ public class Cell {
         this.hx = hx;
     }
 
-    public Double getFx(){
-        return fx;
-    }
-
-    public FieldCoordinates getFieldCoordinates() {
-        return fieldCoordinates;
-    }
-
-    public GeoCoordinates getGeoCoordinates() {
-        return geoCoordinates;
-    }
-
-    public void setClosed(boolean closed) {
-        isClosed = closed;
-    }
-
-    public Double getGx() {
-        return gx;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value){
-        this.value = value;
-    }
-
-    public Cell getParent(){
-        return parent;
-    }
 }
