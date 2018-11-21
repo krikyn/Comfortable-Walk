@@ -13,35 +13,41 @@ import com.netcracker.datacollector.util.Variables;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 @Component
 public class DistanceUtil {
 
-    private final double UPPER_LEFT_LONGITUDE = 30.18035;
-    private final double UPPER_LEFT_LATITUDE = 60.02781;
-    private final double BOTTOM_RIGHT_LONGITUDE = 30.52101;
-    private final double BOTTOM_RIGHT_LATITUDE = 59.84802;
-    private final double DISTANCE_FOR_LONGITUDE = 0.008965;
-    private final double DISTANCE_FOR_LATITUDE = 0.004495;
+    private final BigDecimal UPPER_LEFT_LONGITUDE = BigDecimal.valueOf(30.18035);
+    private final BigDecimal UPPER_LEFT_LATITUDE = BigDecimal.valueOf(60.02781);
+    private final BigDecimal BOTTOM_RIGHT_LONGITUDE = BigDecimal.valueOf(30.52101);
+    private final BigDecimal BOTTOM_RIGHT_LATITUDE = BigDecimal.valueOf(59.84802);
+    private final BigDecimal DISTANCE_FOR_LONGITUDE = BigDecimal.valueOf(0.008965);
+    private final BigDecimal DISTANCE_FOR_LATITUDE = BigDecimal.valueOf(0.004495);
+    private final BigDecimal EPSILON_FOR_LATITUDE = BigDecimal.valueOf(0.00001);
 
     /**
-     *  Возвращает лист всех центров (широта, долгота) квадратов размером 500х500
+     *  Возвращает лист всех центров (широта, долгота) квадратов размером 500х500 (39x41 квадратов)
      **/
     public ArrayList<String> findDestinations() {
         ArrayList<String> list = new ArrayList<>();
-        double currentX = UPPER_LEFT_LONGITUDE;
-        double currentY = UPPER_LEFT_LATITUDE;
+        BigDecimal currentX = UPPER_LEFT_LONGITUDE;
+        BigDecimal currentY = UPPER_LEFT_LATITUDE;
+        currentX.setScale(6, ROUND_HALF_UP);
+        currentY.setScale(6, ROUND_HALF_UP);
         do {
             Point point = new Point();
             point.setX(currentX);
             point.setY(currentY);
             list.add(point.toString());
-            if (currentX > BOTTOM_RIGHT_LONGITUDE) {
+            if (currentX.compareTo(BOTTOM_RIGHT_LONGITUDE) > 0) {
                 currentX = UPPER_LEFT_LONGITUDE;
-                currentY = currentY - DISTANCE_FOR_LATITUDE;
-            } else currentX = currentX + DISTANCE_FOR_LONGITUDE;
-        } while (currentY >= BOTTOM_RIGHT_LATITUDE);
+                currentY = currentY.subtract(DISTANCE_FOR_LATITUDE);
+            } else currentX = currentX.add(DISTANCE_FOR_LONGITUDE);
+        } while (currentY.compareTo(BOTTOM_RIGHT_LATITUDE.subtract(EPSILON_FOR_LATITUDE)) >= 0);
         return list;
     }
 
