@@ -9,6 +9,8 @@ import com.google.maps.model.DirectionsStep;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

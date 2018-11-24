@@ -1,12 +1,13 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class PathFindingAlgorithmTestConfiguration {
-    @Bean
-    public PathFindingAlgorithm pathFindingAlgorithm(){
+    /*@Bean
+    public PathFindingAlgorithm pathFindingAlgorithm() {
         return new PathFindingAlgorithm();
-    }
+    }*/
 }

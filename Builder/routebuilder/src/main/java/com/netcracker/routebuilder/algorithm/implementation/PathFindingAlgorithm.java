@@ -1,31 +1,52 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
+import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
-import com.netcracker.routebuilder.util.implementation.*;
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import com.netcracker.routebuilder.util.enums.RouteProperties;
+import com.netcracker.routebuilder.util.implementation.Utils;
+import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 @Component
 public class PathFindingAlgorithm {
 
-    GoogleRouteBuilder googleRouteBuilder;
-    AlgorithmParameters params;
+
+    final GoogleRouteBuilder googleRouteBuilder;
+    final AlgorithmParameters params;
+    final PotentialMapBuilder potentialMapBuilder;
+
+    //private final CityMapService cityMapService;
+    //private final CityMapRepository cityMapRepository;
+
     private final static double lat1KM = 0.00898; //1 км в градусах широты
     private final static double lon1KM = 0.01440; //1 км в градусах долготы
+
+    //@Autowired
+
 
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperties> routeProperties) {
         log.info("--Start of the algorithm--");
         log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
+
+        //log.info("Null: " + (cityMapService == null));
+
+        //CityMap cityMap = cityMapService.loadCityMapByType("baseCityMap50m");
+
+        //log.info("X: " + cityMap.getBaseMap().length);
+        //log.info("Y: " + cityMap.getGrid()[0].length);
 
         if (EuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
@@ -114,7 +135,7 @@ public class PathFindingAlgorithm {
 
     private void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperties> routeProperties) {
         log.info("start of filling a potential map");
-        AbstractPotentialMap assembledMap = new PotentialMapBuilder(params.getScale()).assemblePotentialMap(routeProperties);
+        AbstractPotentialMap assembledMap = potentialMapBuilder.assemblePotentialMap(routeProperties);
 
         for (int i = 0; i < potentialField.size(); i++) {
             for (int j = 0; j < potentialField.get(i).size(); j++) {
@@ -145,8 +166,8 @@ public class PathFindingAlgorithm {
         log.info("Potential map initialized");
     }
 
-    private  Double calcDistToDestinationCell (Cell from, Cell to) {
-        switch (params.getDistanceType()){
+    private Double calcDistToDestinationCell(Cell from, Cell to) {
+        switch (params.getDistanceType()) {
             case EUCLIDEAN:
                 return EuclideanDist(from, to);
             case CHEBYSHEVA:
