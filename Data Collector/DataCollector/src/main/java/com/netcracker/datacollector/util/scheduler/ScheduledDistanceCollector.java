@@ -3,7 +3,9 @@ package com.netcracker.datacollector.util.scheduler;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrixElement;
 import com.netcracker.datacollector.data.model.Distance;
+import com.netcracker.datacollector.data.model.bean.Graph;
 import com.netcracker.datacollector.data.repository.DistanceRepository;
+import com.netcracker.datacollector.util.DistanceFindingAlgorithm;
 import com.netcracker.datacollector.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,10 +15,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -74,7 +73,7 @@ public class ScheduledDistanceCollector {
 
 //    @Scheduled(fixedDelay = 1000000000)
     public void saveDistancesWithLinks() {
-       try (FileReader reader = new FileReader("distanceCounter.yaml")) {
+        try (FileReader reader = new FileReader("distanceCounter.yaml")) {
             Map<String, Integer> loadedData = yaml.load(reader);
             fromPointCounter = loadedData.get("fromPointCounter");
         } catch (IOException e) {
@@ -83,13 +82,10 @@ public class ScheduledDistanceCollector {
 
         ArrayList<String> destinations = distanceUtil.findDestinations();
         String[] arrayOfDestinations = destinations.toArray(new String[0]);
-        for (int i = fromPointCounter; i < arrayOfDestinations.length; i++) {
+        for (int i = fromPointCounter; i < arrayOfDestinations.length - 1; i++) {
             DistanceMatrixElement[] distanceMatrixElements = new DistanceMatrixElement[0];
             String[] destinationsArray = new String[4];
             try {
-                //если начало в последнем квадрате
-                if (i == arrayOfDestinations.length - 1)
-                    break;
                 //путь в правую точку
                 destinationsArray[0] = arrayOfDestinations[i + 1];
                 //если начало в последней строчке
@@ -139,6 +135,46 @@ public class ScheduledDistanceCollector {
                 e.printStackTrace();
             }
         }
+        calculateLinks();
+    }
+
+    //    @Scheduled(fixedDelay = 1000000000)
+    public void calculateLinks() {
+        List<Distance> distances = distanceRepository.findAll();
+
+        Graph graph = new Graph(distances.size());
+
+        for (Distance distance : distances) {
+            graph.addArc(distance.getFromPoint(), distance.getToPoint(), distance.getDistance());
+            graph.addArc(distance.getToPoint(), distance.getFromPoint(), distance.getDistance());
+        }
+
+        DistanceFindingAlgorithm distanceFindingAlgorithm = new DistanceFindingAlgorithm(graph);
+        for (int fromPoint = 0; fromPoint < AMOUNT_OF_POINTS - 1; fromPoint++) {
+            for (int toPoint = fromPoint + 1; toPoint < AMOUNT_OF_POINTS; toPoint++) {
+                Long distance = distanceFindingAlgorithm.getDistances(fromPoint)[toPoint];
+                if (distance == Integer.MAX_VALUE)
+                    continue;
+                if (fromPoint >= AMOUNT_OF_POINTS - HORIZONTALLY_POINTS)
+                    if (toPoint == fromPoint + 1)
+                        continue;
+                if (fromPoint % HORIZONTALLY_POINTS == 38)
+                    if (toPoint == fromPoint + HORIZONTALLY_POINTS - 1 || toPoint == fromPoint + HORIZONTALLY_POINTS)
+                        continue;
+                if (fromPoint % HORIZONTALLY_POINTS == 0)
+                    if (toPoint == fromPoint + 1 || toPoint == fromPoint + HORIZONTALLY_POINTS ||
+                            toPoint == fromPoint + HORIZONTALLY_POINTS + 1)
+                        continue;
+                if (toPoint == fromPoint + 1 || toPoint == fromPoint + HORIZONTALLY_POINTS - 1
+                        || toPoint == fromPoint + HORIZONTALLY_POINTS || toPoint == fromPoint + HORIZONTALLY_POINTS + 1)
+                    continue;
+                Distance newDistance = new Distance();
+                newDistance.setFromPoint(fromPoint);
+                newDistance.setToPoint(toPoint);
+                newDistance.setDistance(distance);
+                distanceRepository.save(newDistance);
+            }
+        }
     }
 
     private void saveDistance(int fromPoint, int toPoint, DistanceMatrixElement distanceMatrixElement) {
@@ -146,7 +182,7 @@ public class ScheduledDistanceCollector {
         distance.setFromPoint(fromPoint);
         distance.setToPoint(toPoint);
         if (distanceMatrixElement.distance == null) {
-            distance.setDistance(null);
+            return;
         } else {
             distance.setDistance(distanceMatrixElement.distance.inMeters);
         }
