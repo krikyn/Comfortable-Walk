@@ -4,7 +4,6 @@ import com.google.maps.model.LatLng;
 import com.netcracker.datacollector.data.model.Place;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,61 +15,42 @@ import java.util.List;
 @Component
 public class MapBuilder {
     private LatLng startCoord1km = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
-    private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
+    //private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
     private double latitudeInKm = 0.00899;
     private double longitudeInKm = 0.01793;
 
     /**
      * Строит базовую карту города.
      * @param scale - масштаб карты.
-     * ВАЖНО! Метод корректно строит только карты с масштабом 1 и 20, так как только для этих масштабов известны
-     *              начальные координаты.
+     *
      */
-
     public LatLng[][] buildBaseMap(int scale) {
+        int baseRow = 21;
+        int baseCol = 20;
         double lat;
         double lng;
-        int maxRow = 21 * scale;
-        int maxCol = 20 * scale;
+        int maxRow = (baseRow - 1) * scale + 1;
+        int maxCol = (baseCol - 1) * scale + 1;
         LatLng[][] map = new LatLng[maxRow][maxCol];
-        switch (scale) {
-            case 1:
-                lat = startCoord1km.lat;
-                lng = startCoord1km.lng;
-                break;
-            case 20:
-                lat = startCoord50m.lat;
-                lng = startCoord50m.lng;
-                break;
-            default:
-                lat = startCoord1km.lat;
-                lng = startCoord1km.lng;
-                break;
-        }
+
+        lat = startCoord1km.lat;
+        lng = startCoord1km.lng;
 
         //Установка координат в базовой карте
         for (int row = 0; row < maxRow; row++) {
             for (int col = 0; col < maxCol; col++) {
-                setCoordinate(row, col, map, scale, lat, lng);
+                setCoordinate(row, col, map, lat, lng);
                 lng += longitudeInKm / scale;
             }
             lat -= latitudeInKm / scale;
-            if(scale == 20) {
-                lng = startCoord50m.lng;
-            } else {
-                lng = startCoord1km.lng;
-            }
+            lng = startCoord1km.lng;
         }
         return map;
     }
 
-    private void setCoordinate(int row, int col, LatLng[][] map, int scale, double lat, double lng) {
+    private void setCoordinate(int row, int col, LatLng[][] map, double lat, double lng) {
         if (row == 0 && col == 0) {
-            if(scale == 20){
-                map[row][col] = startCoord50m;
-            } else {
-                map[row][col] = startCoord1km;
-            }
+            map[row][col] = startCoord1km;
         } else {
             map[row][col] = new LatLng(lat, lng);
         }
@@ -84,23 +64,24 @@ public class MapBuilder {
      *               при 2 - карта с ячейками 500 на 500 метров и т.д.)
      **/
     public int[][] buildPlaceMap(final LatLng[][] baseMap, final List<Place> places, final int scale) {
-        double halfLat = (latitudeInKm / 2) / scale;
-        double halfLng = (longitudeInKm / 2) / scale;
-        int defaultRowsInMap = 21;
-        int defaultColsInMap = 20;
+        //double halfLat = (latitudeInKm / 2) / scale;
+        //double halfLng = (longitudeInKm / 2) / scale;
+        int baseRow = 21;
+        int baseCol = 20;
 
-        int row = defaultRowsInMap * scale;
-        int col = defaultColsInMap * scale;
-        int[][] placeMap = new int[row][col];
+        int maxRow = (baseRow - 1) * scale + 1;
+        int maxCol = (baseCol - 1) * scale + 1;
+        int[][] placeMap = new int[maxRow][maxCol];
 
         for (Place place : places) {
-            for (int i = 0; i < row; i++) {
-                for (int j = 0; j < col; j++) {
+            setPlaceInMap(placeMap, startCoord1km, place, scale);
+            /*for (int i = 0; i < maxRow; i++) {
+                for (int j = 0; j < maxCol; j++) {
                     if(checkCell(baseMap[i][j], place, halfLat, halfLng)){
                         placeMap[i][j] += 100;
                     }
                 }
-            }
+            }*/
         }
         return placeMap;
     }
@@ -112,12 +93,12 @@ public class MapBuilder {
      *
      * */
     public int[][] buildPotentialMap(final int[][] placeMap, final int scale) {
-        int minRowInMap = 21;
-        int minColInMap = 20;
+        int baseRow = 21;
+        int baseCol = 20;
 
         // Границы карты
-        int maxRow = minRowInMap * scale;
-        int maxCol = minColInMap * scale;
+        int maxRow = (baseRow - 1) * scale + 1;
+        int maxCol = (baseCol - 1) * scale + 1;
 
         int[][] result = new int[maxRow][maxCol];
 
@@ -126,10 +107,10 @@ public class MapBuilder {
             for(int col = 0; col < maxCol; col++) {
                 if(placeMap[row][col] != 0) {
                     result[row][col] += placeMap[row][col]; // Запись ячейки с местом в результат
-                    List<Integer> values = decreaseValue(placeMap[row][col]); // На основе значения ячейки, вычисляется диапазон убывания
+                    List<Integer> values = MapUtil.decreaseValue(placeMap[row][col]); // На основе значения ячейки, вычисляется диапазон убывания
                     int maxRadius = values.get(values.size()-1); // Устанавливается радиус убывания
                     for(int rad = 1; rad <= maxRadius; rad++) {
-                        findNeighbours(row, col, maxRow, maxCol, rad, result, values); // Поиск всех соседних ячеек в указанном радиусе
+                        MapUtil.findNeighbours(row, col, maxRow, maxCol, rad, result, values); // Поиск всех соседних ячеек в указанном радиусе
                     }
                 }
             }
@@ -143,7 +124,7 @@ public class MapBuilder {
      * @param value - Число, на основе которого вычисляется диапазон убывания.
      *
      * */
-    private static List<Integer> decreaseValue(int value) {
+    /*private static List<Integer> decreaseValue(int value) {
         int numberOfDecreasing = 0;
         int resultValue = value;
         int decreaseCoefficient = 3;
@@ -158,7 +139,7 @@ public class MapBuilder {
         }
         result.add(numberOfDecreasing);
         return result;
-    }
+    }*/
 
     /**
      * Функция поиска соседних ячеек в указанном радиусе.
@@ -171,7 +152,7 @@ public class MapBuilder {
      * @param values - список с дипазоном убывания.
      *
      * */
-    private void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
+    /*private void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
         //Проход по заданному радиусу вокруг основной ячейки
         for(int rowNum = cellRow-radius; rowNum <= (cellRow+radius); rowNum++) {
             for(int colNum = cellCol-radius; colNum <= (cellCol+radius); colNum++) {
@@ -187,7 +168,7 @@ public class MapBuilder {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * Метод для проверки границ карты
@@ -197,12 +178,12 @@ public class MapBuilder {
      * @param maxCol - максимальное значение карты по горизонтали.
      *
      * */
-    private boolean checkBounds(int rowNum, int colNum, int maxRow, int maxCol) {
+    /*private boolean checkBounds(int rowNum, int colNum, int maxRow, int maxCol) {
         if(rowNum < 0 || colNum < 0) {
             return false;
         }
         return rowNum < maxRow && colNum < maxCol;
-    }
+    }*/
 
     /**
      * Метод для проверки попадания места в ячейку базовой карты
@@ -217,4 +198,13 @@ public class MapBuilder {
                 && (baseCell.lng - halfLng <= place.getLongitude() && place.getLongitude() < baseCell.lng + halfLng);
     }
 
+    private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale) {
+        final Double lat1 = latitudeInKm / (double) scale;
+        final Double lon1 = longitudeInKm / (double) scale;
+
+        int mapY = (int) Math.floor((baseMapStartCoordinates.lat - place.getLatitude()) / lat1);
+        int mapX = (int) Math.floor((place.getLongitude() - baseMapStartCoordinates.lng) / lon1);
+
+        placeMap[mapY][mapX] += 100;
+    }
 }

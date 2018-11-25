@@ -22,11 +22,11 @@ public class PlaceCollectorController {
 
     private final CityMapService cityMapService;
 
-    /*@GetMapping("/baseMap50m") Для дебага
+    @GetMapping("/baseMap50m")  //Для дебага
     public ResponseEntity<?> getBaseMap50m() {
-        CityMap map = loadMapByType("baseCityMap50m");
+        CityMap map = cityMapService.loadCityMapByType("baseCityMap50m");
         return ResponseEntity.ok().body(map.getBaseMap());
-    }*/
+    }
 
     /**
      * Загружает и выдаёт потенциальную карту места.
@@ -41,8 +41,8 @@ public class PlaceCollectorController {
     //Для дебага
     @GetMapping("/amusement")
     public ResponseEntity<?> getAmusement() {
-        int maxRow = 420;
-        int maxCol = 400;
+        int maxRow = 401;
+        int maxCol = 381;
         CityMap placeMap = cityMapService.loadCityMapByType("POTENTIAL_AMUSEMENT_PARK");
         log.debug("Amusement park potential map.");
         for(int i = 0; i < maxRow; i++) {
