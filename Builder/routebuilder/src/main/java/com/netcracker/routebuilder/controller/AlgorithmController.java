@@ -33,4 +33,10 @@ public class AlgorithmController {
         pathFindingAlgorithm.buildRoute(home1, home2, new ArrayList<>());
     }
 
+    @GetMapping("/hello")
+    public @ResponseBody
+    String returnHello() {
+        return "Hello";
+    }
+
 }

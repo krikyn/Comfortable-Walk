@@ -9,7 +9,6 @@ import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
 import com.netcracker.datacollector.data.model.bean.Point;
-import com.netcracker.datacollector.util.Variables;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

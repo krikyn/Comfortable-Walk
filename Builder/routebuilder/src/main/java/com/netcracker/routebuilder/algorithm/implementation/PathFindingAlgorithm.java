@@ -1,5 +1,6 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
+import com.netcracker.datacollector.data.model.CityMap;
 import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
@@ -10,7 +11,6 @@ import com.netcracker.routebuilder.util.implementation.Utils;
 import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class PathFindingAlgorithm {
     final AlgorithmParameters params;
     final PotentialMapBuilder potentialMapBuilder;
 
-    //private final CityMapService cityMapService;
+    private final CityMapService cityMapService;
     //private final CityMapRepository cityMapRepository;
 
     private final static double lat1KM = 0.00898; //1 км в градусах широты
@@ -40,6 +40,8 @@ public class PathFindingAlgorithm {
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperties> routeProperties) {
         log.info("--Start of the algorithm--");
         log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
+
+        CityMap cityMap = null;
 
         //log.info("Null: " + (cityMapService == null));
 

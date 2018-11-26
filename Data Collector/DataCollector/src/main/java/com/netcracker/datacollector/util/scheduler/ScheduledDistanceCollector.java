@@ -8,7 +8,6 @@ import com.netcracker.datacollector.data.repository.DistanceRepository;
 import com.netcracker.datacollector.util.DistanceFindingAlgorithm;
 import com.netcracker.datacollector.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
