@@ -1,30 +1,44 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
-import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
+import com.netcracker.routebuilder.util.implementation.PlacesMap;
+import com.netcracker.routebuilder.util.implementation.WeatherMap;
 import com.netcracker.routebuilder.util.implementation.ZeroMap;
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
-import com.netcracker.routebuilder.util.enums.RouteProperties;
+import com.netcracker.routebuilder.util.enums.RouteProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+import static com.netcracker.routebuilder.util.implementation.Utils.combineFields;
+import static com.netcracker.routebuilder.util.implementation.Utils.initField;
+
 @RequiredArgsConstructor
 @Slf4j
 @Component
 public class PotentialMapBuilder {
 
-    final AlgorithmParameters params;
-    private final CityMapService cityMapService;
+    private final AlgorithmParameters params;
+    private final ZeroMap zeroMap;
+    private final WeatherMap weatherMap;
+    private final PlacesMap placesMap;
 
-    AbstractPotentialMap assemblePotentialMap(ArrayList<RouteProperties> includedProperties) {
+    int[][] assemblePotentialMap(ArrayList<RouteProperty> includedProperties) {
+
         if (includedProperties.isEmpty()) {
             log.info("Route property list is empty, a zero potential map will be used");
-            return new ZeroMap(params.getScale());
+            return zeroMap.getField();
         } else {
-            return new ZeroMap(params.getScale());
+            int[][] field = initField(params.getScale());
+
+            if (includedProperties.contains(RouteProperty.GOOD_WEATHER)) {
+                combineFields(field, weatherMap.getField());
+            }
+
+            combineFields(field, placesMap.getField(includedProperties));
+
+            return field;
         }
     }
 }

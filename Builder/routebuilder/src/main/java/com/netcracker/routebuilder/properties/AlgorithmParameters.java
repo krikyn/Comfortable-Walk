@@ -1,6 +1,6 @@
 package com.netcracker.routebuilder.properties;
 
-import com.netcracker.routebuilder.util.enums.DistanceTypes;
+import com.netcracker.routebuilder.util.enums.DistanceType;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ public class AlgorithmParameters {
     private int scale; //Размер клетки потенциального поля на которой будет работать алгоритм
 
     @Value("${algorithm.distanceType}")
-    private DistanceTypes distanceType; //какой алгоритм для расчета расстояния до цели (H) использовать
+    private DistanceType distanceType; //какой алгоритм для расчета расстояния до цели (H) использовать
 
     @Value("${algorithm.normalFactorH}")
     private double normalFactorH; // нормализующий коэффициент для оценки расстояния до цели

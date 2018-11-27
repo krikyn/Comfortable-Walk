@@ -1,14 +1,11 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.service.CityMapService;
 import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
-import com.netcracker.routebuilder.util.enums.RouteProperties;
+import com.netcracker.routebuilder.util.enums.RouteProperty;
 import com.netcracker.routebuilder.util.implementation.Utils;
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,39 +25,25 @@ public class PathFindingAlgorithm {
     final AlgorithmParameters params;
     final PotentialMapBuilder potentialMapBuilder;
 
-    private final CityMapService cityMapService;
-    //private final CityMapRepository cityMapRepository;
+    private final static double LAT_1_KM = 0.00898; //1 км в градусах широты
+    private final static double LON_1_KM = 0.01440; //1 км в градусах долготы
+    private final static int DEFAULT_MAP_SCALE = 1;
+    //количество клеток 1x1 км по Ox и Oy  на нашей потенциальной карте
+    private final static int DEFAULT_NUM_POINT_X= 21;
+    private final static int DEFAULT_NUM_POINT_Y = 20;
 
-    private final static double lat1KM = 0.00898; //1 км в градусах широты
-    private final static double lon1KM = 0.01440; //1 км в градусах долготы
 
-    //@Autowired
-
-
-    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperties> routeProperties) {
+    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties) {
         log.info("--Start of the algorithm--");
         log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
-
-        CityMap cityMap = null;
-
-        //log.info("Null: " + (cityMapService == null));
-
-        //CityMap cityMap = cityMapService.loadCityMapByType("baseCityMap50m");
-
-        //log.info("X: " + cityMap.getBaseMap().length);
-        //log.info("Y: " + cityMap.getGrid()[0].length);
 
         if (EuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
             return googleRouteBuilder.buildRoute(startPoint, endPoint);
         }
 
-        //количество клеток 1x1 км по Ox и Oy  на нашей потенциальной карте
-        final int defaultNumPointsX = 21;
-        final int defaultNumPointsY = 20;
-
-        final int numPointsX = recountWithNewScale(defaultNumPointsX);
-        final int numPointsY = recountWithNewScale(defaultNumPointsY);
+        final int numPointsX = recountWithNewScale(DEFAULT_NUM_POINT_X, DEFAULT_MAP_SCALE);
+        final int numPointsY = recountWithNewScale(DEFAULT_NUM_POINT_Y, DEFAULT_MAP_SCALE);
 
         log.info("New potential map size: " + numPointsX + ", " + numPointsY);
 
@@ -135,13 +118,13 @@ public class PathFindingAlgorithm {
         return (double) potentialField.get(to.getFieldCoordinates().getX()).get(to.getFieldCoordinates().getY()).getValue();
     }
 
-    private void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperties> routeProperties) {
+    private void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperty> routeProperties) {
         log.info("start of filling a potential map");
-        AbstractPotentialMap assembledMap = potentialMapBuilder.assemblePotentialMap(routeProperties);
+        int[][] assembledMap = potentialMapBuilder.assemblePotentialMap(routeProperties);
 
         for (int i = 0; i < potentialField.size(); i++) {
             for (int j = 0; j < potentialField.get(i).size(); j++) {
-                potentialField.get(i).get(j).setValue(assembledMap.get(i, j));
+                potentialField.get(i).get(j).setValue(assembledMap[i][j]);
             }
         }
         log.info("potential map filled");
@@ -149,8 +132,8 @@ public class PathFindingAlgorithm {
 
     private void potentialFieldInitialization(ArrayList<ArrayList<Cell>> potentialField, int x, int y) {
 
-        double latStep = lat1KM / (double) params.getScale();
-        double lonStep = lon1KM / (double) params.getScale();
+        double latStep = LAT_1_KM / (double) params.getScale();
+        double lonStep = LON_1_KM / (double) params.getScale();
 
         double curX = 30.18035;
         double curY = 60.02781;
@@ -195,12 +178,12 @@ public class PathFindingAlgorithm {
 
     //ответ в метрах
     private static Double EuclideanDist(GeoCoordinates from, GeoCoordinates to) {
-        return Math.sqrt(Math.pow(((from.getX() - to.getX()) / lon1KM) * 1000, 2) +
-                Math.pow(((from.getY() - to.getY()) / lat1KM) * 1000, 2));
+        return Math.sqrt(Math.pow(((from.getX() - to.getX()) / LON_1_KM) * 1000, 2) +
+                Math.pow(((from.getY() - to.getY()) / LAT_1_KM) * 1000, 2));
     }
 
-    private Integer recountWithNewScale(int original) {
-        return Utils.recountWithNewScale(original, params.getScale());
+    private Integer recountWithNewScale(int originalSize, int originalScale) {
+        return Utils.recountWithNewScale(originalSize,originalScale, params.getScale());
     }
 
     private FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point) {

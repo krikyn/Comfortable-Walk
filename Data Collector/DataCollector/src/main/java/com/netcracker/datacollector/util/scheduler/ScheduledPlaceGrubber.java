@@ -45,7 +45,7 @@ public class ScheduledPlaceGrubber {
     private int col;
     private PlacesType[] placesType = PlacesType.values();
 
-    @Scheduled(fixedDelay = MILLIS_PER_MINUTE)
+    //@Scheduled(fixedDelay = MILLIS_PER_MINUTE)
     public void getPlacesFromGoogleMaps() throws Exception {
         loadCounters();
         CityMap baseMap = cityMapService.loadCityMapByType("baseCityMap1km"); //Загрузка базовой карты с координатами локаций
