@@ -21,6 +21,7 @@ algorithm:
   distanceType: COMPOSIT
   normalFactorH: 1
   normalFactorG: 1
+  ApiKey: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:
   file: algorithm.log

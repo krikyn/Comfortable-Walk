@@ -18,6 +18,9 @@ public class AlgorithmParameters {
     @Value("${algorithm.scale}")
     private int scale; //Размер клетки потенциального поля на которой будет работать алгоритм
 
+    @Value("${algorithm.ApiKey}")
+    private String ApiKey; //API-key for Google API Direction
+
     @Value("${algorithm.distanceType}")
     private DistanceType distanceType; //какой алгоритм для расчета расстояния до цели (H) использовать
 
