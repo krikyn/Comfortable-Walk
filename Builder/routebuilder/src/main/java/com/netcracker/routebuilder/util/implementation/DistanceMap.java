@@ -1,12 +1,14 @@
 package com.netcracker.routebuilder.util.implementation;
 
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
+import com.netcracker.datacollector.data.repository.DistanceRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
+@Component
 public class DistanceMap {
 
-    public DistanceMap(int scale){
-
-    }
-
+    //final DistanceRepository distanceRepository;
 
 }

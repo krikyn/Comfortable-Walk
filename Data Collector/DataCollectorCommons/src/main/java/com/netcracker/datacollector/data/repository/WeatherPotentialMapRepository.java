@@ -1,5 +1,6 @@
 package com.netcracker.datacollector.data.repository;
 
+import com.netcracker.datacollector.data.model.CityMap;
 import com.netcracker.datacollector.data.model.WeatherPotentialMap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,4 +17,5 @@ public interface WeatherPotentialMapRepository extends JpaRepository<WeatherPote
     @Query("UPDATE WeatherPotentialMap m SET m.potentialField = :map WHERE m.id = :mapId")
     void updateAddress(@Param("map") int[][] map, @Param("mapId") int mapId);
 
+    WeatherPotentialMap findCityMapById(int id);
 }

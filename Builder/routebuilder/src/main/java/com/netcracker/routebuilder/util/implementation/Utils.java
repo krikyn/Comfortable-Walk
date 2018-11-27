@@ -1,10 +1,7 @@
 package com.netcracker.routebuilder.util.implementation;
 
-import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
-
-import java.util.ArrayList;
 
 public class Utils {
 
@@ -29,8 +26,33 @@ public class Utils {
         return x >= 0 && y >= 0 && x < numX && y < numY;
     }
 
-    public static Integer recountWithNewScale(int original, int scale) {
-        return (original - 1) * scale + 1;
+    public static int[][] combineFields(int[][] a, int[][] b) {
+        //сделать проверку на совпадение размерностей массивов
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                a[i][j] += b[i][j];
+            }
+        }
+        return a;
+    }
+
+    public static int[][] initField(int scale) {
+        final int defaultScale = 1;
+        final int defaultNumPointsX = 21;
+        final int defaultNumPointsY = 20;
+
+        final int numPointsX = recountWithNewScale(defaultNumPointsX, defaultScale, scale);
+        final int numPointsY = recountWithNewScale(defaultNumPointsY, defaultScale, scale);
+
+        return new int[numPointsX][numPointsY];
+    }
+
+    public static Integer recountWithNewScale(int originalSize, int originalScale, int newScale) {
+        if (originalScale < newScale) {
+            return (originalSize - 1) * originalScale + 1;
+        } else {
+            return (originalSize - 1) / originalScale + 1;
+        }
     }
 
     public static FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point, int scale) {

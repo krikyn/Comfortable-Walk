@@ -1,18 +1,11 @@
 package com.netcracker.routebuilder.algorithm.implementation;
 
-import com.netcracker.routebuilder.data.bean.GeoCoordinates;
-import com.netcracker.routebuilder.properties.AlgorithmParameters;
-import com.netcracker.routebuilder.util.enums.DistanceTypes;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = PathFindingAlgorithmTestConfiguration.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = PathFindingAlgorithmTestConfiguration.class)
 public class PathFindingAlgorithmTest {
 
     //@Autowired
@@ -27,7 +20,7 @@ public class PathFindingAlgorithmTest {
 //        pathFindingAlgorithm.params.setMaxAllowableIncrease(3);
 //        pathFindingAlgorithm.params.setMinDistBetweenStartEnd(100);
 //        pathFindingAlgorithm.params.setScale(20);
-//        pathFindingAlgorithm.params.setDistanceType(DistanceTypes.EUCLIDEAN);
+//        pathFindingAlgorithm.params.setDistanceType(DistanceType.EUCLIDEAN);
 //        pathFindingAlgorithm.params.setNormalFactorH(1);
 //        pathFindingAlgorithm.params.setNormalFactorG(1);
 
