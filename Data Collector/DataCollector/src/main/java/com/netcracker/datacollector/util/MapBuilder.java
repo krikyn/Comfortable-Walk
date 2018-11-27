@@ -118,10 +118,10 @@ public class MapBuilder {
         return result;
     }
 
-    /**
-     * Функция для вычисления диапазона убывания.
-     * Возвращает список с диапазоном убывания и радиусом.
-     * @param value - Число, на основе которого вычисляется диапазон убывания.
+    /*
+      Функция для вычисления диапазона убывания.
+      Возвращает список с диапазоном убывания и радиусом.
+      @param value - Число, на основе которого вычисляется диапазон убывания.
      *
      * */
     /*private static List<Integer> decreaseValue(int value) {
@@ -141,9 +141,9 @@ public class MapBuilder {
         return result;
     }*/
 
-    /**
-     * Функция поиска соседних ячеек в указанном радиусе.
-     * @param cellRow - строка, на которой находится основная ячейка.
+    /*
+      Функция поиска соседних ячеек в указанном радиусе.
+      @param cellRow - строка, на которой находится основная ячейка.
      * @param cellCol - столбец, в которой находится основная ячейка.
      * @param maxRow - максимум карты по вертикали.
      * @param maxCol - максимум карты по горизонтали.
@@ -170,9 +170,9 @@ public class MapBuilder {
         }
     }*/
 
-    /**
-     * Метод для проверки границ карты
-     * @param rowNum - проверяемая строка.
+    /*
+      Метод для проверки границ карты
+      @param rowNum - проверяемая строка.
      * @param colNum - проверямый столбец.
      * @param maxRow - максимальное значение карты по вертикали.
      * @param maxCol - максимальное значение карты по горизонтали.
@@ -201,10 +201,13 @@ public class MapBuilder {
     private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale) {
         final Double lat1 = latitudeInKm / (double) scale;
         final Double lon1 = longitudeInKm / (double) scale;
+        double placeRelativeLat = baseMapStartCoordinates.lat - place.getLatitude();
+        double placeRelativeLng = place.getLongitude() - baseMapStartCoordinates.lng;
 
-        int mapY = (int) Math.floor((baseMapStartCoordinates.lat - place.getLatitude()) / lat1);
-        int mapX = (int) Math.floor((place.getLongitude() - baseMapStartCoordinates.lng) / lon1);
-
-        placeMap[mapY][mapX] += 100;
+        if(placeRelativeLat < baseMapStartCoordinates.lat && placeRelativeLat > 0 || placeRelativeLng >= 0 && placeRelativeLng < place.getLongitude()) {
+            int row = (int) Math.floor(placeRelativeLat / lat1);
+            int col = (int) Math.floor(placeRelativeLng / lon1);
+            placeMap[row][col] += 100;
+        }
     }
 }
