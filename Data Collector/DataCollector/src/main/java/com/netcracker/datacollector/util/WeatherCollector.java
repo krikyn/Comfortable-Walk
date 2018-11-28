@@ -14,9 +14,12 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -35,13 +38,29 @@ public class WeatherCollector {
     public void run() {
 
         String fileExtension = "PNG";
-        String[] parameters = setCurrentImageURLAndURI(fileExtension);
+
+        //На случай, если радар начнет опять снимки в произвольное время делать
+
+        ImageAddress imageAddress = new ImageAddress();
+        BufferedImage image = downloadImageFromRadarAlternative(imageAddress);
+        if (image == null) return;
+
+        //saveImageFromRadar(fileExtension, imageAddress.getImageURI(), image);
+
+        BufferedImage negativeImage = uploadNegativeImage();
+        if (negativeImage == null) return;
+
+        File fileAfterProcessing = new File("processed-images/processed" + imageAddress.getImageURI());
+        BufferedImage imageAfterProcessing = image.getSubimage(140, 135, 220, 220);
+
+        //Работает только с фиксированным временем, а теперь радар стал случайным образом делать снимки
+
+        /*String[] parameters = setCurrentImageURLAndURI(fileExtension);
         String imageURI = parameters[0];
         String imageURL = parameters[1];
 
         log.info("URI: " + imageURI);
         log.info("URL: " + imageURL);
-
 
         BufferedImage image = downloadImageFromRadar(imageURL);
         if (image == null) return;
@@ -57,7 +76,7 @@ public class WeatherCollector {
         String processedImageURI = date.format(formatter) + ((date.getMinute() / 10)) + "0";
 
         File fileAfterProcessing = new File("processed-images/processed" + processedImageURI + ".PNG");
-        BufferedImage imageAfterProcessing = image.getSubimage(140, 135, 220, 220);
+        BufferedImage imageAfterProcessing = image.getSubimage(140, 135, 220, 220);*/
 
 
         Map<Integer, Integer> weatherTypes = new HashMap<>();
@@ -76,12 +95,24 @@ public class WeatherCollector {
 
         SelectionPotentialMapFromImage(imageAfterProcessing, weatherTypes, map);
 
+        logTotalSum(map);
+
         updateMapInDB(map);
         log.info("New image from the radar received and saved in the database");
 
         //Печатает ссылку на яндекс карту с потенциальным полем
         //String webStaticMap = createWebMap(30.705, 59.946, imageAfterProcessing);
         //System.out.println(webStaticMap);
+    }
+
+    private void logTotalSum(int[][] map) {
+        int sum = 0;
+        for (int i = 0; i < 21; i++) {
+            for (int j = 0; j < 20; j++) {
+                sum += map[i][j];
+            }
+        }
+        log.info("Total sum: " + sum);
     }
 
     private void SelectionPotentialMapFromImage(BufferedImage imageAfterProcessing, Map<Integer, Integer> weatherTypes, int[][] map) {
@@ -154,6 +185,51 @@ public class WeatherCollector {
         return image;
     }
 
+    private BufferedImage downloadImageFromRadarAlternative(ImageAddress imageAddress) {
+        String radarPage;
+        try {
+            radarPage = getContentOfHTTPPage("http://weather.rshu.ru/radar/", "UTF-8");
+        } catch (IOException e) {
+            log.error("The radar's site is not available");
+            return null;
+        }
+        //http://weather.rshu.ru/radar/data/P_100_26061_2018_11_27_2039_MRL.PNG
+        String prefix = "<img id=\"radar\" src=\"data/";
+        int pos = radarPage.indexOf(prefix);
+        imageAddress.setImageURI(radarPage.substring(pos + prefix.length(), pos + prefix.length() + 35));
+
+        //Pattern pattern = Pattern.compile("<img id=\"radar\" src=\"data/(.*?)\"");
+        //Matcher matcher = pattern.matcher(radarPage);
+        //imageURI = matcher.group(1);
+        imageAddress.setImageURL(radarProperties.getRadarURL() + imageAddress.imageURI);
+
+        log.info("URI: " + imageAddress.getImageURI());
+        log.info("URL: " + imageAddress.getImageURL());
+
+        BufferedImage image = null;
+        try {
+            URL url = new URL(imageAddress.getImageURL());
+            image = ImageIO.read(url);
+        } catch (IOException e) {
+            log.warn("The image is not ready yet. Try again later.");
+        }
+
+        return image;
+    }
+
+    private static String getContentOfHTTPPage(String pageAddress, String codePage) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        URL pageURL = new URL(pageAddress);
+        URLConnection uc = pageURL.openConnection();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(uc.getInputStream(), codePage))) {
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                sb.append(inputLine);
+            }
+        }
+        return sb.toString();
+    }
+
     private String[] setCurrentImageURLAndURI(String fileExtension) {
 
         String radarURL = radarProperties.getRadarURL();
@@ -163,7 +239,7 @@ public class WeatherCollector {
         LocalDateTime date = LocalDateTime.now(ZoneId.of("UTC"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH");
         String imageURINamePrefix = date.format(formatter);
-        String imageURINamePostfix = ((date.getMinute() / 10)) + "0";
+        String imageURINamePostfix = String.valueOf(date.getMinute() / 10) + '0';
 
         String[] parameters = new String[2];
 

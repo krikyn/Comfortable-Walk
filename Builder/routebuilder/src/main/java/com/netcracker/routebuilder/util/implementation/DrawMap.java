@@ -9,53 +9,64 @@ public class DrawMap {
     public static class Grid extends JPanel {
 
         private List<Point> fillCells;
+        private List<Color> ColorCells;
 
-        public Grid() {
-            fillCells = new ArrayList<>(25);
+        Grid() {
+            fillCells = new ArrayList<>();
+            ColorCells = new ArrayList<>();
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            for (Point fillCell : fillCells) {
-                int cellX = 10 + (fillCell.x * 10);
-                int cellY = 10 + (fillCell.y * 10);
-                g.setColor(Color.RED);
-                g.fillRect(cellX, cellY, 5, 5);
+            for (int i = 0; i < fillCells.size(); i++) {
+                int cellX = 2 + (fillCells.get(i).x * 2);
+                int cellY = 2 + (fillCells.get(i).y * 2);
+                g.setColor(ColorCells.get(i));
+                g.fillRect(cellX, cellY, 2, 2);
             }
             g.setColor(Color.BLACK);
-            g.drawRect(10, 10, 381*2, 401*2);
-
+            g.drawRect(2, 2, 381 * 2, 401 * 2);
         }
 
-        public void fillCell(int x, int y) {
-            fillCells.add(new Point(x, y));
-            repaint();
+        void fillCell(int x, int y, int value) {
+            fillCells.add(new Point(y, x));
+            ColorCells.add(new Color(value, 0, 0));
         }
 
     }
 
-    public void draw() {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                }
+    public void draw(int[][] map) {
 
-                Grid grid = new Grid();
-                JFrame window = new JFrame();
-                window.setSize(840, 560);
-                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                window.add(grid);
-                window.setVisible(true);
-                grid.fillCell(0, 0);
-                grid.fillCell(79, 0);
-                grid.fillCell(0, 49);
-                grid.fillCell(79, 49);
-                grid.fillCell(39, 24);
+        double maxValue = 0;
+        for (int i = 0; i < 401; i++) {
+            for (int j = 0; j < 381; j++) {
+                maxValue = Math.max(maxValue, map[i][j]);
             }
+        }
+
+        final double biggestValue = maxValue;
+
+        EventQueue.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ignore) {
+            }
+
+            Grid grid = new Grid();
+            JFrame window = new JFrame();
+            window.setSize(840, 560);
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.add(grid);
+            window.setVisible(true);
+
+            for (int i = 0; i < 401; i++) {
+                for (int j = 0; j < 381; j++) {
+                    grid.fillCell(i, j, (int) ((map[i][j] / biggestValue) * 255d));
+                }
+            }
+
+            grid.repaint();
         });
     }
 }

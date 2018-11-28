@@ -19,12 +19,12 @@ import java.util.ArrayList;
 @Component
 public class GoogleRouteBuilder {
     private final GeoApiContext GCONTEXT;
-    private final AlgorithmParameters PARAMS;
+    //private final AlgorithmParameters PARAMS;
     static Logger LOGGER = LoggerFactory.getLogger(GoogleRouteBuilder.class);
     private final int MAX_COUNT_OF_WAYPOINTS = 21;//max value of waypoints in Google API Direction
 
     public GoogleRouteBuilder() {
-        GCONTEXT = new GeoApiContext.Builder().apiKey(PARAMS.getApiKey()).build();
+        GCONTEXT = new GeoApiContext.Builder().apiKey("AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0").build();
     }
 
     //build route without waypoints

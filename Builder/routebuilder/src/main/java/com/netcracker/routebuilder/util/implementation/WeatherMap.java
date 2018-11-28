@@ -50,11 +50,10 @@ public class WeatherMap extends AbstractPotentialMap {
             return;
         }
 
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                //проверить правильность перевода
-                field[i][j] = map[recountWithNewScale(i, params.getScale(), WEATHER_MAP_SCALE)]
-                        [recountWithNewScale(j, params.getScale(), WEATHER_MAP_SCALE)];
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field[i].length; j++) {
+                field[i][j] = map[(int) Math.round((double) i / (double) params.getScale())]
+                        [(int) Math.round((double) j / (double) params.getScale())];
             }
         }
     }

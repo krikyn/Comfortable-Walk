@@ -204,8 +204,8 @@ public class MapBuilder {
         final Double lon1 = longitudeInKm / (double) scale;
         double placeRelativeLat = baseMapStartCoordinates.lat - place.getLatitude();
         double placeRelativeLng = place.getLongitude() - baseMapStartCoordinates.lng;
-        int row = (int) Math.floor(placeRelativeLat / lat1);
-        int col = (int) Math.floor(placeRelativeLng / lon1);
+        int row = (int) Math.round(placeRelativeLat / lat1);
+        int col = (int) Math.round(placeRelativeLng / lon1);
 
         if(row < maxRow && row >= 0 && col >= 0 && col < maxCol) {
             placeMap[row][col] += 100;

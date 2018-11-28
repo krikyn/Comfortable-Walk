@@ -27,6 +27,7 @@ public class Utils {
     }
 
     public static int[][] combineFields(int[][] a, int[][] b) {
+        //second array factor
         //сделать проверку на совпадение размерностей массивов
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
@@ -37,22 +38,17 @@ public class Utils {
     }
 
     public static int[][] initField(int scale) {
-        final int defaultScale = 1;
         final int defaultNumPointsX = 21;
         final int defaultNumPointsY = 20;
 
-        final int numPointsX = recountWithNewScale(defaultNumPointsX, defaultScale, scale);
-        final int numPointsY = recountWithNewScale(defaultNumPointsY, defaultScale, scale);
+        final int numPointsX = recountWithNewScale(defaultNumPointsX, scale);
+        final int numPointsY = recountWithNewScale(defaultNumPointsY, scale);
 
         return new int[numPointsX][numPointsY];
     }
 
-    public static Integer recountWithNewScale(int originalSize, int originalScale, int newScale) {
-        if (originalScale < newScale) {
-            return (originalSize - 1) * originalScale + 1;
-        } else {
-            return (originalSize - 1) / originalScale + 1;
-        }
+    public static Integer recountWithNewScale(int originalSize, int newScale) {
+        return (originalSize - 1) * newScale + 1;
     }
 
     public static FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point, int scale) {
@@ -62,6 +58,6 @@ public class Utils {
         Double fromFieldStartX = point.getX() - 30.18035d;
         Double fromFieldStartY = 60.02781d - point.getY();
 
-        return new FieldCoordinates((int) Math.floor(fromFieldStartY / lat1), (int) Math.floor(fromFieldStartX / lon1));
+        return new FieldCoordinates((int) Math.round(fromFieldStartY / lat1), (int) Math.round(fromFieldStartX / lon1));
     }
 }

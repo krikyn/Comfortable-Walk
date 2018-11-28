@@ -1,3 +1,4 @@
+/*
 package com.netcracker.routebuilder.util.implementation;
 
 
@@ -81,3 +82,4 @@ public class RouteMap extends AbstractPotentialMap {
 
 
 
+*/

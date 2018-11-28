@@ -24,7 +24,7 @@ public class PotentialMapBuilder {
     private final WeatherMap weatherMap;
     private final PlacesMap placesMap;
 
-    int[][] assemblePotentialMap(ArrayList<RouteProperty> includedProperties) {
+    public int[][] assemblePotentialMap(ArrayList<RouteProperty> includedProperties) {
 
         if (includedProperties.isEmpty()) {
             log.info("Route property list is empty, a zero potential map will be used");

@@ -20,7 +20,6 @@ import java.util.PriorityQueue;
 @Component
 public class PathFindingAlgorithm {
 
-
     final GoogleRouteBuilder googleRouteBuilder;
     final AlgorithmParameters params;
     final PotentialMapBuilder potentialMapBuilder;
@@ -42,8 +41,8 @@ public class PathFindingAlgorithm {
             return googleRouteBuilder.buildRoute(startPoint, endPoint);
         }
 
-        final int numPointsX = recountWithNewScale(DEFAULT_NUM_POINT_X, DEFAULT_MAP_SCALE);
-        final int numPointsY = recountWithNewScale(DEFAULT_NUM_POINT_Y, DEFAULT_MAP_SCALE);
+        final int numPointsX = recountWithNewScale(DEFAULT_NUM_POINT_X);
+        final int numPointsY = recountWithNewScale(DEFAULT_NUM_POINT_Y);
 
         log.info("New potential map size: " + numPointsX + ", " + numPointsY);
 
@@ -182,8 +181,8 @@ public class PathFindingAlgorithm {
                 Math.pow(((from.getY() - to.getY()) / LAT_1_KM) * 1000, 2));
     }
 
-    private Integer recountWithNewScale(int originalSize, int originalScale) {
-        return Utils.recountWithNewScale(originalSize,originalScale, params.getScale());
+    private Integer recountWithNewScale(int originalSize) {
+        return Utils.recountWithNewScale(originalSize, params.getScale());
     }
 
     private FieldCoordinates convertGeoToFieldCoordinates(GeoCoordinates point) {
