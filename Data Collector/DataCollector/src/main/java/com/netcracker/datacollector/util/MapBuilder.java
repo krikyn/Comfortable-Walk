@@ -2,6 +2,7 @@ package com.netcracker.datacollector.util;
 
 import com.google.maps.model.LatLng;
 import com.netcracker.datacollector.data.model.Place;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 
 @Component
+@Slf4j
 public class MapBuilder {
     private LatLng startCoord1km = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x 60.02781, 30.18035
     //private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
@@ -58,12 +60,11 @@ public class MapBuilder {
 
     /**
      *  Строит карту мест на основе базовой карты
-     *  @param baseMap - базовая карта
      *  @param places - список мест
      *  @param scale - масштаб (при масштабе 1 - строится карта мест с ячейками 1 на 1 километр,
      *               при 2 - карта с ячейками 500 на 500 метров и т.д.)
      **/
-    public int[][] buildPlaceMap(final LatLng[][] baseMap, final List<Place> places, final int scale) {
+    public int[][] buildPlaceMap(final List<Place> places, final int scale) {
         //double halfLat = (latitudeInKm / 2) / scale;
         //double halfLng = (longitudeInKm / 2) / scale;
         int baseRow = 21;
@@ -74,7 +75,7 @@ public class MapBuilder {
         int[][] placeMap = new int[maxRow][maxCol];
 
         for (Place place : places) {
-            setPlaceInMap(placeMap, startCoord1km, place, scale);
+            setPlaceInMap(placeMap, startCoord1km, place, scale, maxRow, maxCol);
             /*for (int i = 0; i < maxRow; i++) {
                 for (int j = 0; j < maxCol; j++) {
                     if(checkCell(baseMap[i][j], place, halfLat, halfLng)){
@@ -185,7 +186,7 @@ public class MapBuilder {
         return rowNum < maxRow && colNum < maxCol;
     }*/
 
-    /**
+    /*
      * Метод для проверки попадания места в ячейку базовой карты
      * @param baseCell - ячейка базовой карты.
      * @param place - место которое надо проверить
@@ -193,20 +194,20 @@ public class MapBuilder {
      * @param halfLng - расстояние по долготе для проверки попадания в ячейку карты.
      *
      * */
-    private boolean checkCell(LatLng baseCell, Place place, double halfLat, double halfLng) {
+    /*private boolean checkCell(LatLng baseCell, Place place, double halfLat, double halfLng) {
         return (baseCell.lat - halfLat <= place.getLatitude() && place.getLatitude() < baseCell.lat + halfLat)
                 && (baseCell.lng - halfLng <= place.getLongitude() && place.getLongitude() < baseCell.lng + halfLng);
-    }
+    }*/
 
-    private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale) {
+    private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale, int maxRow, int maxCol) {
         final Double lat1 = latitudeInKm / (double) scale;
         final Double lon1 = longitudeInKm / (double) scale;
         double placeRelativeLat = baseMapStartCoordinates.lat - place.getLatitude();
         double placeRelativeLng = place.getLongitude() - baseMapStartCoordinates.lng;
+        int row = (int) Math.floor(placeRelativeLat / lat1);
+        int col = (int) Math.floor(placeRelativeLng / lon1);
 
-        if(placeRelativeLat < baseMapStartCoordinates.lat && placeRelativeLat > 0 || placeRelativeLng >= 0 && placeRelativeLng < place.getLongitude()) {
-            int row = (int) Math.floor(placeRelativeLat / lat1);
-            int col = (int) Math.floor(placeRelativeLng / lon1);
+        if(row < maxRow && row >= 0 && col >= 0 && col < maxCol) {
             placeMap[row][col] += 100;
         }
     }
