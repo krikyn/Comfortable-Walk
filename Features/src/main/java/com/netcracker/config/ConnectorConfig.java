@@ -2,6 +2,7 @@ package com.netcracker.config;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
+import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -12,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConnectorConfig {
 
+    private static final String USER_CONSTRAINT = "CONFIDENTIAL";
+
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat =
@@ -19,8 +22,7 @@ public class ConnectorConfig {
                     @Override
                     protected void postProcessContext(Context context) {
                         SecurityConstraint securityConstraint = new SecurityConstraint();
-                        // daba в константу
-                        securityConstraint.setUserConstraint("CONFIDENTIAL");
+                        securityConstraint.setUserConstraint(USER_CONSTRAINT);
                         SecurityCollection collection = new SecurityCollection();
                         collection.addPattern("/*");
                         securityConstraint.addCollection(collection);
@@ -32,8 +34,7 @@ public class ConnectorConfig {
     }
 
     private Connector redirectConnector() {
-        // daba Http11NioProtocol.class.getName()
-        Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+        Connector connector = new Connector(Http11Nio2Protocol.class.getCanonicalName());
         connector.setScheme("http");
         connector.setPort(8081);
         connector.setSecure(false);

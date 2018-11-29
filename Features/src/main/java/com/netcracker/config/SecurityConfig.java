@@ -20,6 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -70,8 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public ClientRegistrationRepository clientRegistrationRepository() {
         List<ClientRegistration> registrations = clients.stream()
-                .map(c -> getRegistration(c))
-                .filter(registration -> registration != null)
+                .map(this::getRegistration)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return new InMemoryClientRegistrationRepository(registrations);

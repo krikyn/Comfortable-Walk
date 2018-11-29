@@ -31,44 +31,37 @@ public class ScheduledDistanceCollector {
     private Yaml yaml = new Yaml();
     private Integer fromPointCounter = 0;
 
-//    ОПАСНО! НЕ СНИМАТЬ!
-//    @Scheduled(fixedDelay = 1)
-//    public void saveDistances() {
-//        try (FileReader reader = new FileReader("distanceCounter.yaml")) {
-//            Map<String, Integer> loadedData = yaml.load(reader);
-//            fromPointCounter = loadedData.get("fromPointCounter");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        ArrayList<String> destinations = distanceUtil.findDestinations();
-//        String[] arrayOfDestinations = destinations.toArray(new String[0]);
-//        for (int fromPoint = fromPointCounter; fromPoint < AMOUNT_OF_POINTS; fromPoint++) {
-//
-//            for (int j = 0; j <= arrayOfDestinations.length; j += AMOUNT_OF_DESTINATIONS_PER_REQUEST) {
-//
-//                String[] shortenedArray = Arrays.copyOfRange(arrayOfDestinations, j, j + AMOUNT_OF_DESTINATIONS_PER_REQUEST);
-//                DistanceMatrixElement[] distanceMatrixElements = new DistanceMatrixElement[0];
-//                try {
-//                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[fromPoint], shortenedArray);
-//                } catch (InterruptedException | ApiException | IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                for (int i = 0; i < distanceMatrixElements.length; i++) {
-//                    if (i + j >= AMOUNT_OF_POINTS) break;
-//                    saveDistance(fromPoint, i + j, distanceMatrixElements[i]);
-//                }
-//            }
-//            try (FileWriter writer = new FileWriter("distanceCounter.yaml")) {
-//                Map<String, Integer> counter = new HashMap<>(); //Сохраняем значения счётчиков в yaml файл
-//                counter.put("fromPointCounter", fromPoint + 1);
-//                yaml.dump(counter, writer);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+//    @Scheduled(fixedDelay = 1000000000)
+    public void saveDistances() {
+        try (FileReader reader = new FileReader("distanceCounter.yaml")) {
+            Map<String, Integer> loadedData = yaml.load(reader);
+            fromPointCounter = loadedData.get("fromPointCounter");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<String> destinations = distanceUtil.findDestinations();
+        String[] arrayOfDestinations = destinations.toArray(new String[0]);
+        for (int fromPoint = fromPointCounter; fromPoint < AMOUNT_OF_POINTS; fromPoint++) {
+
+            for (int j = 0; j <= arrayOfDestinations.length; j += AMOUNT_OF_DESTINATIONS_PER_REQUEST) {
+
+                String[] shortenedArray = Arrays.copyOfRange(arrayOfDestinations, j, j + AMOUNT_OF_DESTINATIONS_PER_REQUEST);
+                DistanceMatrixElement[] distanceMatrixElements = new DistanceMatrixElement[0];
+                try {
+                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[fromPoint], shortenedArray);
+                } catch (InterruptedException | ApiException | IOException e) {
+                    e.printStackTrace();
+                }
+
+                for (int i = 0; i < distanceMatrixElements.length; i++) {
+                    if (i + j >= AMOUNT_OF_POINTS) break;
+                    saveDistance(fromPoint, i + j, distanceMatrixElements[i]);
+                }
+            }
+            saveFromPointInFile(fromPoint);
+        }
+    }
 
 //    @Scheduled(fixedDelay = 1000000000)
     public void saveDistancesWithLinks() {
@@ -126,19 +119,12 @@ public class ScheduledDistanceCollector {
             saveDistance(i, i + HORIZONTALLY_POINTS, distanceMatrixElements[2]);
             saveDistance(i, i + HORIZONTALLY_POINTS + 1, distanceMatrixElements[3]);
 
-            try (FileWriter writer = new FileWriter("distanceCounter.yaml")) {
-                Map<String, Integer> counter = new HashMap<>(); //Сохраняем значения счётчиков в yaml файл
-                counter.put("fromPointCounter", i + 1);
-                yaml.dump(counter, writer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            saveFromPointInFile(i);
         }
         calculateLinks();
     }
 
-    //    @Scheduled(fixedDelay = 1000000000)
-    public void calculateLinks() {
+    private void calculateLinks() {
         List<Distance> distances = distanceRepository.findAll();
 
         Graph graph = new Graph(distances.size());
@@ -173,6 +159,16 @@ public class ScheduledDistanceCollector {
                 newDistance.setDistance(distance);
                 distanceRepository.save(newDistance);
             }
+        }
+    }
+
+    private void saveFromPointInFile(int fromPoint) {
+        try (FileWriter writer = new FileWriter("distanceCounter.yaml")) {
+            Map<String, Integer> counter = new HashMap<>(); //Сохраняем значения счётчиков в yaml файл
+            counter.put("fromPointCounter", fromPoint + 1);
+            yaml.dump(counter, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

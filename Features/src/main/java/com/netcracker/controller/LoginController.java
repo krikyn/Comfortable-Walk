@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Controller
@@ -43,7 +44,7 @@ public class LoginController {
             clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
         }
 
-        clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+        Objects.requireNonNull(clientRegistrations).forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
         model.addAttribute("urls", oauth2AuthenticationUrls);
 
         return "oauth_login";
@@ -65,23 +66,23 @@ public class LoginController {
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
                     .getTokenValue());
 
-            HttpEntity<String> entity = new HttpEntity<String>("", headers);
+            HttpEntity<String> entity = new HttpEntity<>("", headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             Map userAttributes = response.getBody();
             switch (userInfoEndpointUri) {
                 case "https://www.googleapis.com/oauth2/v3/userinfo":
-                    model.addAttribute("name", userAttributes.get("name"));
+                    model.addAttribute("name", Objects.requireNonNull(userAttributes).get("name"));
                     model.addAttribute("picture", userAttributes.get("picture"));
                     userUtil.saveUser("google", userAttributes.get("sub"), userAttributes.get("name"), userAttributes.get("picture"));
                     break;
                 case "https://api.github.com/user":
-                    model.addAttribute("name", userAttributes.get("login"));
+                    model.addAttribute("name", Objects.requireNonNull(userAttributes).get("login"));
                     model.addAttribute("picture", userAttributes.get("avatar_url"));
                     userUtil.saveUser("github", userAttributes.get("id"), userAttributes.get("login"), userAttributes.get("avatar_url"));
                     break;
                 case "https://graph.facebook.com/me":
-                    model.addAttribute("name", userAttributes.get("name"));
+                    model.addAttribute("name", Objects.requireNonNull(userAttributes).get("name"));
                     model.addAttribute("picture", userAttributes.get("picture"));
                     userUtil.saveUser("facebook", userAttributes.get("id"), userAttributes.get("name"), userAttributes.get("picture"));
                     break;

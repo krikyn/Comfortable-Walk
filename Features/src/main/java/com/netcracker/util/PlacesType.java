@@ -1,5 +1,7 @@
 package com.netcracker.util;
 
+import java.util.Arrays;
+
 public enum PlacesType {
     AMUSEMENT_PARK("AMUSEMENT"),
     BAKERY("BAKERY"),
@@ -27,9 +29,6 @@ public enum PlacesType {
     }
 
     public static PlacesType getType(String string) {
-        for (PlacesType type : PlacesType.values()) {
-            if (string.contains(type.token)) return type;
-        }
-        return null;
+        return Arrays.stream(PlacesType.values()).filter(type -> string.contains(type.token)).findFirst().orElse(null);
     }
 }
