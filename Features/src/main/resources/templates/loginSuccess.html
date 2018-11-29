@@ -83,7 +83,7 @@
                                 <span class="input-group-text"><u>A</u></span>
                             </div>
                             <input id="autocompleteFrom" type="text" class="form-control"
-                                   onFocus="geolocate()" required>
+                                   onFocus="initAutocomplete()" required>
                             <input th:field="*{fromPointLat}" id="fromPointLat" style="display: none"/>
                             <input th:field="*{fromPointLng}" id="fromPointLng" style="display: none"/>
                         </div>
@@ -94,7 +94,7 @@
                                 <span class="input-group-text"><u>B</u></span>
                             </div>
                             <input id="autocompleteTo" type="text" class="form-control"
-                                   onFocus="geolocate()" required>
+                                   onFocus="initAutocomplete()" required>
                             <input th:field="*{toPointLat}" id="toPointLat" style="display: none"/>
                             <input th:field="*{toPointLng}" id="toPointLng" style="display: none"/>
                         </div>
