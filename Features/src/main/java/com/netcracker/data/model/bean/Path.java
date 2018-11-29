@@ -9,8 +9,10 @@ import java.util.List;
 @Getter
 @Setter
 public class Path {
-    private String fromPoint;
-    private String toPoint;
+    private String fromPointLng;
+    private String fromPointLat;
+    private String toPointLng;
+    private String toPointLat;
     private List<PlacesType> checkedItems;
     private String placeName;
     private Boolean isBestWeather;

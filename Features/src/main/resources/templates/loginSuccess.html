@@ -10,6 +10,7 @@
             charset="utf-8"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"
             charset="utf-8"></script>
+    <script src="js/script.js" type="text/javascript" charset="UTF-8"></script>
     <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css"
           href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
@@ -81,7 +82,10 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><u>A</u></span>
                             </div>
-                            <input type="text" th:field="*{fromPoint}" class="form-control">
+                            <input id="autocompleteFrom" type="text" class="form-control"
+                                   onFocus="geolocate()">
+                            <input th:field="*{fromPointLat}" id="fromPointLat" style="display: none"/>
+                            <input th:field="*{fromPointLng}" id="fromPointLng" style="display: none"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -89,7 +93,10 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><u>B</u></span>
                             </div>
-                            <input type="text" th:field="*{toPoint}" class="form-control">
+                            <input id="autocompleteTo" type="text" class="form-control"
+                                   onFocus="geolocate()">
+                            <input th:field="*{toPointLat}" id="toPointLat" style="display: none"/>
+                            <input th:field="*{toPointLng}" id="toPointLng" style="display: none"/>
                         </div>
                     </div>
                     <label><b>Specify route properties</b></label>
@@ -105,16 +112,6 @@
                         <ul id="myTags">
                         </ul>
                     </div>
-
-
-                    <!--<div class="form-group">-->
-                    <!--<select class="custom-select" id="select">-->
-                    <!--<option selected="">Open this select menu</option>-->
-                    <!--<option value="1">One</option>-->
-                    <!--<option value="2">Two</option>-->
-                    <!--<option value="3">Three</option>-->
-                    <!--</select>-->
-                    <!--</div>-->
                     <button type="submit" class="btn btn-block btn-outline-primary"><b>Build</b></button>
                 </form>
                 <p style="display: none;" id="notification">Thank You!</p>
@@ -131,5 +128,7 @@
         </div>
     </div>
 </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </body>
 </html>
