@@ -15,7 +15,10 @@ public class MainPageController {
 
     @PostMapping("/loginSuccess")
     public String postParams(@ModelAttribute Path path) {
-        path.setCheckedItems(checkedItemsUtil.getItems(path.getPlaceName().toUpperCase()));
+        if (path.getPlaceName() == null)
+            path.setCheckedItems(null);
+        else
+            path.setCheckedItems(checkedItemsUtil.getItems(path.getPlaceName().toUpperCase()));
         System.out.println("From point: " + path.getFromPointLat() + ", " + path.getFromPointLng() + " To Point: "
                 + path.getToPointLat() + ", " + path.getToPointLng() + " Wanna best weather? "
                 + path.getIsBestWeather() + " Checked items: " + path.getCheckedItems());
