@@ -20,6 +20,7 @@ public class Cell {
         this.value = value;
         this.fieldCoordinates = fieldCoordinates;
         this.geoCoordinates = geoCoordinates;
+        gx = Double.MAX_VALUE;
         parent = null;
         isClosed = false;
     }

@@ -19,6 +19,9 @@ public class DrawMap {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
+            g.drawImage(new ImageIcon("auxiliary-images/background2.PNG").getImage(), 2, 2, 381 * 2, 401 * 2,new Color(0,0,0),null);
+
             for (int i = 0; i < fillCells.size(); i++) {
                 int cellX = 2 + (fillCells.get(i).x * 2);
                 int cellY = 2 + (fillCells.get(i).y * 2);
@@ -31,7 +34,7 @@ public class DrawMap {
 
         void fillCell(int x, int y, int value) {
             fillCells.add(new Point(y, x));
-            ColorCells.add(new Color(value, 0, 0));
+            ColorCells.add(new Color(value, 0, 0, 210));
         }
 
     }
@@ -55,7 +58,9 @@ public class DrawMap {
 
             Grid grid = new Grid();
             JFrame window = new JFrame();
-            window.setSize(840, 560);
+            window.setSize(840, 850);
+
+
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             window.add(grid);
             window.setVisible(true);

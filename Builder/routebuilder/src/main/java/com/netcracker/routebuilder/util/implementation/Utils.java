@@ -6,7 +6,7 @@ import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 public class Utils {
 
     private final static double lat1KM = 0.00898; //1 км в градусах широты
-    private final static double lon1KM = 0.01440; //1 км в градусах долготы
+    private final static double lon1KM = 0.01793; //1 км в градусах долготы
 
     public static boolean checkBorders(int x, int y, int scale) {
 

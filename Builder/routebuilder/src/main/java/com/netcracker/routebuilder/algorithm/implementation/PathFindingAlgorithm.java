@@ -25,14 +25,14 @@ public class PathFindingAlgorithm {
     final PotentialMapBuilder potentialMapBuilder;
 
     private final static double LAT_1_KM = 0.00898; //1 км в градусах широты
-    private final static double LON_1_KM = 0.01440; //1 км в градусах долготы
+    private final static double LON_1_KM = 0.01793; //1 км в градусах долготы
     private final static int DEFAULT_MAP_SCALE = 1;
     //количество клеток 1x1 км по Ox и Oy  на нашей потенциальной карте
-    private final static int DEFAULT_NUM_POINT_X= 21;
+    private final static int DEFAULT_NUM_POINT_X = 21;
     private final static int DEFAULT_NUM_POINT_Y = 20;
 
 
-    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties) {
+    public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties, int[][] mapWithRoute) {
         log.info("--Start of the algorithm--");
         log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
 
@@ -49,6 +49,10 @@ public class PathFindingAlgorithm {
         final FieldCoordinates startCell = convertGeoToFieldCoordinates(startPoint);
         final FieldCoordinates endCell = convertGeoToFieldCoordinates(endPoint);
 
+        //test
+        mapWithRoute[startCell.getX()][startCell.getY()] = 100;
+        mapWithRoute[endCell.getX()][endCell.getY()] = 100;
+
         log.info("Start cell: " + startCell.getX() + ", " + startCell.getY());
         log.info("End cell: " + endCell.getX() + ", " + endCell.getY());
 
@@ -61,45 +65,44 @@ public class PathFindingAlgorithm {
 
         PriorityQueue<Cell> nodes = new PriorityQueue<>(Comparator.comparing(Cell::getFx));
 
+        //hmmmmmmmm
         Cell firstPoint = potentialField.get(startCell.getX()).get(startCell.getY());
 
-        //todo calcGlobalH
         Double firstPointH = calcDistToDestinationCell(startNode, endNode);
-        firstPoint.updateParameters(null, 0d, firstPointH);
+        firstPoint.updateParameters(null, (double) firstPoint.getValue(), firstPointH);
 
         nodes.add(firstPoint);
+        log.info("The route search begins");
 
-        if (1 == 1) {
-            return null;
-        }
+        int iterationsNum = 0;
 
         while (!nodes.isEmpty()) {
-            Cell curNode = nodes.poll();
-            if (curNode.getFieldCoordinates().equals(endNode.getFieldCoordinates())) {
-                System.out.println("Нашли");
+            iterationsNum++;
+            Cell curCell = nodes.poll();
+            System.out.println(curCell.getGx() + " - " + curCell.getHx());
 
-                ArrayList<GeoCoordinates> route = routeRestoration(curNode);
+            if (curCell.getFieldCoordinates().equals(endNode.getFieldCoordinates())) {
+                ArrayList<GeoCoordinates> route = routeRestoration(curCell, mapWithRoute);
                 log.info("The algorithm found the best way");
+                log.info("Iterations number: " + iterationsNum);
                 return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
             }
 
-            int x = curNode.getFieldCoordinates().getX();
-            int y = curNode.getFieldCoordinates().getY();
-            potentialField.get(x).get(y).setClosed(true);
+            curCell.setClosed(true);
 
             for (int offsetX = -1; offsetX <= 1; offsetX++) {
                 for (int offsetY = -1; offsetY <= 1; offsetY++) {
-                    int newX = x + offsetX;
-                    int newY = y + offsetY;
+                    int newX = curCell.getFieldCoordinates().getX() + offsetX;
+                    int newY = curCell.getFieldCoordinates().getY() + offsetY;
 
                     if (newX >= 0 && newY >= 0 && newX < numPointsX && newY < numPointsY) {
                         Cell nextCell = potentialField.get(newX).get(newY);
 
-                        Double tentativeScore = curNode.getGx() + calcGxBetweenPoints(potentialField, curNode, nextCell);
+                        Double tentativeScore = curCell.getGx() + calcDistToDestinationCell(curCell, nextCell); //calcGxBetweenPoints(potentialField, curCell, nextCell);
 
                         if (!nextCell.isClosed() || tentativeScore < nextCell.getGx()) {
-                            nextCell.updateParameters(curNode,
-                                    tentativeScore, calcDistToDestinationCell(curNode, endNode));
+                            nextCell.updateParameters(curCell,
+                                    tentativeScore, calcDistToDestinationCell(curCell, endNode));
                             if (!nodes.contains(nextCell)) {
                                 nodes.add(nextCell);
                             }
@@ -109,7 +112,7 @@ public class PathFindingAlgorithm {
             }
         }
 
-        log.warn("The algorithm did not find the path, give the standard Google route");
+        log.warn("The algorithm did not find the path, standard Google route will be used");
         return googleRouteBuilder.buildRoute(startPoint, endPoint);
     }
 
@@ -156,16 +159,22 @@ public class PathFindingAlgorithm {
                 return EuclideanDist(from, to);
             case CHEBYSHEVA:
                 return ChebyshevDist(from, to);
+            case MANHATTAN:
+                return ManhattanDistance(from, to);
             case COMPOSIT:
                 return 0d;
             default:
-                log.error("Wrong distance type in the parameters");
-                return 0d;
+                log.error("Wrong distance type in the parameters. Euclidean distance will be used");
+                return EuclideanDist(from, to);
         }
     }
 
+    private static Double ManhattanDistance(Cell from, Cell to) {
+        return (double) Math.abs(from.getFieldCoordinates().getX() - to.getFieldCoordinates().getX()) +
+                Math.abs(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY());
+    }
+
     private static Double ChebyshevDist(Cell from, Cell to) {
-        //TODO переделать
         return (double) Math.max(Math.abs(from.getFieldCoordinates().getX() - to.getFieldCoordinates().getX()),
                 Math.abs(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY()));
     }
@@ -189,7 +198,7 @@ public class PathFindingAlgorithm {
         return Utils.convertGeoToFieldCoordinates(point, params.getScale());
     }
 
-    private ArrayList<GeoCoordinates> routeRestoration(Cell curNode) {
+    private ArrayList<GeoCoordinates> routeRestoration(Cell curNode, int[][] mapWithRoute) {
         ArrayList<GeoCoordinates> route = new ArrayList<>();
 
         //не включаем конечную точку
@@ -198,10 +207,15 @@ public class PathFindingAlgorithm {
         while (curNode.getParent() != null) {
             curNode = curNode.getParent();
             route.add(curNode.getGeoCoordinates());
+            mapWithRoute[curNode.getFieldCoordinates().getX()][curNode.getFieldCoordinates().getY()] = 100;
+            ;
         }
 
         //не включаем начальную точку
-        route.remove(route.size() - 1);
+        if (!route.isEmpty()){
+            route.remove(route.size() - 1);
+        }
+
 
         Collections.reverse(route);
 

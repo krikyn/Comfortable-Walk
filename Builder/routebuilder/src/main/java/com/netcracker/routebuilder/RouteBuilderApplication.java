@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+//оставить корневую папку + переименовать common
 @SpringBootApplication
 @ComponentScan({"com.netcracker.datacollector.*", "com.netcracker.routebuilder.*"})
 @EnableJpaRepositories(basePackages = {"com.netcracker.datacollector.data.*", "com.netcracker.routebuilder.*"})
