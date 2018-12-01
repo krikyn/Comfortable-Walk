@@ -19,5 +19,9 @@ spring:
     image-uri-prefix: P_100_26061_
     image-uri-postfix: _MRL
 
+google:
+  api:
+    key: "AIzaSyBw3Bcepmq4q_VtqIohTNDBHPJnMiNw9yY"
+
 logging:
   file: data_collector.log

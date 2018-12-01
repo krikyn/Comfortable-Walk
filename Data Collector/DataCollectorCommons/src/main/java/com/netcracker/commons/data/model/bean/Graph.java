@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.data.model.bean;
+package com.netcracker.commons.data.model.bean;
 
 import java.util.ArrayList;
 import java.util.Iterator;

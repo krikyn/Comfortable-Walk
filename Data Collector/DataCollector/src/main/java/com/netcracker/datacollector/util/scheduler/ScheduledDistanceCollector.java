@@ -2,9 +2,9 @@ package com.netcracker.datacollector.util.scheduler;
 
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrixElement;
-import com.netcracker.datacollector.data.model.Distance;
-import com.netcracker.datacollector.data.model.bean.Graph;
-import com.netcracker.datacollector.data.repository.DistanceRepository;
+import com.netcracker.commons.data.model.Distance;
+import com.netcracker.commons.data.model.bean.Graph;
+import com.netcracker.commons.data.repository.DistanceRepository;
 import com.netcracker.datacollector.util.DistanceFindingAlgorithm;
 import com.netcracker.datacollector.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;

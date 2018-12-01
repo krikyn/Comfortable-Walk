@@ -1,6 +1,6 @@
 package com.netcracker.datacollector.util;
 
-import com.netcracker.datacollector.data.repository.WeatherPotentialMapRepository;
+import com.netcracker.commons.data.repository.WeatherPotentialMapRepository;
 import io.github.mvpotter.model.Coordinate;
 import io.github.mvpotter.model.Size;
 import io.github.mvpotter.model.YandexMap;

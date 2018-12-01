@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.data.model;
+package com.netcracker.commons.data.model;
 
 import com.google.maps.model.LatLng;
 import lombok.Data;
@@ -9,11 +9,10 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
- * Created by Grout on 28.10.2018.
+ * Class that describes entity of the city map.
  *
- * Класс описывающий сущность карты.
+ * @author Али
  * */
-
 @Entity
 @Table(name = "maps")
 @Data

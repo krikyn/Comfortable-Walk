@@ -45,7 +45,7 @@
             });
         });
     </script>
-    <link rel="stylesheet" href="/aquamarine.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body class="" style="">
@@ -83,7 +83,7 @@
                                 <span class="input-group-text"><u>A</u></span>
                             </div>
                             <input id="autocompleteFrom" type="text" class="form-control"
-                                   onFocus="initAutocomplete()" required>
+                                   onFocus="initAutocomplete()" name="fromPoint" required>
                             <input th:field="*{fromPointLat}" id="fromPointLat" style="display: none"/>
                             <input th:field="*{fromPointLng}" id="fromPointLng" style="display: none"/>
                         </div>
@@ -94,7 +94,7 @@
                                 <span class="input-group-text"><u>B</u></span>
                             </div>
                             <input id="autocompleteTo" type="text" class="form-control"
-                                   onFocus="initAutocomplete()" required>
+                                   onFocus="initAutocomplete()" name="toPoint" required>
                             <input th:field="*{toPointLat}" id="toPointLat" style="display: none"/>
                             <input th:field="*{toPointLng}" id="toPointLng" style="display: none"/>
                         </div>
@@ -112,7 +112,7 @@
                         <ul id="myTags">
                         </ul>
                     </div>
-                    <button type="submit" class="btn btn-block btn-outline-primary"><b>Build</b></button>
+                    <button onclick="loading()" type="submit" class="btn btn-block btn-outline-primary"><b>Build</b></button>
                 </form>
                 <p style="display: none;" id="notification">Thank You!</p>
                 <div class="alert alert-primary" role="alert">
@@ -126,6 +126,22 @@
                         frameborder="0" style="border:0" allowfullscreen></iframe>
             </div>
         </div>
+    </div>
+</div>
+<div class="loader">
+    <div class="sk-circle">
+        <div class="sk-circle1 sk-child"></div>
+        <div class="sk-circle2 sk-child"></div>
+        <div class="sk-circle3 sk-child"></div>
+        <div class="sk-circle4 sk-child"></div>
+        <div class="sk-circle5 sk-child"></div>
+        <div class="sk-circle6 sk-child"></div>
+        <div class="sk-circle7 sk-child"></div>
+        <div class="sk-circle8 sk-child"></div>
+        <div class="sk-circle9 sk-child"></div>
+        <div class="sk-circle10 sk-child"></div>
+        <div class="sk-circle11 sk-child"></div>
+        <div class="sk-circle12 sk-child"></div>
     </div>
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0&libraries=places&callback=initAutocomplete"
