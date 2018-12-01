@@ -4,40 +4,67 @@ import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.DirectionsStep;
-import com.google.maps.model.LatLng;
-import com.google.maps.model.TravelMode;
+import com.google.maps.model.*;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.netcracker.routebuilder.properties.AlgorithmParameters;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Builder of route via Google Direction API   <b>GOOGLE_CONTEXT</b> и <b>params</b>.
+ *
+ * @version 1.0
+ * @author Kisliakov Grigori
+ */
+@Slf4j
 @Component
 public class GoogleRouteBuilder {
-    private final GeoApiContext GCONTEXT;
-    //private final AlgorithmParameters PARAMS;
-    static Logger LOGGER = LoggerFactory.getLogger(GoogleRouteBuilder.class);
-    private final int MAX_COUNT_OF_WAYPOINTS = 21;//max value of waypoints in Google API Direction
+    /**
+     * field of Google GeoApiContex need to build route
+     */
+    private final GeoApiContext GOOGLE_CONTEXT;
+    /**
+     * final field of algorithm's parameters
+     */
+    private final AlgorithmParameters params;
 
-    public GoogleRouteBuilder() {
-        GCONTEXT = new GeoApiContext.Builder().apiKey("AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0").build();
+    /**
+     * Initialization of  final fields
+     * @param params - object of Parameters class
+     */
+    public GoogleRouteBuilder(AlgorithmParameters params) {
+        this.params=params;
+        GOOGLE_CONTEXT = new GeoApiContext.Builder().apiKey(params.getApiKey()).build();
     }
 
-    //build route without waypoints
+    /**
+     * Build Google's route  without intermediate points
+     *
+     * @param start - start position of route
+     * @param end   - end position of route
+     * @return return list  of route's points
+     */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, GeoCoordinates end) {
-        return buildDirection(start, end);
+        return buildDirection(ConvertToLatLang(start), ConvertToLatLang(end));
     }
-    //build route .Input arrayList include starting position,final position,array of waypoints
+
+    /**
+     * Build Google's route
+     *
+     * @param points - list of necessary intermediate points of route
+     * @return return list  of route's points
+     */
+
+
     public ArrayList<GeoCoordinates> buildRoute(ArrayList<GeoCoordinates> points) {
         ArrayList<GeoCoordinates> ListPoints = new ArrayList<>();
         //add start point of route
         ListPoints.add(points.get(0));
-        GeoCoordinates starT = points.get(0);
-        GeoCoordinates enD = points.get(points.size() - 1);
+        LatLng starT = ConvertToLatLang(points.get(0));
+        LatLng enD;
         int AllPoints = points.size();
         int startPosition = 0;
         //devide route by parts
@@ -45,18 +72,18 @@ public class GoogleRouteBuilder {
             //array of intermediate points(not more maxCountOfWayPoints)
             LatLng[] latL;
             int leng_point = 0;
-            // if quantity of intermediate points less then 21
-            if (AllPoints / MAX_COUNT_OF_WAYPOINTS < 1) {
-                latL = new LatLng[AllPoints % MAX_COUNT_OF_WAYPOINTS];
-                enD = points.get(points.size() - 1);
+            // if quantity of intermediate points less then maxCountOfWayPoints
+            if (AllPoints / params.getMaxCountOfWaypoints() < 1) {
+                latL = new LatLng[AllPoints % params.getMaxCountOfWaypoints()];
+                enD = ConvertToLatLang(points.get(points.size() - 1));
             }
-            // if quantity of intermediate points more then 21
+            // if quantity of intermediate points more then maxCountOfWayPoints
             else {
-                latL = new LatLng[MAX_COUNT_OF_WAYPOINTS];
+                latL = new LatLng[params.getMaxCountOfWaypoints()];
                 //add endpoint geoposition
-                enD = points.get(startPosition + latL.length);
+                enD = ConvertToLatLang(points.get(startPosition + latL.length));
             }
-            //add geoposition for clear array of  intermediate points from String array 'por'
+            //add geoposition for clear array of  intermediate points from ArrayList
             for (int i = startPosition; i < startPosition + latL.length; i++) {
                 latL[leng_point++] = ConvertToLatLang(points.get(i));
             }
@@ -71,13 +98,20 @@ public class GoogleRouteBuilder {
         return ListPoints;
     }
 
-    //build route with waypoints
+    /**
+     * Build Google's route
+     *
+     * @param start  - start position of route
+     * @param points - list of necessary intermediate points of route
+     * @param end    - end position of route
+     * @return return list  of route's points
+     */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, ArrayList<GeoCoordinates> points, GeoCoordinates end) {
         ArrayList<GeoCoordinates> ListPoints = new ArrayList<>();
         //add start point of route
         ListPoints.add(start);
-        GeoCoordinates starT = start;
-        GeoCoordinates enD = end;
+        LatLng starT = ConvertToLatLang(start);
+        LatLng enD;
         int AllPoints = points.size();
         int startPosition = 0;
         //devide route by parts
@@ -85,18 +119,18 @@ public class GoogleRouteBuilder {
             //array of intermediate points(not more maxCountOfWayPoints)
             LatLng[] latL;
             int leng_point = 0;
-            // if quantity of intermediate points less then 21
-            if (AllPoints / MAX_COUNT_OF_WAYPOINTS < 1) {
-                latL = new LatLng[AllPoints % MAX_COUNT_OF_WAYPOINTS];
-                enD = end;
+            // if quantity of intermediate points less then maxCountOfWayPoints
+            if (AllPoints / params.getMaxCountOfWaypoints() < 1) {
+                latL = new LatLng[AllPoints % params.getMaxCountOfWaypoints()];
+                enD = ConvertToLatLang(end);
             }
-            // if quantity of intermediate points more then 21
+            // if quantity of intermediate points more then maxCountOfWayPoints
             else {
-                latL = new LatLng[MAX_COUNT_OF_WAYPOINTS];
+                latL = new LatLng[params.getMaxCountOfWaypoints()];
                 //add endpoint geoposition
-                enD = points.get(startPosition + latL.length);
+                enD = ConvertToLatLang(points.get(startPosition + latL.length));
             }
-            //add geoposition for clear array of  intermediate points from String array 'por'
+            //add geoposition for clear array of  intermediate points from ArrayList
             for (int i = startPosition; i < startPosition + latL.length; i++) {
                 latL[leng_point++] = ConvertToLatLang(points.get(i));
             }
@@ -105,74 +139,100 @@ public class GoogleRouteBuilder {
             startPosition += latL.length + 1;
             //condition of 'while'
             AllPoints -= latL.length + 1;
-            starT = end;
+            starT = ConvertToLatLang(end);
         }
         ListPoints.add(end);
         return ListPoints;
     }
 
-    //standart Google's method of building Routes without waypoints
-    private ArrayList<GeoCoordinates> buildDirection(GeoCoordinates StartPoint, GeoCoordinates endPoint) {
+    /**
+     * Standard Google's method of building Routes without intermediate points
+     *
+     * @param StartPoint - start position of route
+     * @param endPoint   - end position of route
+     * @return return list  of route's points
+     */
+    private ArrayList<GeoCoordinates> buildDirection(LatLng StartPoint, LatLng endPoint) {
         ArrayList<GeoCoordinates> listPoint = new ArrayList<>();
-        listPoint.add(StartPoint);
+        listPoint.add(ConvertToGeoCoordinates(StartPoint));
         try {
             //Standart Google API method
-            DirectionsResult result = DirectionsApi.newRequest(GCONTEXT)
-                    .origin(StartPoint.getX() + "," + StartPoint.getY())
-                    .destination(endPoint.getX() + "," + endPoint.getY())
+            DirectionsResult result = DirectionsApi.newRequest(GOOGLE_CONTEXT)
+                    .origin(StartPoint)
+                    .destination(endPoint)
                     .mode(TravelMode.WALKING)
                     .await();
             //get steps with geoposition
-            DirectionsStep[] Dirstep = result.routes[0].legs[0].steps;
-            for (int i = 1; i < Dirstep.length; i++) {
-                listPoint.add(ConvertToGeoCoordinates(Dirstep[i].endLocation));
+            for (DirectionsStep step : result.routes[0].legs[0].steps) {
+                DecodePolyine(step.polyline, listPoint);
+                listPoint.add(ConvertToGeoCoordinates(step.endLocation));
             }
-            listPoint.add(endPoint);
+            listPoint.add(ConvertToGeoCoordinates(endPoint));
         } catch (ApiException e) {
-            LOGGER.error("Not valid API=key");
+            log.error("Not valid API=key");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            LOGGER.error("Interrupt Thread");
+            log.error("Interrupt Thread");
         } catch (IOException e) {
-            LOGGER.error("IOException");
+            log.error("IOException");
         }
         return listPoint;
     }
 
-    //standart Google's method of building Routes
-    private void buildDirection(GeoCoordinates StartPoint, LatLng[] waypoints,
-                                GeoCoordinates endPoint, ArrayList<GeoCoordinates> Points) {
-        if (waypoints.length > 21) throw new ArrayIndexOutOfBoundsException("Quantity of waypoints more  than 21");
+
+    /**
+     * Standard Google's method of building Routes with intermediate points
+     *
+     * @param StartPoint - start position of route
+     * @param waypoints  - list of necessary intermediate points of route
+     * @param endPoint   - end position of route
+     * @param Points     - list of finish route's points
+     */
+    private void buildDirection(LatLng StartPoint, LatLng[] waypoints,
+                                LatLng endPoint, ArrayList<GeoCoordinates> Points) {
+        if (waypoints.length > params.getMaxCountOfWaypoints())
+            log.error("Quantity of waypoints more  than " + params.getMaxCountOfWaypoints());
         try {
             //Standart Google API method
-            DirectionsResult result = DirectionsApi.newRequest(GCONTEXT)
-                    .origin(StartPoint.getX() + "," + StartPoint.getY())
-                    .destination(endPoint.getX() + "," + endPoint.getY())
+            DirectionsResult result = DirectionsApi.newRequest(GOOGLE_CONTEXT)
+                    .origin(StartPoint)
+                    .destination(endPoint)
                     .mode(TravelMode.WALKING)
                     .waypoints(ConvertToWaypoints(waypoints))//add waypoints
                     .await();
             //get steps with geoposition
-            DirectionsStep[] Dirstep = result.routes[0].legs[0].steps;
-            for (int i = 1; i < Dirstep.length; i++) {
-                Points.add(ConvertToGeoCoordinates(Dirstep[i].endLocation));
+            for (DirectionsStep step : result.routes[0].legs[0].steps) {
+                DecodePolyine(step.polyline, Points);
+                Points.add(ConvertToGeoCoordinates(step.endLocation));
             }
         } catch (ApiException e) {
-            LOGGER.error("Not valid API=key");
+            log.error("Not valid API=key");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            LOGGER.error("Interrupt Thread");
+            log.error("Interrupt Thread");
         } catch (IOException e) {
-            LOGGER.error("IOException");
+            log.error("IOException");
         }
     }
 
-    //Convert LatLng type to GeoCoordinates
+    /**
+     * Convert LatLng type to GeoCoordinates type
+     *
+     * @param point - point  in LatLng type
+     * @return return  point  in GeoCoordinates type
+     */
     private GeoCoordinates ConvertToGeoCoordinates(LatLng point) {
         String[] st = point.toString().split(",");
-        return new GeoCoordinates(Double.valueOf(st[0]), Double.valueOf(st[1]));
+        return new GeoCoordinates(Double.valueOf(st[1]), Double.valueOf(st[0]));
     }
 
-    //Convert Latlang array to WayPoints array
+    /**
+     * Convert Latlang array to WayPoints array
+     *
+     * @param waypoints - array of  points  in LatLng type
+     * @return array of  points  in Waypoint type
+     */
+
     private DirectionsApiRequest.Waypoint[] ConvertToWaypoints(LatLng[] waypoints) {
         DirectionsApiRequest.Waypoint[] lat = new DirectionsApiRequest.Waypoint[waypoints.length];
         for (int i = 0; i < waypoints.length; i++) {
@@ -181,7 +241,27 @@ public class GoogleRouteBuilder {
         return lat;
     }
 
-    //Convert GeoCoordinates type to LatLng
+    /**
+     * Add points into list from Google's polyline(small part of route consisting of markers on map)
+     *
+     * @param polyline - array of  points  in LatLng type
+     * @param list     -  list of  route's points
+     */
+    private void DecodePolyine(EncodedPolyline polyline, ArrayList<GeoCoordinates> list) {
+        for (LatLng lang : polyline.decodePath()) {
+            list.add(ConvertToGeoCoordinates(lang));
+        }
+    }
+
+    /**
+     * Convert GeoCoordinates type to LatLng type
+     *
+     * @param point - point  in GeoCoordinates type
+     * @return return  point  in LatLng type
+     */
     private LatLng ConvertToLatLang(GeoCoordinates point) {
-        return new LatLng(point.getX(), point.getY());
-    }}
+        return new LatLng(point.getY(), point.getX());
+    }
+
+
+}
