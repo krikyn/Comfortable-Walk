@@ -1,7 +1,6 @@
-package com.netcracker.datacollector.data.repository;
+package com.netcracker.commons.data.repository;
 
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.data.model.WeatherPotentialMap;
+import com.netcracker.commons.data.model.WeatherPotentialMap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

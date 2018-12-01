@@ -1,7 +1,7 @@
-package com.netcracker.datacollector.service;
+package com.netcracker.commons.service;
 
-import com.netcracker.datacollector.data.model.Place;
-import com.netcracker.datacollector.data.repository.PlaceRepository;
+import com.netcracker.commons.data.model.Place;
+import com.netcracker.commons.data.repository.PlaceRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

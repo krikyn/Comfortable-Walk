@@ -1,19 +1,25 @@
-package com.netcracker.datacollector.util;
+package com.netcracker.commons.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that presents utility methods for map building.
+ *
+ * @author Али
+ */
 public class MapUtil {
 
     /**
-     * Функция поиска соседних ячеек в указанном радиусе.
-     * @param cellRow - строка, на которой находится основная ячейка.
-     * @param cellCol - столбец, в которой находится основная ячейка.
-     * @param maxRow - максимум карты по вертикали.
-     * @param maxCol - максимум карты по горизонтали.
-     * @param radius - радиус поиска соседних ячеек.
-     * @param result - карта в которую записывается результат построения.
-     * @param values - список с дипазоном убывания.
+     * Find neighbours cells in specified radius.
+     *
+     * @param cellRow - base cell row.
+     * @param cellCol - base cell column.
+     * @param maxRow - vertical maximum of the map.
+     * @param maxCol - horizontal maximum of the map.
+     * @param radius - radius of searching neighbour cells.
+     * @param result - map where put result of search.
+     * @param values - value list of decreasing range.
      *
      * */
     public static void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
@@ -35,25 +41,11 @@ public class MapUtil {
     }
 
     /**
-     * Метод для проверки границ карты
-     * @param rowNum - проверяемая строка.
-     * @param colNum - проверямый столбец.
-     * @param maxRow - максимальное значение карты по вертикали.
-     * @param maxCol - максимальное значение карты по горизонтали.
+     * Calculating decreasing range.
      *
-     * */
-    private static boolean checkBounds(int rowNum, int colNum, int maxRow, int maxCol) {
-        if(rowNum < 0 || colNum < 0) {
-            return false;
-        }
-        return rowNum < maxRow && colNum < maxCol;
-    }
-
-    /**
-     * Функция для вычисления диапазона убывания.
-     * Возвращает список с диапазоном убывания и радиусом.
-     * @param value - Число, на основе которого вычисляется диапазон убывания.
+     * @param value - Base value from which decreasing occurs.
      *
+     * @return List of decrease range and the radius.
      * */
     public static List<Integer> decreaseValue(int value) {
         int numberOfDecreasing = 0;
@@ -70,5 +62,12 @@ public class MapUtil {
         }
         result.add(numberOfDecreasing);
         return result;
+    }
+
+    private static boolean checkBounds(int rowNum, int colNum, int maxRow, int maxCol) {
+        if(rowNum < 0 || colNum < 0) {
+            return false;
+        }
+        return rowNum < maxRow && colNum < maxCol;
     }
 }
