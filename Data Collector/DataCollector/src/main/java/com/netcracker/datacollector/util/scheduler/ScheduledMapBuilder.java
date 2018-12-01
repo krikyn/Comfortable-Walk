@@ -30,9 +30,8 @@ public class ScheduledMapBuilder {
 
     /**
      * Builds maps at specified intervals (by default once in 1 hour).
-     *
      */
-    //@Scheduled(fixedDelay = MILLIS_PER_MINUTE * 60)
+    @Scheduled(fixedDelay = MILLIS_PER_MINUTE * 60)
     public void buildMaps() {
         //Строит и загружает базовые карты размером 1 на 1 км и 50 на 50 м
         if(cityMapService.loadCityMapByType("baseCityMap1km") == null) {
