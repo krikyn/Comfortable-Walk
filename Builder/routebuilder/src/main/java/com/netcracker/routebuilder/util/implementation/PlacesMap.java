@@ -1,6 +1,6 @@
 package com.netcracker.routebuilder.util.implementation;
 
-import com.netcracker.datacollector.service.CityMapService;
+import com.netcracker.commons.service.CityMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
 import com.netcracker.routebuilder.util.enums.PlacesType;
 import com.netcracker.routebuilder.util.enums.RouteProperty;

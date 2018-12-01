@@ -1,7 +1,7 @@
 package com.netcracker.routebuilder.util.implementation;
 
-import com.netcracker.datacollector.data.model.WeatherPotentialMap;
-import com.netcracker.datacollector.service.WeatherMapService;
+import com.netcracker.commons.data.model.WeatherPotentialMap;
+import com.netcracker.commons.service.WeatherMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
 import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
-import static com.netcracker.routebuilder.util.implementation.Utils.recountWithNewScale;
 
 @Slf4j
 @Component

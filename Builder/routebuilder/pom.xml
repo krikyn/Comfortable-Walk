@@ -82,7 +82,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.netcracker</groupId>
+            <groupId>com.netcracker.commons</groupId>
             <artifactId>data-collector-commons</artifactId>
             <version>${project.version}</version>
         </dependency>

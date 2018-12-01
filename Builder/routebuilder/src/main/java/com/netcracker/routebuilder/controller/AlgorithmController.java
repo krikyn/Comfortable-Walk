@@ -1,7 +1,7 @@
 package com.netcracker.routebuilder.controller;
 
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.service.CityMapService;
+import com.netcracker.commons.data.model.CityMap;
+import com.netcracker.commons.service.CityMapService;
 import com.netcracker.routebuilder.algorithm.implementation.GoogleRouteBuilder;
 import com.netcracker.routebuilder.algorithm.implementation.PathFindingAlgorithm;
 import com.netcracker.routebuilder.algorithm.implementation.PotentialMapBuilder;
