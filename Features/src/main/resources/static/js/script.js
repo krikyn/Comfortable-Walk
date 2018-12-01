@@ -1,4 +1,21 @@
-var autocompleteFrom, autocompleteTo;
+var autocompleteFrom, autocompleteTo, directionsService, directionsDisplay;
+
+function initialize() {
+    initMap();
+    initAutocomplete();
+}
+
+function initMap() {
+    directionsService = new google.maps.DirectionsService;
+    directionsDisplay = new google.maps.DirectionsRenderer;
+    var map = new google.maps.Map(document.getElementById("googleMap"), {
+        center: {lat: 59.946079, lng: 30.318713},
+        zoom:10,
+    });
+    directionsDisplay.setMap(map);
+
+    
+}
 
 function initAutocomplete() {
     var defaultBounds = new google.maps.LatLngBounds(
@@ -35,4 +52,21 @@ function loading() {
     var toPoint = document.getElementById('autocompleteTo').value;
     if (fromPoint !== "" && toPoint !== "")
         document.getElementsByClassName('loader')[0].style.visibility = "visible";
+}
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+    var originPoint = document.getElementById('fromPointLat').value + ", " + document.getElementById('fromPointLng').value;
+    var destinationPoint = document.getElementById('toPointLat').value + ", " + document.getElementById('toPointLng').value;
+    console.info(originPoint);
+    directionsService.route({
+        origin: originPoint,
+        destination: destinationPoint,
+        travelMode: 'WALKING'
+    }, function(response, status) {
+        if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
 }
