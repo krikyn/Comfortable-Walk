@@ -14,8 +14,8 @@ import java.util.List;
 
 import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 
-import static com.netcracker.datacollector.util.MapUtil.decreaseValue;
-import static com.netcracker.datacollector.util.MapUtil.findNeighbours;
+import static com.netcracker.commons.util.MapUtil.decreaseValue;
+import static com.netcracker.commons.util.MapUtil.findNeighbours;
 import static com.netcracker.routebuilder.util.implementation.Utils.convertGeoToFieldCoordinates;
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 

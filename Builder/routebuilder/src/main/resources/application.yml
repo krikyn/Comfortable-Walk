@@ -18,7 +18,7 @@ algorithm:
   maxAllowableIncrease: 3
   minDistBetweenStartEnd: 0
   scale: 20
-  maxCountOfWaypoints: 21
+  maxCountOfWayypoints: 21
   distanceType: EUCLIDEAN
   normalFactorH: 1
   normalFactorG: 1
