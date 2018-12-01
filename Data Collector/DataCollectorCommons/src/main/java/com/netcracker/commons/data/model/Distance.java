@@ -4,6 +4,10 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ * Entity for saving distances info in DB
+ * @author prokhorovartem
+ */
 @Entity
 @Data
 @Table(name = "distances")

@@ -5,65 +5,67 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Представление нагруженного графа списками смежности.
- * Нагрузка на дуги - вещественные числа ("длина дуги").
+ * Graph bean for representation of a loaded graph with adjacency lists.
+ * @author prokhorovartem
  */
 public class Graph {
     /**
-     * Представление дуги графа
+     * Representation of arc graph
      */
     public static class Arc {
-        public long weight; //Нагрузка на дугу
-        int to;             //Номер вершины, в которую ведет дуга
+        /**
+         * arc weight
+         */
+        public long weight;
+        /**
+         * vertex number where arc goes
+         */
+        int to;
 
-        public Arc(int to, long info) {
+        Arc(int to, long info) {
             this.to = to;
             this.weight = info;
-        }
-
-        public double weight() {
-            return weight;
         }
 
         public int to() {
             return to;
         }
-
-        public void addWeight(double delta) {
-            weight += delta;
-        }
     }
 
-    ;
-
-    private List<List<Arc>> lGraph; //Списки смежности
-    private int nVertex;            //Число вершин
+    /**
+     * adjacency lists
+     */
+    private List<List<Arc>> lGraph;
+    /**
+     * number of vertex
+     */
+    private int nVertex;
 
     /**
-     * Конструктор пустого графа с заданным числом вершин
-     * @param nVert Число вершин
+     * Constructor of empty graph with given the number of vertices
+     * @param nVertices number of vertices
      */
-    public Graph(int nVert) {
+    public Graph(int nVertices) {
         lGraph = new ArrayList<>();
-        for (int i = 0; i < nVert; ++i) {
+        for (int i = 0; i < nVertices; ++i) {
             lGraph.add(new ArrayList<>());
         }
-        nVertex = nVert;
+        nVertex = nVertices;
     }
 
     /**
-     * Число вершин графа
+     * The number of vertices of the graph
      */
     public int getCount() {
         return nVertex;
     }
 
     /**
-     * Добавление дуги в граф. Предполагается, что ранее такой дуги в графе не было.
+     * Adding an arc to a graph.
      *
-     * @param from Начало дуги (номер вершины)
-     * @param to   Конец дуги (номер вершины)
-     * @param info Нагрузка на дугу
+     * @param from Start of arc (vertex number)
+     * @param to   End of arc (vertex number)
+     * @param info Arc weight
      */
     public void addArc(int from, int to, long info) {
         assert from < nVertex && from >= 0;
@@ -72,31 +74,10 @@ public class Graph {
         lGraph.get(from).add(new Arc(to, info));
     }
 
-    public int addVertex() {
-        lGraph.add(new ArrayList<>());
-        nVertex++;
-        return lGraph.size() - 1;
-    }
-
-    public void removeVertex(int u) {
-        lGraph.remove(u);
-        nVertex--;
-        for (List<Arc> list : lGraph) {
-            for (Iterator<Arc> iArc = list.iterator(); iArc.hasNext(); ) {
-                Arc arc = iArc.next();
-                if (arc.to == u) {
-                    iArc.remove();
-                } else if (arc.to > u) {
-                    arc.to--;
-                }
-            }
-        }
-    }
-
     /**
-     * Итератор дуг, ведущих из заданной вершины
+     * Iterator of arcs leading from a source vertex
      *
-     * @param u Исходная вершина
+     * @param u Source vertex
      */
     public Iterator<Arc> arcs(int u) {
         return lGraph.get(u).iterator();
