@@ -7,12 +7,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+/**
+ * Controller for main page
+ * @author prokhorovartem
+ */
 @RequiredArgsConstructor
 @Controller
 public class MainPageController {
 
     private final CheckedItemsUtil checkedItemsUtil;
 
+    /**
+     * Mapping for post params of the path
+     * @param path posted path
+     * @return redirect to stay on this page
+     */
     @PostMapping("/loginSuccess")
     public String postParams(@ModelAttribute Path path) {
         if (path.getPlaceName() == null)
