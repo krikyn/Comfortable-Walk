@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.data.model;
+package com.netcracker.commons.data.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

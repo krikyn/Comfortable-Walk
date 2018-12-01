@@ -1,6 +1,6 @@
 package com.netcracker.datacollector.util;
 
-import com.netcracker.datacollector.data.model.bean.Graph;
+import com.netcracker.commons.data.model.bean.Graph;
 
 import java.util.Iterator;
 

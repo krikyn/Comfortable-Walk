@@ -1,6 +1,6 @@
-package com.netcracker.datacollector.data.repository;
+package com.netcracker.commons.data.repository;
 
-import com.netcracker.datacollector.data.model.CityMap;
+import com.netcracker.commons.data.model.CityMap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

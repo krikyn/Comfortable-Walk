@@ -3,10 +3,10 @@ package com.netcracker.datacollector.util.scheduler;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.data.model.Place;
-import com.netcracker.datacollector.service.CityMapService;
-import com.netcracker.datacollector.service.PlaceService;
+import com.netcracker.commons.data.model.CityMap;
+import com.netcracker.commons.data.model.Place;
+import com.netcracker.commons.service.CityMapService;
+import com.netcracker.commons.service.PlaceService;
 import com.netcracker.datacollector.util.PlaceSearcher;
 import com.netcracker.datacollector.util.enums.PlacesType;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,9 @@ import java.util.*;
 
 
 /**
- * Created by Grout on 28.10.2018.
+ * Class for automatic information gathering of places.
+ *
+ * @author Али
  */
 
 @Component

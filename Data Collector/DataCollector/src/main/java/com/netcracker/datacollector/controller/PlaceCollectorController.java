@@ -1,7 +1,7 @@
 package com.netcracker.datacollector.controller;
 
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.service.CityMapService;
+import com.netcracker.commons.data.model.CityMap;
+import com.netcracker.commons.service.CityMapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

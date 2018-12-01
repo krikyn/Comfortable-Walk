@@ -1,9 +1,9 @@
 package com.netcracker.datacollector.util.enums;
 
 /**
- * Created by Grout on 28.10.2018.
+ * Enum of places on the map.
  *
- * Перечисление типов мест.
+ * @author Али
  * */
 
 public enum PlacesType {

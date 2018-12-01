@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.data.model;
+package com.netcracker.commons.data.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,11 +7,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by Grout on 28.10.2018.
+ * Class that describes entity of the place on the map.
  *
- * Класс описывающий сущность места.
+ * @author Али
  */
-
 @Entity
 @Table(name = "places")
 @Data

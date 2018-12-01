@@ -1,9 +1,8 @@
-package com.netcracker.datacollector.service;
+package com.netcracker.commons.service;
 
-import com.netcracker.datacollector.data.model.WeatherPotentialMap;
-import com.netcracker.datacollector.data.repository.WeatherPotentialMapRepository;
+import com.netcracker.commons.data.model.WeatherPotentialMap;
+import com.netcracker.commons.data.repository.WeatherPotentialMapRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
