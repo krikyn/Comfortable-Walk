@@ -1,7 +1,8 @@
 package com.netcracker.datacollector.util;
 
 import com.google.maps.model.LatLng;
-import com.netcracker.datacollector.data.model.Place;
+import com.netcracker.commons.data.model.Place;
+import com.netcracker.commons.util.MapUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

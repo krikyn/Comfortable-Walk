@@ -1,9 +1,9 @@
 package com.netcracker.datacollector.util.scheduler;
 
-import com.netcracker.datacollector.data.model.CityMap;
-import com.netcracker.datacollector.data.model.Place;
-import com.netcracker.datacollector.service.CityMapService;
-import com.netcracker.datacollector.service.PlaceService;
+import com.netcracker.commons.data.model.CityMap;
+import com.netcracker.commons.data.model.Place;
+import com.netcracker.commons.service.CityMapService;
+import com.netcracker.commons.service.PlaceService;
 import com.netcracker.datacollector.util.MapBuilder;
 import com.netcracker.datacollector.util.enums.PlacesType;
 import lombok.RequiredArgsConstructor;

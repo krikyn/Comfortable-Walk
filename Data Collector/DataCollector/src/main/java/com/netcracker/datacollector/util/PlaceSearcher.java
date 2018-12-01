@@ -1,10 +1,9 @@
 package com.netcracker.datacollector.util;
 
-import com.google.maps.FindPlaceFromTextRequest;
 import com.google.maps.GeoApiContext;
-import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -18,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PlaceSearcher{
 
-    // daba вынесите его в настройку через спринговые values
-    private final String apiKey = "AIzaSyBw3Bcepmq4q_VtqIohTNDBHPJnMiNw9yY";
+    @Value("${google.api.key}")
+    private String apiKey;
 
     private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).maxRetries(10)
             .retryTimeout(20000, TimeUnit.MILLISECONDS).build();
