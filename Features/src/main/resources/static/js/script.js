@@ -29,3 +29,10 @@ function fillInAddressTo() {
     document.getElementById('toPointLat').value = placeTo.geometry.location.lat(0);
     document.getElementById('toPointLng').value = placeTo.geometry.location.lng(0);
 }
+
+function loading() {
+    var fromPoint = document.getElementById('autocompleteFrom').value;
+    var toPoint = document.getElementById('autocompleteTo').value;
+    if (fromPoint !== "" && toPoint !== "")
+        document.getElementsByClassName('loader')[0].style.visibility = "visible";
+}
