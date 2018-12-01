@@ -5,15 +5,13 @@ import com.netcracker.datacollector.data.model.bean.Graph;
 import java.util.Iterator;
 
 /**
- * Реализация алгоритма Дейкстры поиска минимальных путей в графе
- * с неотрицательной нагрузкой на дугах.
- * Хранение текущих расстояний до вершин графа производится в
- * двоичной куче.
+ * Implementation of Dijkstra’s algorithm for finding minimal paths in a graph with non-negative load on arcs
+ * Current distances are stored in a binary heap
  */
 public class DistanceFindingAlgorithm {
     /**
-     * Пара из номера вершины и растояния до нее - элемент кучи.
-     * Сравнение пар производится по расстояниям.
+     * Element of the heap is a pair: number of vertices and distance to this vertex
+     * Comparison of pairs is made by distance
      */
     private static class Pair implements Comparable<Pair> {
         int vertex;         // Номер вершины
@@ -48,18 +46,43 @@ public class DistanceFindingAlgorithm {
         }
     }
 
-    private final Graph graph;      // Граф, для которого производятся вычисления
+    /**
+     * The graph for which calculations are made
+     */
+    private final Graph graph;
 
-    private int src = -1;           // Начальная вершина, пути из которой анализируются
-    private int nVert;              // число вершин в графе
-
-    private long[] distances;       // Массив расстояний
-    private int[] tree;             // Дерево обхода по минимальным путям
-
-    private int[] positions;        // Индексы вершин в куче
-    private Pair[] binHeap;         // Двоичная куча
-    private int heapSize;           // Размер кучи
-    private boolean[] passed;       // Массив пройденных вершин
+    /**
+     * Initial vertex
+     */
+    private int src = -1;
+    /**
+     * Number of vertices
+     */
+    private int nVert;
+    /**
+     * Array of distances
+     */
+    private long[] distances;
+    /**
+     * Tree traversal of the minimal paths
+     */
+    private int[] tree;
+    /**
+     * Indexes of vertex in the heap
+     */
+    private int[] positions;
+    /**
+     * Binary heap
+     */
+    private Pair[] binHeap;
+    /**
+     * Heap size
+     */
+    private int heapSize;
+    /**
+     * Passed vertexes
+     */
+    private boolean[] passed;
 
     public DistanceFindingAlgorithm(Graph g) {
         graph = g;
@@ -67,11 +90,11 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Выдает длины минимальных путей.
-     * Если дерево еще не построено, запускается алгоритм Дейкстры.
+     * Gives the lengths of the minimum paths.
+     * If the tree has not been built yet, Dijkstra’s algorithm is launched.
      *
-     * @param u Номер исходной вершины
-     * @return Массив расстояний до указанных вершин
+     * @param u Number of source vertex
+     * @return Array of distances to the source vertex
      */
     public long[] getDistances(int u) {
         if (u < 0 || u >= nVert) return null;
@@ -82,11 +105,11 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Реализация алгоритма Дейкстры.
-     * В результате работы алгоритма будет построено
-     * дерево минимальных путей и определены их длины.
+     * The implementation of the Dijkstra algorithm.
+     * As a result, the algorithm will build
+     * tree of minimal paths and their lengths will defined.
      *
-     * @param s Начальная вершина
+     * @param s Initial vertex
      */
     private void dijkstra(int s) {
         src = s;
@@ -139,11 +162,11 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Изменение позиции элемента в куче в соответствии с изменившимся
-     * (уменьшившимся) расстоянием до нее.
+     * Changing the position of an element in the heap according to the changed
+     * (decreased) distance to it.
      *
-     * @param i       Позиция элемента в куче
-     * @param newDist Новое расстояние
+     * @param i       Position of the element in the heap
+     * @param newDist New distance
      */
     private void changeHeap(int i, long newDist) {
         binHeap[i].distance = newDist;
@@ -151,18 +174,18 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Доступ к элементу кучи по индексу.
+     * Access to the heap element by index.
      *
-     * @param i Индекс элемента
+     * @param i Element index
      */
     private Pair getFromHeap(int i) {
         return binHeap[i];
     }
 
     /**
-     * Извлечение из кучи элемента с минимальным расстоянием до него.
+     * Extract from the heap an element with a minimum distance to it.
      *
-     * @return Элемент с наивысшим приоритетом (наименьшим расстоянием).
+     * @return The element with the highest priority (shortest distance).
      */
     private Pair extractHeap() {
         Pair minPair = binHeap[0];
@@ -177,7 +200,7 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Добавление нового элемента в кучу.
+     * Adding new element to the heap
      *
      * @param pair Новый элемент
      */
@@ -187,16 +210,16 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Проверка, пуста ли куча.
+     * Check if the heap is empty
      */
     private boolean emptyHeap() {
         return heapSize == 0;
     }
 
     /**
-     * Протаскивание элемента кучи с заданным индексом вверх по куче
+     * Dragging a heap element with a given index up the heap
      *
-     * @param i Индекс элемента
+     * @param i Element index
      */
     private void heapUp(int i) {
         Pair pair = binHeap[i];
@@ -213,9 +236,9 @@ public class DistanceFindingAlgorithm {
     }
 
     /**
-     * Протаскивание элемента кучи с заданным индексом вниз по куче
+     * Dragging a heap element with a given index down the heap
      *
-     * @param i Индекс элемента
+     * @param i Element index
      */
     private void heapDown(int i) {
         Pair pair = binHeap[i];
