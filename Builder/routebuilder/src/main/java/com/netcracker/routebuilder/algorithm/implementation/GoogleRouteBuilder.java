@@ -16,8 +16,8 @@ import java.util.ArrayList;
 /**
  * Builder of route via Google Direction API   <b>GOOGLE_CONTEXT</b> и <b>params</b>.
  *
- * @version 1.0
  * @author Kisliakov Grigori
+ * @version 1.0
  */
 @Slf4j
 @Component
@@ -33,10 +33,11 @@ public class GoogleRouteBuilder {
 
     /**
      * Initialization of  final fields
+     *
      * @param params - object of Parameters class
      */
     public GoogleRouteBuilder(AlgorithmParameters params) {
-        this.params=params;
+        this.params = params;
         GOOGLE_CONTEXT = new GeoApiContext.Builder().apiKey(params.getApiKey()).build();
     }
 

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 
 import static com.netcracker.commons.util.MapUtil.decreaseValue;
 import static com.netcracker.commons.util.MapUtil.findNeighbours;
@@ -28,12 +27,11 @@ import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RouteMap extends AbstractPotentialMap {
+public class RouteMap {
     /**
      * final field of algorithm's parameters
      */
     private final AlgorithmParameters PARAMS;
-
 
 
     /**
@@ -44,23 +42,25 @@ public class RouteMap extends AbstractPotentialMap {
      * @return return building potential map
      */
 
-    public int [] [] buildMap(GeoCoordinates start, GeoCoordinates end) {
-        field = initField(PARAMS.getScale());
+    public int[][] buildMap(GeoCoordinates start, GeoCoordinates end) {
+        int[][] field = initField(PARAMS.getScale());
         ArrayList<FieldCoordinates> routeMap = ConvertRouteListToFieldList(new GoogleRouteBuilder(PARAMS).buildRoute(start, end));
-        MakeRoutePotentialMap(routeMap);
+        MakeRoutePotentialMap(routeMap, field);
         return field;
 
     }
 
     /**
      * Build potential map,put it in list of  route_list
+     *
      * @param routeMap - list of route points with type of potential cells coordinates
+     * @param field    - rout potential map
      */
 
-    private void MakeRoutePotentialMap(ArrayList<FieldCoordinates> routeMap ) {
+    private void MakeRoutePotentialMap(ArrayList<FieldCoordinates> routeMap, int[][] field) {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                int value = AddvalueOfCell(i, j,routeMap);
+                int value = AddvalueOfCell(i, j, routeMap);
                 field[i][j] = value;
                 if (value != 0) {
                     List<Integer> values = decreaseValue(value);
@@ -78,12 +78,12 @@ public class RouteMap extends AbstractPotentialMap {
     /**
      * Build potential map,put it in list of route_list
      *
-     * @param x - Horizontal coordinate of route point on potential map
-     * @param y -  Vertical coordinate of route point on potential map
+     * @param x        - Horizontal coordinate of route point on potential map
+     * @param y        -  Vertical coordinate of route point on potential map
      * @param routeMap - list of route points with type of potential cells coordinates
      * @return value of point on potential route map
      */
-    private int AddvalueOfCell(int x, int y,ArrayList<FieldCoordinates> routeMap) {
+    private int AddvalueOfCell(int x, int y, ArrayList<FieldCoordinates> routeMap) {
         for (FieldCoordinates fieldR : routeMap) {
             if ((fieldR.getX() == x) && (fieldR.getY() == y)) {
                 return 100;
