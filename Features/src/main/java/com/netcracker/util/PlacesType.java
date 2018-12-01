@@ -2,6 +2,10 @@ package com.netcracker.util;
 
 import java.util.Arrays;
 
+/**
+ * Enum for Checked items
+ * @author prokhorovartem
+ */
 public enum PlacesType {
     AMUSEMENT_PARK("AMUSEMENT"),
     BAKERY("BAKERY"),
@@ -28,6 +32,11 @@ public enum PlacesType {
         token = type;
     }
 
+    /**
+     * Getting string and return enum type
+     * @param string string, which is taken from mini-search from frontend
+     * @return enum type or null
+     */
     public static PlacesType getType(String string) {
         return Arrays.stream(PlacesType.values()).filter(type -> string.contains(type.token)).findFirst().orElse(null);
     }

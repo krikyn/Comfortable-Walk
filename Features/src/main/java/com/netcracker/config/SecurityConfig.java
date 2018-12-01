@@ -1,5 +1,6 @@
 package com.netcracker.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,13 +24,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Configuration for security to allow only authorized users use the application
+ * @author prokhorovartem
+ */
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
 
-    @Autowired
-    public SecurityConfig(Environment env) {
-        this.env = env;
-    }
+    private final Environment env;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -78,18 +82,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
-    private static String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
-
-    private final Environment env;
-
     private ClientRegistration getRegistration(String client) {
         String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
 
         if (clientId == null) {
             return null;
         }
-
-        //TODO Научиться аутентифицироваться через ВК и тд
 
         String clientSecret = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-secret");
         if (client.equals("google")) {
@@ -112,5 +110,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         return null;
     }
-
 }
