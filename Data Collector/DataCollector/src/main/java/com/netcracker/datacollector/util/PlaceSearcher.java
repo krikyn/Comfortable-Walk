@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Grout on 21.10.2018.
+ * Class for searching places info using Google Maps API.
  *
- * Позволяет искать места используя Google Maps API.
+ * @author Али
  */
-
 @Component
 public class PlaceSearcher{
 
@@ -23,6 +22,14 @@ public class PlaceSearcher{
     private final GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).maxRetries(10)
             .retryTimeout(20000, TimeUnit.MILLISECONDS).build();
 
+    /**
+     * Finds all places of specified type.
+     *
+     * @param type - type of searching place.
+     * @param location - search location.
+     * @return PlacesSearchResponse object that contains list of founded places and next page token.
+     * @throws Exception
+     */
     public PlacesSearchResponse findAllPlacesByType(final String type, final LatLng location) throws Exception {
         int searchRadius = 707;
         return PlacesApi.nearbySearchQuery(context, location)
@@ -32,6 +39,15 @@ public class PlaceSearcher{
                 .awaitIgnoreError();
     }
 
+    /**
+     * Finds all places of specified type. Using when need find more than 20 places.
+     *
+     * @param type - type of searching place.
+     * @param location - search location.
+     * @param token - token for the next page of founded places.
+     * @return PlacesSearchResponse object that contains list of founded places and next page token.
+     * @throws Exception
+     */
     public PlacesSearchResponse findAllPlacesByType(final String type, LatLng location, final String token) throws Exception {
         int searchRadius = 707;
         return PlacesApi.nearbySearchQuery(context, location)

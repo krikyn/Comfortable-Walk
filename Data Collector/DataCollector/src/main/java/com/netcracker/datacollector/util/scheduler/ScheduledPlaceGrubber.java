@@ -24,7 +24,9 @@ import java.util.*;
 
 
 /**
- * Created by Grout on 28.10.2018.
+ * Class for automatic information gathering of places.
+ *
+ * @author Али
  */
 
 @Component
