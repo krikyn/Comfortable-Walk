@@ -6,6 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Entity for saving user's info in DB
+ * @author prokhorovartem
+ */
 @Entity
 @Data
 @Table(name = "user_application")

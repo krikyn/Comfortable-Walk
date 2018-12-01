@@ -24,8 +24,8 @@ public class AlgorithmParameters {
     @Value("${algorithm.distanceType}")
     private DistanceType distanceType; //какой алгоритм для расчета расстояния до цели (H) использовать
 
-    @Value("${algorithm.MaxCountOfWaypoints}")
-    private int MaxCountOfWaypoints; //Max count of waypoints in Google's API
+    @Value("${algorithm.maxCountOfWaypoints}")
+    private int maxCountOfWaypoints; //max count of waypoint in Gooogle's Api
 
     @Value("${algorithm.normalFactorH}")
     private double normalFactorH; // нормализующий коэффициент для оценки расстояния до цели

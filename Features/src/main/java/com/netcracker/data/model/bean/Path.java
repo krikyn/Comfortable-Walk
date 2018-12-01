@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Path bean for saving path params
+ * @author prokhorovartem
+ */
 @Getter
 @Setter
 public class Path {

@@ -17,20 +17,46 @@ import java.util.ArrayList;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
+/**
+ * Util for finding destinations and getting distance from Google API
+ * @author prokhorovartem
+ */
 @Component
 public class DistanceUtil {
 
+    /**
+     * Longitude for upper left corner
+     */
     private final BigDecimal UPPER_LEFT_LONGITUDE = BigDecimal.valueOf(30.18035);
+    /**
+     * Latitude for upper left corner
+     */
     private final BigDecimal UPPER_LEFT_LATITUDE = BigDecimal.valueOf(60.02781);
+    /**
+     * Longitude for bottom right corner
+     */
     private final BigDecimal BOTTOM_RIGHT_LONGITUDE = BigDecimal.valueOf(30.52101);
+    /**
+     * Latitude for bottom right corner
+     */
     private final BigDecimal BOTTOM_RIGHT_LATITUDE = BigDecimal.valueOf(59.84802);
+    /**
+     * Distance in longitude 500m
+     */
     private final BigDecimal DISTANCE_FOR_LONGITUDE = BigDecimal.valueOf(0.008965);
+    /**
+     * Distance in latitude 500m
+     */
     private final BigDecimal DISTANCE_FOR_LATITUDE = BigDecimal.valueOf(0.004495);
+    /**
+     * Epsilon for latitude, which helps to stop the loop correctly
+     */
     private final BigDecimal EPSILON_FOR_LATITUDE = BigDecimal.valueOf(0.00001);
 
     /**
-     *  Возвращает лист всех центров (широта, долгота) квадратов размером 500х500 (39x41 квадратов)
-     **/
+     * Finds destination according to constant coordinates
+     * @return list of destinations
+     */
     public ArrayList<String> findDestinations() {
         ArrayList<String> list = new ArrayList<>();
         BigDecimal currentX = UPPER_LEFT_LONGITUDE;
@@ -51,9 +77,10 @@ public class DistanceUtil {
     }
 
     /**
-     * @param origin начальная точка
-     * @param addresses массив точек, куда проложить маршрут
-     * @return массив расстояний
+     * Getting distance according to origin and destinations
+     * @param origin start point
+     * @param addresses array of points
+     * @return distance between points
      */
     public DistanceMatrixElement[] getDistance(String origin, String... addresses) throws InterruptedException, ApiException, IOException {
         GeoApiContext geoApiContext = new GeoApiContext.Builder()

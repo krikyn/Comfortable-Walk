@@ -10,6 +10,10 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration for connection to enable https
+ * @author prokhorovartem
+ */
 @Configuration
 public class ConnectorConfig {
 

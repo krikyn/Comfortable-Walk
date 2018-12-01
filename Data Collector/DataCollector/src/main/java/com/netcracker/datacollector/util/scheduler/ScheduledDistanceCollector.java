@@ -7,7 +7,9 @@ import com.netcracker.commons.data.model.bean.Graph;
 import com.netcracker.commons.data.repository.DistanceRepository;
 import com.netcracker.datacollector.util.DistanceFindingAlgorithm;
 import com.netcracker.datacollector.util.DistanceUtil;
+import com.netcracker.datacollector.util.enums.VariantsToCalculateDistances;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
@@ -16,23 +18,66 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Scheduler for collecting distances
+ *
+ * @author prokhorovartem
+ */
 @RequiredArgsConstructor
 @Service
 public class ScheduledDistanceCollector {
 
+    /**
+     * The number of all points
+     */
     private final int AMOUNT_OF_POINTS = 1599;
+    /**
+     * The number of horizontally points only
+     */
     private final int HORIZONTALLY_POINTS = 39;
+    /**
+     * The number of vertically points only
+     */
     private final int VERTICALLY_POINTS = 41;
+    /**
+     * The number of destinations per one request for first (expensive) variant to count distances
+     */
     private final int AMOUNT_OF_DESTINATIONS_PER_REQUEST = 25;
-
+    /**
+     * Instance of DistanceRepository, which works with DB
+     */
     private final DistanceRepository distanceRepository;
+    /**
+     * Instance of DistanceUtil, which finds destinations and distances
+     */
     private final DistanceUtil distanceUtil;
-
+    /**
+     * Instance of Yaml class for working with *.yaml files
+     */
     private Yaml yaml = new Yaml();
+    /**
+     * Field which guarantees to start calculate distances from zero point
+     */
     private Integer fromPointCounter = 0;
+    /**
+     * Variant we should use to calculate distances
+     */
+    private VariantsToCalculateDistances variantToCalculateDistances = VariantsToCalculateDistances.INACCURATE;
 
-//    @Scheduled(fixedDelay = 1000000000)
+    /**
+     * Scheduler, which updates distances every 24hr
+     */
+    @Scheduled(fixedDelay = 86400000)
     public void saveDistances() {
+        if (variantToCalculateDistances == VariantsToCalculateDistances.EXPENSIVE)
+            saveDistancesViaExpensiveVariant();
+        else saveDistancesWithLinks();
+    }
+
+    /**
+     * First (expensive) variant to count distances. It counts from one point to all points
+     */
+    private void saveDistancesViaExpensiveVariant() {
         try (FileReader reader = new FileReader("distanceCounter.yaml")) {
             Map<String, Integer> loadedData = yaml.load(reader);
             fromPointCounter = loadedData.get("fromPointCounter");
@@ -62,9 +107,10 @@ public class ScheduledDistanceCollector {
             saveFromPointInFile(fromPoint);
         }
     }
-
-//    @Scheduled(fixedDelay = 1000000000)
-    public void saveDistancesWithLinks() {
+    /**
+     * Second (inaccurate) variant to count distances. It counts from one point to neighbours
+     */
+    private void saveDistancesWithLinks() {
         try (FileReader reader = new FileReader("distanceCounter.yaml")) {
             Map<String, Integer> loadedData = yaml.load(reader);
             fromPointCounter = loadedData.get("fromPointCounter");
@@ -124,6 +170,9 @@ public class ScheduledDistanceCollector {
         calculateLinks();
     }
 
+    /**
+     * Counts another links for second (inaccurate) variant with Dijkstra's algorithm
+     */
     private void calculateLinks() {
         List<Distance> distances = distanceRepository.findAll();
 
@@ -162,6 +211,10 @@ public class ScheduledDistanceCollector {
         }
     }
 
+    /**
+     * Saves next fromPoint in file to continue if program will suddenly stopped
+     * @param fromPoint at which point we have to continue
+     */
     private void saveFromPointInFile(int fromPoint) {
         try (FileWriter writer = new FileWriter("distanceCounter.yaml")) {
             Map<String, Integer> counter = new HashMap<>(); //Сохраняем значения счётчиков в yaml файл
@@ -172,6 +225,12 @@ public class ScheduledDistanceCollector {
         }
     }
 
+    /**
+     * Save received values into DB
+     * @param fromPoint from which point we found distance
+     * @param toPoint to which point we found distance
+     * @param distanceMatrixElement distance between points
+     */
     private void saveDistance(int fromPoint, int toPoint, DistanceMatrixElement distanceMatrixElement) {
         Distance distance = new Distance();
         distance.setFromPoint(fromPoint);
