@@ -14,9 +14,7 @@ function initMap() {
     });
     directionsDisplay.setMap(map);
 
-    document.getElementById('test_submit').addEventListener('click', function() {
-        calculateAndDisplayRoute(directionsService, directionsDisplay);
-    });
+    
 }
 
 function initAutocomplete() {

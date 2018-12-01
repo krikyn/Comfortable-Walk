@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/comfortable_walk_db
+    url: jdbc:postgresql://localhost:5432/netcrackers
     username: postgres
-    password: postgres
+    password: 12345
   jpa:
     generate-ddl: true
     properties:
