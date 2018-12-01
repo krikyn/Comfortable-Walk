@@ -9,6 +9,7 @@ import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.util.enums.RouteProperty;
 import com.netcracker.routebuilder.util.implementation.DrawMap;
+import com.netcracker.routebuilder.util.implementation.RouteMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class AlgorithmController {
     private final PathFindingAlgorithm pathFindingAlgorithm;
     private final CityMapService cityMapService;
     private final PotentialMapBuilder potentialMapBuilder;
-    GoogleRouteBuilder googleRouteBuilder;
+    private final RouteMap routeMap;
 
     /*@GetMapping("/build")
     public @ResponseBody
@@ -85,6 +86,34 @@ public class AlgorithmController {
         return map.getGrid();
     }
 
+    @GetMapping("/route-map")
+    public @ResponseBody
+    String returnRouteMap() {
+        GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
+        GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+        GeoCoordinates northPoint = new GeoCoordinates(30.4277723, 59.841273);
+
+        DrawMap drawMap = new DrawMap();
+        drawMap.draw(routeMap.buildMap(domitory, northPoint));
+
+        return "loading map image...";
+    }
+
+    @GetMapping("/route-map2")
+    public @ResponseBody
+    String returnRoute2Map() {
+        GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
+        GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+
+        ArrayList<RouteProperty> properties = new ArrayList<>();
+        properties.add(RouteProperty.ZOO);
+
+        DrawMap drawMap = new DrawMap();
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(domitory, university, properties));
+
+        return "loading map image...";
+    }
+
     @GetMapping("/weather-map")
     public @ResponseBody
     String returnWeatherMap() {
@@ -93,7 +122,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.GOOD_WEATHER);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
 
         return "loading map image...";
     }
@@ -106,7 +135,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.PARK);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
 
         return "loading map image...";
     }
@@ -119,7 +148,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.CAFE);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
 
         return "loading map image...";
     }
@@ -132,7 +161,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.ZOO);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
 
         return "loading map image...";
     }
@@ -144,7 +173,7 @@ public class AlgorithmController {
         ArrayList<RouteProperty> properties = new ArrayList<>(Arrays.asList(RouteProperty.values()));
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
 
         return "loading map image...";
     }

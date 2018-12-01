@@ -58,7 +58,7 @@ public class DrawMap {
 
             Grid grid = new Grid();
             JFrame window = new JFrame();
-            window.setSize(840, 850);
+            window.setSize(840, 900);
 
 
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

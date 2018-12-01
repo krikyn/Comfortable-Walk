@@ -3,6 +3,8 @@ package com.netcracker.routebuilder.util.implementation;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 
+import java.util.Arrays;
+
 public class Utils {
 
     private final static double lat1KM = 0.00898; //1 км в градусах широты
@@ -26,15 +28,38 @@ public class Utils {
         return x >= 0 && y >= 0 && x < numX && y < numY;
     }
 
-    public static int[][] combineFields(int[][] a, int[][] b) {
-        //second array factor
-        //сделать проверку на совпадение размерностей массивов
+    private static int normalize100(int value, int maxValue) {
+        return (int) (((double) value / maxValue) * 100);
+    }
+
+    public static void fieldNormalization100(int[][] a) {
+        int maxValue = getMaxValue(a);
+
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < a[i].length; j++) {
-                a[i][j] += b[i][j];
+                a[i][j] = normalize100(a[i][j], maxValue);
             }
         }
-        return a;
+    }
+
+    public static void combineFields(int[][] a, int[][] b, double factor) {
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                a[i][j] += factor * (double) b[i][j];
+            }
+        }
+    }
+
+    private static int getMaxValue(int[][] b) {
+        int maxValue = 0;
+
+        for (int[] aB : b) {
+            for (int anAB : aB) {
+                maxValue = Math.max(maxValue, anAB);
+            }
+        }
+
+        return maxValue;
     }
 
     public static int[][] initField(int scale) {

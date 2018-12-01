@@ -58,7 +58,7 @@ public class PathFindingAlgorithm {
 
         ArrayList<ArrayList<Cell>> potentialField = new ArrayList<>();
         potentialFieldInitialization(potentialField, numPointsX, numPointsY);
-        fillPotentialField(potentialField, routeProperties);
+        fillPotentialField(startPoint, endPoint, potentialField, routeProperties);
 
         Cell startNode = potentialField.get(startCell.getX()).get(startCell.getY());
         Cell endNode = potentialField.get(endCell.getX()).get(endCell.getY());
@@ -120,9 +120,9 @@ public class PathFindingAlgorithm {
         return (double) potentialField.get(to.getFieldCoordinates().getX()).get(to.getFieldCoordinates().getY()).getValue();
     }
 
-    private void fillPotentialField(ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperty> routeProperties) {
+    private void fillPotentialField(GeoCoordinates start, GeoCoordinates end, ArrayList<ArrayList<Cell>> potentialField, ArrayList<RouteProperty> routeProperties) {
         log.info("start of filling a potential map");
-        int[][] assembledMap = potentialMapBuilder.assemblePotentialMap(routeProperties);
+        int[][] assembledMap = potentialMapBuilder.assemblePotentialMap(start, end, routeProperties);
 
         for (int i = 0; i < potentialField.size(); i++) {
             for (int j = 0; j < potentialField.get(i).size(); j++) {

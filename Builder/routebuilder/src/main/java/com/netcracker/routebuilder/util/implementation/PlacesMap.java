@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.netcracker.routebuilder.util.implementation.Utils.combineFields;
+import static com.netcracker.routebuilder.util.implementation.Utils.fieldNormalization100;
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 
 @Component
@@ -53,7 +54,9 @@ public class PlacesMap extends AbstractPotentialMap {
 
         for (RouteProperty type : includedProperties) {
             if (!type.equals(RouteProperty.GOOD_WEATHER)) {
-                combineFields(baseMap, fields.get(type.toString()));
+                int[][] curField = fields.get(type.toString());
+                fieldNormalization100(curField);
+                combineFields(baseMap, curField, 1);
             }
         }
 

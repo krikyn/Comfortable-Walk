@@ -32,4 +32,13 @@ public class AlgorithmParameters {
 
     @Value("${algorithm.normalFactorG}")
     private double normalFactorG; //нормализующий коэффициент для стоимости пути от начальной вершины
+
+    @Value("${algorithm.weatherFieldFactor}")
+    private double weatherFieldFactor; //насколько учитывается потенциальная карта погоды в работе алгоритма
+
+    @Value("${algorithm.placesFieldFactor}")
+    private double placesFieldFactor; //насколько учитывается потенциальная карта мест в работе алгоритма
+
+    @Value("${algorithm.routeFieldFactor}")
+    private double routeFieldFactor; //насколько учитывается потенциальная карта исходного маршрута в работе алгоритма
 }

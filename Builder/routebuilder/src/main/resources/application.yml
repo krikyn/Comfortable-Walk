@@ -22,6 +22,9 @@ algorithm:
   distanceType: EUCLIDEAN
   normalFactorH: 1
   normalFactorG: 1
+  weatherFieldFactor: -1
+  placesFieldFactor: 1
+  routeFieldFactor: 0.1
   ApiKey: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:
