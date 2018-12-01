@@ -5,6 +5,10 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Point bean for saving point params and overridden toString()
+ * @author prokhorovartem
+ */
 @Getter
 @Setter
 public class Point {
