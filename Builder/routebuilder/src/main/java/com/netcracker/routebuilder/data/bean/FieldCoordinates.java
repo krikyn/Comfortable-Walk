@@ -11,5 +11,9 @@ public class FieldCoordinates {
         this.x = x;
         this.y = y;
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        FieldCoordinates field =(FieldCoordinates) obj;
+        return (this.getX()==field.getX())&&(this.getY()==field.getY());
+    }
 }
