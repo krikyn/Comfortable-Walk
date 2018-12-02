@@ -2,35 +2,35 @@ package com.netcracker.controller;
 
 import com.netcracker.data.model.bean.Path;
 import com.netcracker.util.CheckedItemsUtil;
+import com.netcracker.util.PlacesType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 /**
  * Controller for main page
  * @author prokhorovartem
  */
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class MainPageController {
 
     private final CheckedItemsUtil checkedItemsUtil;
 
-    /**
-     * Mapping for post params of the path
-     * @param path posted path
-     * @return redirect to stay on this page
-     */
-    @PostMapping("/loginSuccess")
-    public String postParams(@ModelAttribute Path path) {
+    @PostMapping("/sendData")
+    public String[] sendData(@RequestBody Path path){
+        List<PlacesType> checkedItems;
         if (path.getPlaceName() == null)
-            path.setCheckedItems(null);
+            checkedItems = null;
         else
-            path.setCheckedItems(checkedItemsUtil.getItems(path.getPlaceName().toUpperCase()));
-        System.out.println("From point: " + path.getFromPointLat() + ", " + path.getFromPointLng() + " To Point: "
-                + path.getToPointLat() + ", " + path.getToPointLng() + " Wanna best weather? "
-                + path.getIsBestWeather() + " Checked items: " + path.getCheckedItems());
-        return "redirect:/loginSuccess";
+            checkedItems = checkedItemsUtil.getItems(path.getPlaceName().toUpperCase());
+        System.out.println("From point: " + path.getFromPointLat() + ", " + path.getFromPointLng()
+                + " To Point: " + path.getToPointLat() + ", " + path.getToPointLng()
+                + " Wanna best weather? " + path.getIsBestWeather()
+                + " Checked items: " + checkedItems);
+        String[] response = {"59.971304, 30.293745", "59.966297, 30.292687"};
+        return response;
     }
 }

@@ -1,7 +1,5 @@
 package com.netcracker.controller;
 
-import com.netcracker.data.model.bean.Path;
-import com.netcracker.data.model.User;
 import com.netcracker.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ResolvableType;
@@ -109,7 +107,7 @@ public class LoginController {
             }
         }
 
-        model.addAttribute("path", new Path());
+//        model.addAttribute("path", new Path());
 
         return "loginSuccess";
     }
