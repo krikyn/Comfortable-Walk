@@ -7,22 +7,27 @@ import com.netcracker.routebuilder.algorithm.implementation.PathFindingAlgorithm
 import com.netcracker.routebuilder.algorithm.implementation.PotentialMapBuilder;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
+import com.netcracker.routebuilder.data.bean.Path;
+import com.netcracker.routebuilder.util.enums.PlacesType;
 import com.netcracker.routebuilder.util.enums.RouteProperty;
 import com.netcracker.routebuilder.util.implementation.DrawMap;
 import com.netcracker.routebuilder.util.implementation.RouteMap;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.internal.http2.Header;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.netcracker.routebuilder.util.implementation.Utils.convertGeoToFieldCoordinates;
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 
+@Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class AlgorithmController {
 
     private final PathFindingAlgorithm pathFindingAlgorithm;
@@ -30,11 +35,41 @@ public class AlgorithmController {
     private final PotentialMapBuilder potentialMapBuilder;
     private final RouteMap routeMap;
 
-    /*@GetMapping("/build")
-    public @ResponseBody
-    ArrayList<GeoCoordinates> buildRoute(@RequestParam GeoCoordinates startPoint, @RequestParam GeoCoordinates endPoint, @RequestParam ArrayList<RouteProperty> routeProperties) {
-        return pathFindingAlgorithm.buildRoute(startPoint, endPoint, routeProperties);
-    }*/
+    @CrossOrigin
+    @PostMapping("/build")
+    public String[] sendData(@RequestBody Path path) {
+        ArrayList<RouteProperty> routeProperties = new ArrayList<>();
+        int[][] mapWithRoute = initField(20);
+
+
+        if (path.getIsBestWeather()) {
+            routeProperties.add(RouteProperty.GOOD_WEATHER);
+        }
+
+        String[] arrayOfWords = path.getPlaceName().toUpperCase().split(",");
+        for (String arrayOfWord : arrayOfWords) {
+            try {
+                routeProperties.add(RouteProperty.valueOf(arrayOfWord));
+            } catch (IllegalArgumentException e) {
+                log.error("Error with parsing places in the controller", e);
+            }
+        }
+
+        GeoCoordinates from = new GeoCoordinates(Double.valueOf(path.getFromPointLng()), Double.valueOf(path.getFromPointLat()));
+        GeoCoordinates to = new GeoCoordinates(Double.valueOf(path.getToPointLng()), Double.valueOf(path.getToPointLat()));
+
+        ArrayList<GeoCoordinates> route = pathFindingAlgorithm.buildRoute(from, to, routeProperties, mapWithRoute);
+        String[] response = new String[route.size()];
+
+        for (int i = 0; i < route.size(); i++) {
+            response[i] = route.get(i).getY() + ", " + route.get(i).getX();
+        }
+
+        DrawMap drawMap = new DrawMap();
+        drawMap.draw(mapWithRoute);
+
+        return response;
+    }
 
     @GetMapping("/test")
     public @ResponseBody
@@ -122,7 +157,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.GOOD_WEATHER);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
 
         return "loading map image...";
     }
@@ -135,7 +170,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.PARK);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
 
         return "loading map image...";
     }
@@ -148,7 +183,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.CAFE);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
 
         return "loading map image...";
     }
@@ -161,7 +196,7 @@ public class AlgorithmController {
         properties.add(RouteProperty.ZOO);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
 
         return "loading map image...";
     }
@@ -173,7 +208,7 @@ public class AlgorithmController {
         ArrayList<RouteProperty> properties = new ArrayList<>(Arrays.asList(RouteProperty.values()));
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d,0d),new GeoCoordinates(0d,0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
 
         return "loading map image...";
     }

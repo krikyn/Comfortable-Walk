@@ -71,7 +71,7 @@ function sendData() {
         $.ajax({
             type: "POST",
             contentType: "application/json",
-            url: "/sendData",
+            url: "http://localhost:9091/build",
             data: JSON.stringify(search),
             dataType: 'json',
             cache: false,

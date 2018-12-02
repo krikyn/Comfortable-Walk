@@ -65,7 +65,6 @@ public class PathFindingAlgorithm {
 
         PriorityQueue<Cell> nodes = new PriorityQueue<>(Comparator.comparing(Cell::getFx));
 
-        //hmmmmmmmm
         Cell firstPoint = potentialField.get(startCell.getX()).get(startCell.getY());
 
         Double firstPointH = calcDistToDestinationCell(startNode, endNode);
@@ -77,7 +76,14 @@ public class PathFindingAlgorithm {
         int iterationsNum = 0;
 
         while (!nodes.isEmpty()) {
+
             iterationsNum++;
+
+            if (iterationsNum > params.getMaxIterationsNum()) {
+                log.warn("Maximum number of iterations exceeded in the algorithm, standard Google route will be used");
+                return googleRouteBuilder.buildRoute(startPoint, endPoint);
+            }
+
             Cell curCell = nodes.poll();
             System.out.println(curCell.getGx() + " - " + curCell.getHx());
 
@@ -85,7 +91,10 @@ public class PathFindingAlgorithm {
                 ArrayList<GeoCoordinates> route = routeRestoration(curCell, mapWithRoute);
                 log.info("The algorithm found the best way");
                 log.info("Iterations number: " + iterationsNum);
-                return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
+
+                //TODO ЧЕ С фРОНТОМ??????????
+                return route;
+                //return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
             }
 
             curCell.setClosed(true);
@@ -199,23 +208,29 @@ public class PathFindingAlgorithm {
     }
 
     private ArrayList<GeoCoordinates> routeRestoration(Cell curNode, int[][] mapWithRoute) {
+        int routePointsNum = 0;
         ArrayList<GeoCoordinates> route = new ArrayList<>();
 
         //не включаем конечную точку
+        //route.add(curNode.getGeoCoordinates());
+
+        //TODO УДАЛИТ
         //route.add(curNode.getGeoCoordinates());
 
         while (curNode.getParent() != null) {
             curNode = curNode.getParent();
             route.add(curNode.getGeoCoordinates());
             mapWithRoute[curNode.getFieldCoordinates().getX()][curNode.getFieldCoordinates().getY()] = 100;
-            ;
+            routePointsNum++;
         }
 
+        //TODO РАСКОММИТИТЬ
         //не включаем начальную точку
-        if (!route.isEmpty()){
+        if (!route.isEmpty()) {
             route.remove(route.size() - 1);
         }
 
+        log.info("Number of the route's points: " + routePointsNum);
 
         Collections.reverse(route);
 

@@ -1,12 +1,15 @@
 package com.netcracker.routebuilder.util.implementation;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class DrawMap {
-    public static class Grid extends JPanel {
+    public class Grid extends JPanel {
 
         private List<Point> fillCells;
         private List<Color> ColorCells;
@@ -20,7 +23,7 @@ public class DrawMap {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            g.drawImage(new ImageIcon("auxiliary-images/background2.PNG").getImage(), 2, 2, 381 * 2, 401 * 2,new Color(0,0,0),null);
+            g.drawImage(new ImageIcon("auxiliary-images/background2.PNG").getImage(), 2, 2, 381 * 2, 401 * 2, new Color(0, 0, 0), null);
 
             for (int i = 0; i < fillCells.size(); i++) {
                 int cellX = 2 + (fillCells.get(i).x * 2);
@@ -65,9 +68,16 @@ public class DrawMap {
             window.add(grid);
             window.setVisible(true);
 
+            //int count = 0;
+
             for (int i = 0; i < 401; i++) {
                 for (int j = 0; j < 381; j++) {
                     grid.fillCell(i, j, (int) ((map[i][j] / biggestValue) * 255d));
+
+                    /*if (map[i][j] == 100) {
+                        count++;
+                        if (count > 0) break;
+                    }*/
                 }
             }
 

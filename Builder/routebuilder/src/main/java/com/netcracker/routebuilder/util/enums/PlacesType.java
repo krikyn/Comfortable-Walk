@@ -1,5 +1,4 @@
 package com.netcracker.routebuilder.util.enums;
-
 public enum PlacesType {
     AMUSEMENT_PARK,
     BAKERY,

@@ -41,4 +41,7 @@ public class AlgorithmParameters {
 
     @Value("${algorithm.routeFieldFactor}")
     private double routeFieldFactor; //насколько учитывается потенциальная карта исходного маршрута в работе алгоритма
+
+    @Value("${algorithm.maxIterationsNum}")
+    private double maxIterationsNum; //максимальное количество итераций в алгоритме, при превышении которого, выдается обычный гугловский маршрут
 }
