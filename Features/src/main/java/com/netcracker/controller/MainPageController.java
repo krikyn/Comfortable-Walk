@@ -20,7 +20,7 @@ public class MainPageController {
     private final CheckedItemsUtil checkedItemsUtil;
 
     @PostMapping("/sendData")
-    public String[] sendData(@RequestBody Path path){
+    public double[][] sendData(@RequestBody Path path) {
         List<PlacesType> checkedItems;
         if (path.getPlaceName() == null)
             checkedItems = null;
@@ -30,7 +30,10 @@ public class MainPageController {
                 + " To Point: " + path.getToPointLat() + ", " + path.getToPointLng()
                 + " Wanna best weather? " + path.getIsBestWeather()
                 + " Checked items: " + checkedItems);
-        String[] response = {"59.971304, 30.293745", "59.966297, 30.292687"};
+        double[][] response = {
+                {59.971304, 30.293745},
+                {59.966297, 30.292687}
+        };
         return response;
     }
 }
