@@ -7,9 +7,16 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to visualize potential maps
+ * TODO: доделать, ЧЕРНОВОЙ ТЕСТОВЫЙ ВАРИАНТ
+ *
+ * @author Kirill.Vakhrushev
+ */
 @Slf4j
 public class DrawMap {
-    public class Grid extends JPanel {
+
+    private class Grid extends JPanel {
 
         private List<Point> fillCells;
         private List<Color> ColorCells;
@@ -42,6 +49,11 @@ public class DrawMap {
 
     }
 
+    /**
+     * Method to create a window with a drawn potential map
+     *
+     * @param map potential map
+     */
     public void draw(int[][] map) {
 
         double maxValue = 0;
@@ -68,16 +80,9 @@ public class DrawMap {
             window.add(grid);
             window.setVisible(true);
 
-            //int count = 0;
-
             for (int i = 0; i < 401; i++) {
                 for (int j = 0; j < 381; j++) {
                     grid.fillCell(i, j, (int) ((map[i][j] / biggestValue) * 255d));
-
-                    /*if (map[i][j] == 100) {
-                        count++;
-                        if (count > 0) break;
-                    }*/
                 }
             }
 

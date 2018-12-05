@@ -2,22 +2,24 @@ package com.netcracker.routebuilder.algorithm.implementation;
 
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
+import com.netcracker.routebuilder.util.enums.RouteProperty;
 import com.netcracker.routebuilder.util.implementation.PlacesMap;
 import com.netcracker.routebuilder.util.implementation.RouteMap;
 import com.netcracker.routebuilder.util.implementation.WeatherMap;
 import com.netcracker.routebuilder.util.implementation.ZeroMap;
-import com.netcracker.routebuilder.util.enums.RouteProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import static com.netcracker.routebuilder.util.implementation.Utils.combineFields;
-import static com.netcracker.routebuilder.util.implementation.Utils.fieldNormalization100;
-import static com.netcracker.routebuilder.util.implementation.Utils.initField;
+import static com.netcracker.routebuilder.util.implementation.Utils.*;
 
+/**
+ * Class to combine all potential maps into one, taking into account the necessary features of the route
+ *
+ * @author Kirill.Vakhrushev
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component
@@ -29,8 +31,15 @@ public class PotentialMapBuilder {
     private final PlacesMap placesMap;
     private final RouteMap routeMap;
 
+    /**
+     * method for assemble main potential map
+     *
+     * @param start              start point of the route
+     * @param end                end point of the route
+     * @param includedProperties necessary properties of the route
+     * @return assembled potential map
+     */
     public int[][] assemblePotentialMap(GeoCoordinates start, GeoCoordinates end, ArrayList<RouteProperty> includedProperties) {
-
         if (includedProperties.isEmpty()) {
             log.info("Route property list is empty, a zero potential map will be used");
             return zeroMap.getField();
@@ -45,7 +54,7 @@ public class PotentialMapBuilder {
 
             combineFields(field, placesMap.getField(includedProperties), params.getPlacesFieldFactor());
 
-            int[][] routeField = routeMap.buildMap(start,end);
+            int[][] routeField = routeMap.buildMap(start, end);
             fieldNormalization100(routeField);
             combineFields(field, routeField, params.getRouteFieldFactor());
 

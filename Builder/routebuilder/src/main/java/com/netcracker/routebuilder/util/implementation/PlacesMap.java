@@ -4,7 +4,6 @@ import com.netcracker.commons.service.CityMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
 import com.netcracker.routebuilder.util.enums.PlacesType;
 import com.netcracker.routebuilder.util.enums.RouteProperty;
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,6 +17,11 @@ import static com.netcracker.routebuilder.util.implementation.Utils.combineField
 import static com.netcracker.routebuilder.util.implementation.Utils.fieldNormalization100;
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 
+/**
+ * Class describing a places potential map
+ *
+ * @author Kirill.Vakhrushev
+ */
 @Component
 @RequiredArgsConstructor
 public class PlacesMap extends AbstractPotentialMap {
@@ -26,6 +30,9 @@ public class PlacesMap extends AbstractPotentialMap {
     private final CityMapService cityMapService;
     private Map<String, int[][]> fields;
 
+    /**
+     * Places potential map initialization
+     */
     @PostConstruct
     public void init() {
         fields = new HashMap<>();
@@ -37,7 +44,7 @@ public class PlacesMap extends AbstractPotentialMap {
         updateMaps();
     }
 
-    @Scheduled(cron = "0 0 1 * * MON") //every monday at 1 AM
+    @Scheduled(cron = "0 0 1 * * MON")
     private void update() {
         updateMaps();
     }
@@ -49,6 +56,12 @@ public class PlacesMap extends AbstractPotentialMap {
     }
 
 
+    /**
+     * Method for collecting a potential map with the desired properties
+     *
+     * @param includedProperties route properties
+     * @return potential map with plotted objects
+     */
     public int[][] getField(ArrayList<RouteProperty> includedProperties) {
         int[][] baseMap = initField(params.getScale());
 

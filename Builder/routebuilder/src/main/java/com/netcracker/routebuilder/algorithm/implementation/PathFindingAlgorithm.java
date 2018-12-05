@@ -15,6 +15,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+/**
+ * Class that implements an algorithm for constructing a route with given parameters
+ *
+ * @author Kirill.Vakhrushev
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component
@@ -24,14 +29,33 @@ public class PathFindingAlgorithm {
     final AlgorithmParameters params;
     final PotentialMapBuilder potentialMapBuilder;
 
-    private final static double LAT_1_KM = 0.00898; //1 км в градусах широты
-    private final static double LON_1_KM = 0.01793; //1 км в градусах долготы
-    private final static int DEFAULT_MAP_SCALE = 1;
-    //количество клеток 1x1 км по Ox и Oy  на нашей потенциальной карте
+    /**
+     * 1 km in degrees of latitude
+     */
+    private final static double LAT_1_KM = 0.00898;
+    /**
+     * 1 km in degrees of longitude
+     */
+    private final static double LON_1_KM = 0.01793;
+    /**
+     * the number of cells 1x1 km by Ox on potential map
+     */
     private final static int DEFAULT_NUM_POINT_X = 21;
+    /**
+     * the number of cells 1x1 km by Oy on our potential map
+     */
     private final static int DEFAULT_NUM_POINT_Y = 20;
 
 
+    /**
+     * Method for build route
+     *
+     * @param startPoint      starting route geo-location
+     * @param endPoint        final route geo-location
+     * @param routeProperties route properties
+     * @param mapWithRoute    map on which the route will be applied
+     * @return list of coordinates of points of the constructed route
+     */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties, int[][] mapWithRoute) {
         log.info("--Start of the algorithm--");
         log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
@@ -92,9 +116,7 @@ public class PathFindingAlgorithm {
                 log.info("The algorithm found the best way");
                 log.info("Iterations number: " + iterationsNum);
 
-                //TODO ЧЕ С фРОНТОМ??????????
-                return route;
-                //return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
+                return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
             }
 
             curCell.setClosed(true);
@@ -214,9 +236,6 @@ public class PathFindingAlgorithm {
         //не включаем конечную точку
         //route.add(curNode.getGeoCoordinates());
 
-        //TODO УДАЛИТ
-        //route.add(curNode.getGeoCoordinates());
-
         while (curNode.getParent() != null) {
             curNode = curNode.getParent();
             route.add(curNode.getGeoCoordinates());
@@ -224,7 +243,6 @@ public class PathFindingAlgorithm {
             routePointsNum++;
         }
 
-        //TODO РАСКОММИТИТЬ
         //не включаем начальную точку
         if (!route.isEmpty()) {
             route.remove(route.size() - 1);

@@ -1,5 +1,10 @@
 package com.netcracker.routebuilder.util.enums;
 
+/**
+ * Enum of route properties.
+ *
+ * @author Kirill.Vakhrushev
+ */
 public enum RouteProperty {
     AMUSEMENT_PARK,
     BAKERY,

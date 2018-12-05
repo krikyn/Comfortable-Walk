@@ -3,7 +3,6 @@ package com.netcracker.routebuilder.util.implementation;
 import com.netcracker.commons.data.model.WeatherPotentialMap;
 import com.netcracker.commons.service.WeatherMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
-import com.netcracker.routebuilder.util.interfaces.AbstractPotentialMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,6 +12,11 @@ import javax.annotation.PostConstruct;
 
 import static com.netcracker.routebuilder.util.implementation.Utils.initField;
 
+/**
+ * Class describing a weather potential map
+ *
+ * @author Kirill.Vakhrushev
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -20,8 +24,10 @@ public class WeatherMap extends AbstractPotentialMap {
 
     private final WeatherMapService weatherMapService;
     private final AlgorithmParameters params;
-    private final static int WEATHER_MAP_SCALE = 1;
 
+    /**
+     * Weather potential map initialization
+     */
     @PostConstruct
     public void init() {
         field = initField(params.getScale());

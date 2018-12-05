@@ -1,19 +1,18 @@
 package com.netcracker.routebuilder.data.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+
+/**
+ * FieldCoordinates bean for saving field coordinates in the order of the arguments in the array (a[x][y])
+ *
+ * @author KirillVakhrushev
+ */
 @Data
+@AllArgsConstructor
 public class FieldCoordinates {
 
     private int x;
     private int y;
 
-    public FieldCoordinates(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        FieldCoordinates field =(FieldCoordinates) obj;
-        return (this.getX()==field.getX())&&(this.getY()==field.getY());
-    }
 }

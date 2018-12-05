@@ -1,4 +1,10 @@
 package com.netcracker.routebuilder.util.enums;
+
+/**
+ * Enum of places on the map
+ *
+ * @author Kirill.Vakhrushev
+ */
 public enum PlacesType {
     AMUSEMENT_PARK,
     BAKERY,

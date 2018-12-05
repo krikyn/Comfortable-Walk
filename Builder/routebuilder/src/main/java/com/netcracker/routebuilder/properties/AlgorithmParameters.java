@@ -5,6 +5,9 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Class for accessing constants participating in the path finding algorithm
+ */
 @Configuration
 @Data
 public class AlgorithmParameters {
