@@ -67,7 +67,7 @@ public class ScheduledDistanceCollector {
     /**
      * Scheduler, which updates distances every 24hr
      */
-    @Scheduled(fixedDelay = 86400000)
+    //@Scheduled(fixedDelay = 86400000)
     public void saveDistances() {
         if (variantToCalculateDistances == VariantsToCalculateDistances.EXPENSIVE)
             saveDistancesViaExpensiveVariant();

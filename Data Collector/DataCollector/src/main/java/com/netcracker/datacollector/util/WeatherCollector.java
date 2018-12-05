@@ -27,6 +27,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class for get data from weather radar
+ *
+ * @author Kirill.Vakhrushev
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -35,11 +40,14 @@ public class WeatherCollector {
     private final WeatherPotentialMapRepository repository;
     private final RadarProperties radarProperties;
 
+    /**
+     * Method for get data from weather radar and rewrite weather potential map in DB
+     */
     public void run() {
 
         String fileExtension = "PNG";
 
-        //На случай, если радар начнет опять снимки в произвольное время делать
+        //На случай, если радар делает снимки в произвольное время
 
         ImageAddress imageAddress = new ImageAddress();
         BufferedImage image = downloadImageFromRadarAlternative(imageAddress);
