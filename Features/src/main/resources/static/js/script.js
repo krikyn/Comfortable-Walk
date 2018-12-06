@@ -104,12 +104,12 @@ function calculateAndDisplayRoute(data) {
     });
     var shapes = [];
     var path = [];
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length - 1; i++) {
         path.push(new google.maps.LatLng(data[i][0], data[i][1]))
     }
     var polyline = new google.maps.Polyline({path: path, strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2});
     polyline.setMap(map);
-    map.setCenter(new google.maps.LatLng(59.94725871655315, 30.303347840670995), 13);
+    map.setCenter(new google.maps.LatLng(data[data.length - 1][0], data[data.length - 1][1]), 13);
     shapes.push(polyline);
 }
 

@@ -37,7 +37,7 @@ public class AlgorithmController {
      */
     @CrossOrigin
     @PostMapping("/build")
-    public String[] build(@RequestBody Path path) {
+    public double[][] build(@RequestBody Path path) {
         int[][] mapWithRoute = initField(20);
         ArrayList<RouteProperty> routeProperties = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class AlgorithmController {
 
         ArrayList<GeoCoordinates> route = pathFindingAlgorithm.buildRoute(from, to, routeProperties, mapWithRoute);
 
-        String[] response = new String[route.size()];
+        double[][] response = new double[route.size() + 1][2];
         generateResponse(route, response);
 
         return response;

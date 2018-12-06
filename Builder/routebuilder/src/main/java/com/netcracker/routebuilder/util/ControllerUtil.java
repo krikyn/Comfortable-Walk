@@ -36,11 +36,15 @@ public class ControllerUtil {
      * Method for generate response
      *
      * @param route    list of coordinates of points of the constructed route
-     * @param response array of strings where to write a list of coordinates of points of the constructed route
+     * @param response two-dimensional array where to write a list of coordinates of points of the constructed route
      */
-    public static void generateResponse(ArrayList<GeoCoordinates> route, String[] response) {
+    public static void generateResponse(ArrayList<GeoCoordinates> route, double[][] response) {
         for (int i = 0; i < route.size(); i++) {
-            response[i] = route.get(i).getY() + ", " + route.get(i).getX();
+            response[i][0] = route.get(i).getY();
+            response[i][1] = route.get(i).getX();
         }
+        //Переменная для центра
+        response[route.size()][0] = 61.946079;
+        response[route.size()][1] = 32.318713;
     }
 }
