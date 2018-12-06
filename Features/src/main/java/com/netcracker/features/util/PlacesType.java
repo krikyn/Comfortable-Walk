@@ -1,9 +1,10 @@
-package com.netcracker.util;
+package com.netcracker.features.util;
 
 import java.util.Arrays;
 
 /**
  * Enum for Checked items
+ *
  * @author prokhorovartem
  */
 public enum PlacesType {
@@ -34,6 +35,7 @@ public enum PlacesType {
 
     /**
      * Getting string and return enum type
+     *
      * @param string string, which is taken from mini-search from frontend
      * @return enum type or null
      */

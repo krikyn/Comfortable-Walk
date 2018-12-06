@@ -1,7 +1,6 @@
-package com.netcracker.config;
+package com.netcracker.features.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * Configuration for security to allow only authorized users use the application
+ *
  * @author prokhorovartem
  */
 @RequiredArgsConstructor
@@ -92,19 +92,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         String clientSecret = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-secret");
-        if (client.equals("google")) {
+        if (Objects.equals(client, "google")) {
             return CommonOAuth2Provider.GOOGLE.getBuilder(client)
                     .clientId(clientId)
                     .clientSecret(clientSecret)
                     .build();
         }
-        if (client.equals("github")) {
+        if (Objects.equals(client, "github")) {
             return CommonOAuth2Provider.GITHUB.getBuilder(client)
                     .clientId(clientId)
                     .clientSecret(clientSecret)
                     .build();
         }
-        if (client.equals("facebook")) {
+        if (Objects.equals(client, "facebook")) {
             return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
                     .clientId(clientId)
                     .clientSecret(clientSecret)

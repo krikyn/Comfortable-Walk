@@ -1,4 +1,4 @@
-package com.netcracker;
+package com.netcracker.features;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

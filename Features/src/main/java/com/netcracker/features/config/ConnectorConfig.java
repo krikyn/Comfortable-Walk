@@ -1,4 +1,4 @@
-package com.netcracker.config;
+package com.netcracker.features.config;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration for connection to enable https
+ *
  * @author prokhorovartem
  */
 @Configuration

@@ -1,26 +1,28 @@
-package com.netcracker.util;
+package com.netcracker.features.service;
 
-import com.netcracker.data.model.User;
-import com.netcracker.data.repository.UserRepository;
+import com.netcracker.features.data.model.User;
+import com.netcracker.features.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Util for working with user's info
+ *
  * @author prokhorovartem
  */
 @RequiredArgsConstructor
-@Component
-public class UserUtil {
+@Service
+public class UserService {
 
     private final UserRepository userRepository;
 
     /**
      * Saving new user or editing user with new info
+     *
      * @param socialName name of social network
-     * @param sub id in social network
-     * @param userName nickname or first name + last name
-     * @param picture avatar from social network
+     * @param sub        id in social network
+     * @param userName   nickname or first name + last name
+     * @param picture    avatar from social network
      */
     public void saveUser(String socialName, Object sub, Object userName, Object picture) {
         String id = socialName + "_" + sub;

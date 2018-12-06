@@ -1,4 +1,4 @@
-package com.netcracker.data.model;
+package com.netcracker.features.data.model;
 
 import lombok.Data;
 
@@ -8,6 +8,7 @@ import javax.persistence.Table;
 
 /**
  * Entity for saving user's info in DB
+ *
  * @author prokhorovartem
  */
 @Entity

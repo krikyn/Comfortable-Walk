@@ -1,10 +1,11 @@
-package com.netcracker.data.model.bean;
+package com.netcracker.features.data.model.bean;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Path bean for saving path params
+ *
  * @author prokhorovartem
  */
 @Getter

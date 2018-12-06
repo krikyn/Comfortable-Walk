@@ -1,6 +1,6 @@
-package com.netcracker.controller;
+package com.netcracker.features.controller;
 
-import com.netcracker.util.UserUtil;
+import com.netcracker.features.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
@@ -24,6 +24,7 @@ import java.util.Objects;
 
 /**
  * Controller for login-page
+ *
  * @author prokhorovartem
  */
 @RequiredArgsConstructor
@@ -35,10 +36,11 @@ public class LoginController {
 
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
-    private final UserUtil userUtil;
+    private final UserService userService;
 
     /**
      * Mapping for adding registration services on login-page
+     *
      * @param model model for thymeleaf
      * @return name of thymeleaf template
      */
@@ -60,7 +62,8 @@ public class LoginController {
 
     /**
      * Mapping for adding information about client on main page
-     * @param model model for thymeleaf
+     *
+     * @param model          model for thymeleaf
      * @param authentication token for access registration service
      * @return name of thymeleaf template
      */
@@ -89,25 +92,23 @@ public class LoginController {
                 case "https://www.googleapis.com/oauth2/v3/userinfo":
                     model.addAttribute("name", Objects.requireNonNull(userAttributes).get("name"));
                     model.addAttribute("picture", userAttributes.get("picture"));
-                    userUtil.saveUser("google", userAttributes.get("sub"),
+                    userService.saveUser("google", userAttributes.get("sub"),
                             userAttributes.get("name"), userAttributes.get("picture"));
                     break;
                 case "https://api.github.com/user":
                     model.addAttribute("name", Objects.requireNonNull(userAttributes).get("login"));
                     model.addAttribute("picture", userAttributes.get("avatar_url"));
-                    userUtil.saveUser("github", userAttributes.get("id"),
+                    userService.saveUser("github", userAttributes.get("id"),
                             userAttributes.get("login"), userAttributes.get("avatar_url"));
                     break;
                 case "https://graph.facebook.com/me":
                     model.addAttribute("name", Objects.requireNonNull(userAttributes).get("name"));
                     model.addAttribute("picture", userAttributes.get("picture"));
-                    userUtil.saveUser("facebook", userAttributes.get("id"),
+                    userService.saveUser("facebook", userAttributes.get("id"),
                             userAttributes.get("name"), userAttributes.get("picture"));
                     break;
             }
         }
-
-//        model.addAttribute("path", new Path());
 
         return "loginSuccess";
     }
