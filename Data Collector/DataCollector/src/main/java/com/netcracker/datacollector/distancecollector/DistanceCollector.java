@@ -17,6 +17,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Distance Collector for Path Finding Algorithm
+ *
+ * @author prokhorovartem
+ */
 @RequiredArgsConstructor
 @Component
 @Slf4j

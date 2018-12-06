@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Util for working with user's info
+ * Service for working with user's info
  *
  * @author prokhorovartem
  */

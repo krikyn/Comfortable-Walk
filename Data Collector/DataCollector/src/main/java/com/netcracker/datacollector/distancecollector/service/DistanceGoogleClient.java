@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
- * Util for finding destinations and getting distance from Google API
+ * Service for finding destinations and getting distance from Google API
  *
  * @author prokhorovartem
  */
