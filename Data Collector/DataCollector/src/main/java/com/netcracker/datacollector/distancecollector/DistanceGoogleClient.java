@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.util;
+package com.netcracker.datacollector.distancecollector;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.DistanceMatrixApiRequest;
@@ -9,7 +9,8 @@ import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
 import com.netcracker.commons.data.model.bean.Point;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,10 +20,11 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
  * Util for finding destinations and getting distance from Google API
+ *
  * @author prokhorovartem
  */
-@Component
-public class DistanceUtil {
+@Service
+public class DistanceGoogleClient {
 
     /**
      * Longitude for upper left corner
@@ -54,7 +56,14 @@ public class DistanceUtil {
     private final BigDecimal EPSILON_FOR_LATITUDE = BigDecimal.valueOf(0.00001);
 
     /**
+     * Google Distance Matrix API key value
+     */
+    @Value("${google.api.distance-key}")
+    private String apiKey;
+
+    /**
      * Finds destination according to constant coordinates
+     *
      * @return list of destinations
      */
     public ArrayList<String> findDestinations() {
@@ -78,13 +87,15 @@ public class DistanceUtil {
 
     /**
      * Getting distance according to origin and destinations
-     * @param origin start point
+     *
+     * @param origin    start point
      * @param addresses array of points
      * @return distance between points
      */
     public DistanceMatrixElement[] getDistance(String origin, String... addresses) throws InterruptedException, ApiException, IOException {
+
         GeoApiContext geoApiContext = new GeoApiContext.Builder()
-                .apiKey(Variables.SECRET_KEY)
+                .apiKey(apiKey)
                 .build();
 
         DistanceMatrixApiRequest req = DistanceMatrixApi.newRequest(geoApiContext);

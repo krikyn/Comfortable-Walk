@@ -1,16 +1,13 @@
-package com.netcracker.datacollector.util.scheduler;
+package com.netcracker.datacollector.distancecollector;
 
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrixElement;
 import com.netcracker.commons.data.model.Distance;
 import com.netcracker.commons.data.model.bean.Graph;
 import com.netcracker.commons.data.repository.DistanceRepository;
-import com.netcracker.datacollector.util.DistanceFindingAlgorithm;
-import com.netcracker.datacollector.util.DistanceUtil;
-import com.netcracker.datacollector.util.enums.VariantsToCalculateDistances;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileReader;
@@ -18,15 +15,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Scheduler for collecting distances
- *
- * @author prokhorovartem
- */
 @RequiredArgsConstructor
-@Service
-public class ScheduledDistanceCollector {
-
+@Component
+@Slf4j
+public class DistanceCollector {
     /**
      * The number of all points
      */
@@ -50,7 +42,7 @@ public class ScheduledDistanceCollector {
     /**
      * Instance of DistanceUtil, which finds destinations and distances
      */
-    private final DistanceUtil distanceUtil;
+    private final DistanceGoogleClient distanceGoogleClient;
     /**
      * Instance of Yaml class for working with *.yaml files
      */
@@ -59,33 +51,19 @@ public class ScheduledDistanceCollector {
      * Field which guarantees to start calculate distances from zero point
      */
     private Integer fromPointCounter = 0;
-    /**
-     * Variant we should use to calculate distances
-     */
-    private VariantsToCalculateDistances variantToCalculateDistances = VariantsToCalculateDistances.INACCURATE;
-
-    /**
-     * Scheduler, which updates distances every 24hr
-     */
-    //@Scheduled(fixedDelay = 86400000)
-    public void saveDistances() {
-        if (variantToCalculateDistances == VariantsToCalculateDistances.EXPENSIVE)
-            saveDistancesViaExpensiveVariant();
-        else saveDistancesWithLinks();
-    }
 
     /**
      * First (expensive) variant to count distances. It counts from one point to all points
      */
-    private void saveDistancesViaExpensiveVariant() {
+    public void saveDistancesViaExpensiveVariant() {
         try (FileReader reader = new FileReader("distanceCounter.yaml")) {
             Map<String, Integer> loadedData = yaml.load(reader);
             fromPointCounter = loadedData.get("fromPointCounter");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error with loading data", e);
         }
 
-        ArrayList<String> destinations = distanceUtil.findDestinations();
+        ArrayList<String> destinations = distanceGoogleClient.findDestinations();
         String[] arrayOfDestinations = destinations.toArray(new String[0]);
         for (int fromPoint = fromPointCounter; fromPoint < AMOUNT_OF_POINTS; fromPoint++) {
 
@@ -94,9 +72,9 @@ public class ScheduledDistanceCollector {
                 String[] shortenedArray = Arrays.copyOfRange(arrayOfDestinations, j, j + AMOUNT_OF_DESTINATIONS_PER_REQUEST);
                 DistanceMatrixElement[] distanceMatrixElements = new DistanceMatrixElement[0];
                 try {
-                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[fromPoint], shortenedArray);
+                    distanceMatrixElements = distanceGoogleClient.getDistance(arrayOfDestinations[fromPoint], shortenedArray);
                 } catch (InterruptedException | ApiException | IOException e) {
-                    e.printStackTrace();
+                    log.error("Error with getting data from Google API", e);
                 }
 
                 for (int i = 0; i < distanceMatrixElements.length; i++) {
@@ -107,18 +85,19 @@ public class ScheduledDistanceCollector {
             saveFromPointInFile(fromPoint);
         }
     }
+
     /**
      * Second (inaccurate) variant to count distances. It counts from one point to neighbours
      */
-    private void saveDistancesWithLinks() {
+    public void saveDistancesWithLinks() {
         try (FileReader reader = new FileReader("distanceCounter.yaml")) {
             Map<String, Integer> loadedData = yaml.load(reader);
             fromPointCounter = loadedData.get("fromPointCounter");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error with loading data", e);
         }
 
-        ArrayList<String> destinations = distanceUtil.findDestinations();
+        ArrayList<String> destinations = distanceGoogleClient.findDestinations();
         String[] arrayOfDestinations = destinations.toArray(new String[0]);
         for (int i = fromPointCounter; i < arrayOfDestinations.length - 1; i++) {
             DistanceMatrixElement[] distanceMatrixElements = new DistanceMatrixElement[0];
@@ -129,7 +108,7 @@ public class ScheduledDistanceCollector {
                 //если начало в последней строчке
                 if (i >= AMOUNT_OF_POINTS - HORIZONTALLY_POINTS) {
                     String[] lastRowDestinationsArray = {destinationsArray[0]};
-                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[i], lastRowDestinationsArray);
+                    distanceMatrixElements = distanceGoogleClient.getDistance(arrayOfDestinations[i], lastRowDestinationsArray);
                     saveDistance(i, i + 1, distanceMatrixElements[0]);
                     continue;
                 }
@@ -140,7 +119,7 @@ public class ScheduledDistanceCollector {
                 //если начало в крайней правой колонке
                 if (i % HORIZONTALLY_POINTS == 38) {
                     String[] rightColumnDestinationsArray = {destinationsArray[1], destinationsArray[2]};
-                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[i], rightColumnDestinationsArray);
+                    distanceMatrixElements = distanceGoogleClient.getDistance(arrayOfDestinations[i], rightColumnDestinationsArray);
                     saveDistance(i, i + HORIZONTALLY_POINTS - 1, distanceMatrixElements[0]);
                     saveDistance(i, i + HORIZONTALLY_POINTS, distanceMatrixElements[1]);
                     continue;
@@ -150,15 +129,15 @@ public class ScheduledDistanceCollector {
                 //если начало в крайней левой колонке
                 if (i % HORIZONTALLY_POINTS == 0) {
                     String[] leftColumnDestinationsArray = {destinationsArray[0], destinationsArray[2], destinationsArray[3]};
-                    distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[i], leftColumnDestinationsArray);
+                    distanceMatrixElements = distanceGoogleClient.getDistance(arrayOfDestinations[i], leftColumnDestinationsArray);
                     saveDistance(i, i + 1, distanceMatrixElements[0]);
                     saveDistance(i, i + HORIZONTALLY_POINTS, distanceMatrixElements[1]);
                     saveDistance(i, i + HORIZONTALLY_POINTS + 1, distanceMatrixElements[2]);
                     continue;
                 }
-                distanceMatrixElements = distanceUtil.getDistance(arrayOfDestinations[i], destinationsArray);
+                distanceMatrixElements = distanceGoogleClient.getDistance(arrayOfDestinations[i], destinationsArray);
             } catch (InterruptedException | ApiException | IOException e) {
-                e.printStackTrace();
+                log.error("Error with getting data from Google API", e);
             }
             saveDistance(i, i + 1, distanceMatrixElements[0]);
             saveDistance(i, i + HORIZONTALLY_POINTS - 1, distanceMatrixElements[1]);
@@ -213,6 +192,7 @@ public class ScheduledDistanceCollector {
 
     /**
      * Saves next fromPoint in file to continue if program will suddenly stopped
+     *
      * @param fromPoint at which point we have to continue
      */
     private void saveFromPointInFile(int fromPoint) {
@@ -221,14 +201,15 @@ public class ScheduledDistanceCollector {
             counter.put("fromPointCounter", fromPoint + 1);
             yaml.dump(counter, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error with saving data", e);
         }
     }
 
     /**
      * Save received values into DB
-     * @param fromPoint from which point we found distance
-     * @param toPoint to which point we found distance
+     *
+     * @param fromPoint             from which point we found distance
+     * @param toPoint               to which point we found distance
      * @param distanceMatrixElement distance between points
      */
     private void saveDistance(int fromPoint, int toPoint, DistanceMatrixElement distanceMatrixElement) {

@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.util;
+package com.netcracker.datacollector.distancecollector;
 
 import com.netcracker.commons.data.model.bean.Graph;
 
@@ -9,42 +9,6 @@ import java.util.Iterator;
  * Current distances are stored in a binary heap
  */
 public class DistanceFindingAlgorithm {
-    /**
-     * Element of the heap is a pair: number of vertices and distance to this vertex
-     * Comparison of pairs is made by distance
-     */
-    private static class Pair implements Comparable<Pair> {
-        int vertex;         // Номер вершины
-        long distance;      // Расстояние до нее
-
-        Pair(int v, long d) {
-            vertex = v;
-            distance = d;
-        }
-
-        @Override
-        public int compareTo(Pair p) {
-            return distance < p.distance ? -1
-                    : distance == p.distance ? vertex - p.vertex : 1;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null && !(o instanceof Pair)) return false;
-            Pair sndPair = (Pair) o;
-            return vertex == sndPair.vertex && distance == sndPair.distance;
-        }
-
-        @Override
-        public int hashCode() {
-            return vertex ^ new Double(distance).hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "(" + vertex + "," + distance + ")";
-        }
-    }
 
     /**
      * The graph for which calculations are made
@@ -257,5 +221,42 @@ public class DistanceFindingAlgorithm {
         }
         positions[pair.vertex] = i;
         binHeap[i] = pair;
+    }
+
+    /**
+     * Element of the heap is a pair: number of vertices and distance to this vertex
+     * Comparison of pairs is made by distance
+     */
+    private static class Pair implements Comparable<Pair> {
+        int vertex;         // Номер вершины
+        long distance;      // Расстояние до нее
+
+        Pair(int v, long d) {
+            vertex = v;
+            distance = d;
+        }
+
+        @Override
+        public int compareTo(Pair p) {
+            return distance < p.distance ? -1
+                    : distance == p.distance ? vertex - p.vertex : 1;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Pair)) return false;
+            Pair sndPair = (Pair) o;
+            return vertex == sndPair.vertex && distance == sndPair.distance;
+        }
+
+        @Override
+        public int hashCode() {
+            return vertex ^ new Double(distance).hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "(" + vertex + "," + distance + ")";
+        }
     }
 }
