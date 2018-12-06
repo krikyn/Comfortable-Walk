@@ -1,5 +1,7 @@
-package com.netcracker.datacollector.distancecollector;
+package com.netcracker.datacollector.distancecollector.scheduler;
 
+import com.netcracker.datacollector.distancecollector.DistanceCollector;
+import com.netcracker.datacollector.distancecollector.util.VariantsToCalculateDistances;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

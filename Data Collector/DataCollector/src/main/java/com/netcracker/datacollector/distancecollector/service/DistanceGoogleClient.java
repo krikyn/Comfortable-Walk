@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.distancecollector;
+package com.netcracker.datacollector.distancecollector.service;
 
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.DistanceMatrixApiRequest;

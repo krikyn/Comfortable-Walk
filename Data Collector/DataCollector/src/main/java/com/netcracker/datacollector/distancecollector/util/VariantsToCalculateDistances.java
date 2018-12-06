@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.distancecollector;
+package com.netcracker.datacollector.distancecollector.util;
 
 /**
  * Enum for Distance Collector Scheduler

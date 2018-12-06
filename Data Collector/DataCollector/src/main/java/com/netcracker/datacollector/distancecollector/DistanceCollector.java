@@ -5,6 +5,8 @@ import com.google.maps.model.DistanceMatrixElement;
 import com.netcracker.commons.data.model.Distance;
 import com.netcracker.commons.data.model.bean.Graph;
 import com.netcracker.commons.data.repository.DistanceRepository;
+import com.netcracker.datacollector.distancecollector.service.DistanceGoogleClient;
+import com.netcracker.datacollector.distancecollector.util.DistanceFindingAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
