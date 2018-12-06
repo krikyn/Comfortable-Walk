@@ -1,6 +1,6 @@
 package com.netcracker.routebuilder.controller;
 
-import com.netcracker.routebuilder.algorithm.implementation.PathFindingAlgorithm;
+import com.netcracker.routebuilder.algorithm.PathFindingAlgorithm;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.data.bean.Path;
 import com.netcracker.routebuilder.util.enums.RouteProperty;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 
-import static com.netcracker.routebuilder.util.implementation.ControllerUtils.extractRouteProperties;
-import static com.netcracker.routebuilder.util.implementation.ControllerUtils.generateResponse;
-import static com.netcracker.routebuilder.util.implementation.Utils.initField;
+import static com.netcracker.routebuilder.util.ControllerUtil.extractRouteProperties;
+import static com.netcracker.routebuilder.util.ControllerUtil.generateResponse;
+import static com.netcracker.routebuilder.util.AlgorithmUtil.initField;
 
 /**
  * Controller for path finding algorithm
