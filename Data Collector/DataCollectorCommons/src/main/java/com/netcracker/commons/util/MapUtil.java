@@ -22,16 +22,20 @@ public class MapUtil {
      * @param values - value list of decreasing range.
      *
      * */
-    public static void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
+    public static void findNeighbours(final int cellRow, final int cellCol, final int maxRow, final int maxCol,
+                                      int radius, int[][] result, List<Integer> values) {
         //Проход по заданному радиусу вокруг основной ячейки
         for(int rowNum = cellRow-radius; rowNum <= (cellRow+radius); rowNum++) {
             for(int colNum = cellCol-radius; colNum <= (cellCol+radius); colNum++) {
-                if(!((rowNum == cellRow) &&(colNum == cellCol))) {
+                if(!((rowNum == cellRow)
+                        && (colNum == cellCol))) {
                     if(checkBounds(rowNum, colNum, maxRow, maxCol)){ //Проверка границ карты
                         //Запись значений из диапазона убывания во внешний радиус
-                        if((rowNum == cellRow-radius) || (rowNum == cellRow+radius)) {
+                        if((rowNum == cellRow-radius)
+                                || (rowNum == cellRow+radius)) {
                             result[rowNum][colNum] += values.get(radius-1);
-                        } else if(colNum == cellCol-radius || colNum == cellCol+radius) {
+                        } else if(colNum == cellCol-radius
+                                || colNum == cellCol+radius) {
                             result[rowNum][colNum] += values.get(radius-1);
                         }
                     }
