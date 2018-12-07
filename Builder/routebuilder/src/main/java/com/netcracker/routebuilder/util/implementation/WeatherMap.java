@@ -1,5 +1,6 @@
 package com.netcracker.routebuilder.util.implementation;
 
+
 import com.netcracker.commons.data.model.WeatherPotentialMap;
 import com.netcracker.commons.service.WeatherMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;

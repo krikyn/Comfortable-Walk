@@ -18,13 +18,10 @@ algorithm:
   maxAllowableIncrease: 3
   minDistBetweenStartEnd: 0
   scale: 20
-  maxCountOfWaypoints: 21
+  maxCountOfWayypoints: 21
   distanceType: EUCLIDEAN
   normalFactorH: 1
   normalFactorG: 1
-  weatherFieldFactor: -1
-  placesFieldFactor: 1
-  routeFieldFactor: 0.1
   ApiKey: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:
