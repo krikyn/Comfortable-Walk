@@ -84,7 +84,14 @@ public class GoogleRouteBuilder {
             }
             // if quantity of intermediate points more then maxCountOfWayPoints
             else {
-                latL = new LatLng[params.getMaxCountOfWaypoints()];
+                if(AllPoints==21){
+                    latL = new LatLng[params.getMaxCountOfWaypoints()-1];
+
+                }
+                else {
+                    latL = new LatLng[params.getMaxCountOfWaypoints()];
+
+                }
                 //add endpoint geoposition
                 enD = convertToLatLang(points.get(startPosition + latL.length));
             }
