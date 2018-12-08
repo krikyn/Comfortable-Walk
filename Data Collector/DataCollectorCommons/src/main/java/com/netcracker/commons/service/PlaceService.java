@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by Grout on 28.10.2018.
+ * Service for {@link Place}
+ *
+ * @author Ali
  */
 
 @Service

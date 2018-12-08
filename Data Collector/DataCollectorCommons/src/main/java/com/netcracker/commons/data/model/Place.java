@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Class that describes entity of the place on the map.
  *
- * @author Али
+ * @author Ali
  */
 @Entity
 @Table(name = "places")

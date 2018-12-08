@@ -1,4 +1,4 @@
-package com.netcracker.datacollector.util;
+package com.netcracker.datacollector.mapcollector.maputil;
 
 import com.google.maps.model.LatLng;
 import com.netcracker.commons.data.model.Place;
@@ -11,20 +11,20 @@ import java.util.List;
 /**
  * Class that presents methods for map building. Builds base city map, base place maps and potential place maps.
  *
- * @author Али
+ * @author Ali
  */
 @Component
 @Slf4j
 public class MapBuilder {
     private LatLng startCoord1km = new LatLng(60.02781, 30.18035); //lat-широта-y; lng-долгота-x
-    //private LatLng startCoord50m = new LatLng(60.03208025, 30.17183325);
     private double latitudeInKm = 0.00899;
     private double longitudeInKm = 0.01793;
 
     /**
-     * Builds base city map.
+     * Builds base city map based on given scale. Return {@link LatLng} two-dimensional array, where cells represents
+     * sectors of the city. In each cell stored coordinate of the sector center.
      *
-     * @param scale - map scale.
+     * @param scale - scale of a built map.
      * @return two-dimensional array of coordinates
      */
     public LatLng[][] buildBaseMap(int scale) {
@@ -51,19 +51,13 @@ public class MapBuilder {
         return map;
     }
 
-    private void setCoordinate(int row, int col, LatLng[][] map, double lat, double lng) {
-        if (row == 0 && col == 0) {
-            map[row][col] = startCoord1km;
-        } else {
-            map[row][col] = new LatLng(lat, lng);
-        }
-    }
-
     /**
-     *  Builds base place map based on base city map.
+     *  Builds base place map based on base city map. Return two-dimensional array og integers, where cells represents
+     *  sectors of the city. In cells stored only place potential (default potential of one place is 100). If in one
+     *  city sector are several places then their potentials are summarised.
      *
      *  @param places - list of places.
-     *  @param scale - map scale of built map.
+     *  @param scale - scale of built map.
      *  @return two-dimensional array of integers.
      **/
     public int[][] buildPlaceMap(final List<Place> places, final int scale) {
@@ -81,7 +75,8 @@ public class MapBuilder {
     }
 
     /**
-     * Builds potential place maps.
+     * Builds potential place maps. Return two-dimensional array og integers, where cells represents
+     * sectors of the city. In cells stored place potential and range of decreasing potentials around place cell.
      *
      * @param placeMap - base place map on the basis of which will be built potential map.
      * @param scale - map scale of built map.
@@ -113,7 +108,16 @@ public class MapBuilder {
         return result;
     }
 
-    private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale, int maxRow, int maxCol) {
+    private void setCoordinate(int row, int col, LatLng[][] map, double lat, double lng) {
+        if (row == 0 && col == 0) {
+            map[row][col] = startCoord1km;
+        } else {
+            map[row][col] = new LatLng(lat, lng);
+        }
+    }
+
+    private void setPlaceInMap(int[][] placeMap, LatLng baseMapStartCoordinates, Place place, int scale,
+                               int maxRow, int maxCol) {
         final Double lat1 = latitudeInKm / (double) scale;
         final Double lon1 = longitudeInKm / (double) scale;
         double placeRelativeLat = baseMapStartCoordinates.lat - place.getLatitude();
@@ -121,7 +125,10 @@ public class MapBuilder {
         int row = (int) Math.round(placeRelativeLat / lat1);
         int col = (int) Math.round(placeRelativeLng / lon1);
 
-        if(row < maxRow && row >= 0 && col >= 0 && col < maxCol) {
+        if(row < maxRow
+                && row >= 0
+                && col >= 0
+                && col < maxCol) {
             placeMap[row][col] += 100;
         }
     }

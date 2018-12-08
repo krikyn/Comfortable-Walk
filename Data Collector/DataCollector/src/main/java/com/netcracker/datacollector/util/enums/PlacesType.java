@@ -1,9 +1,9 @@
 package com.netcracker.datacollector.util.enums;
 
 /**
- * Enum of places on the map.
+ * Enum of places on the city map.
  *
- * @author Али
+ * @author Ali
  * */
 
 public enum PlacesType {

@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Class that describes entity of the city map.
  *
- * @author Али
+ * @author Ali
  * */
 @Entity
 @Table(name = "maps")

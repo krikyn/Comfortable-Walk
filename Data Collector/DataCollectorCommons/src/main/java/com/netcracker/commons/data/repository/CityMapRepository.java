@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * Repository for {@link CityMap}
+ *
+ * @author Ali
+ */
 @Repository
 public interface CityMapRepository extends JpaRepository<CityMap, UUID> {
 
