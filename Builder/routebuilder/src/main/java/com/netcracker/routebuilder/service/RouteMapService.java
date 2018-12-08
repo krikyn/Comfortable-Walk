@@ -50,6 +50,15 @@ public class RouteMapService {
 
     }
 
+    public int[][] buildMap2(GeoCoordinates start, GeoCoordinates end) {
+        int[][] field = initField(PARAMS.getScale());
+        ArrayList<GeoCoordinates> geoCord = new GoogleRouteBuilder(PARAMS).buildRoute(start, end);
+        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCord);
+        makeRoutePotentialMap2(routeMap, field);
+        return field;
+
+    }
+
     /**
      * Build potential map,put it in list of  route_list
      *
@@ -76,6 +85,25 @@ public class RouteMapService {
 
     }
 
+    private void makeRoutePotentialMap2(ArrayList<FieldCoordinates> routeMap, int[][] field) {
+        int value;
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field[i].length; j++) {
+                value = addValueOfCell(i, j, routeMap);
+                if (value != 0) {
+                    if (field[i][j] != 100) {
+                        field[i][j] = 100;
+                        checkField(field, routeMap, value, 100);
+                    }
+
+                }
+            }
+
+        }
+        addDecreasingValuesOnMap2(field, 100);
+
+    }
+
     /**
      * Build potential map,put it in list of route_list
      *
@@ -94,6 +122,25 @@ public class RouteMapService {
         return 0;
     }
 
+    private void findNeighbours2(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
+        //Проход по заданному радиусу вокруг основной ячейки
+        for (int rowNum = cellRow - radius; rowNum <= (cellRow + radius); rowNum++) {
+            for (int colNum = cellCol - radius; colNum <= (cellCol + radius); colNum++) {
+                if (!((rowNum == cellRow) && (colNum == cellCol))) {
+                    if (rowNum < maxRow && colNum < maxCol) { //Проверка границ карты
+                        //Запись значений из диапазона убывания во внешний радиус
+                        if ((rowNum == cellRow - radius) || (rowNum == cellRow + radius)) {
+                            if ((result[rowNum][colNum] != 100) && (values.get(radius - 1)) > result[rowNum][colNum])
+                                result[rowNum][colNum] = values.get(radius - 1);
+                        } else if (colNum == cellCol - radius || colNum == cellCol + radius) {
+                            if ((result[rowNum][colNum] != 100) && (values.get(radius - 1)) > result[rowNum][colNum])
+                                result[rowNum][colNum] = values.get(radius - 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Add decreasing values around route's cells on potential route map
@@ -109,6 +156,26 @@ public class RouteMapService {
                     int maxRadius = values.get(values.size() - 1); // decreasing radius
                     for (int rad = 1; rad <= maxRadius; rad++) {
                         findNeighbours(i, j, field.length, field[i].length, rad, field, values); // find all neighboring cells
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Add decreasing values around route's cells on potential route map
+     *
+     * @param field - array of route potential map
+     * @param value - value of route point's potential
+     */
+    private void addDecreasingValuesOnMap2(int[][] field, int value) {
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field[i].length; j++) {
+                if (field[i][j] == value) {
+                    List<Integer> values = decreaseValue(value);
+                    int maxRadius = values.get(values.size() - 1); // decreasing radius
+                    for (int rad = 1; rad <= maxRadius; rad++) {
+                        findNeighbours2(i, j, field.length, field[i].length, rad, field, values); // find all neighboring cells
                     }
                 }
             }
@@ -248,7 +315,7 @@ public class RouteMapService {
      *
      * @param coord1 - first x coordinate for compare
      * @param coord2 - second x coordinate for compare
-     * @return sorted array of two elements(coordinates)
+     * @return
      */
     private int[] identifyMaxAndMinCoordinate(int coord1, int coord2) {
         int[] coordinates = new int[2];
