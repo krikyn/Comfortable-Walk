@@ -23,7 +23,7 @@ import java.util.ArrayList;
 @Component
 public class GoogleRouteBuilder {
     /**
-     * field of Google GeoApiContex need to build route
+     * field of Google GeoApiContext need to build route
      */
     private final GeoApiContext GOOGLE_CONTEXT;
     /**
@@ -49,7 +49,7 @@ public class GoogleRouteBuilder {
      * @return return list  of route's points
      */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, GeoCoordinates end) {
-        return buildDirection(ConvertToLatLang(start), ConvertToLatLang(end));
+        return buildDirection(convertToLatLang(start), convertToLatLang(end));
     }
 
     /**
@@ -65,12 +65,12 @@ public class GoogleRouteBuilder {
         int AllPoints = points.size();
         int startPosition = 0;
         if (AllPoints == 0) {
-            log.error("Array of route points is empty.Check input Data");
-            throw new ArrayIndexOutOfBoundsException();
+            log.error("Array of route points is empty.Check input Data", new ArrayIndexOutOfBoundsException());
+
         }
         //add start point of
         ListPoints.add(points.get(0));
-        LatLng starT = ConvertToLatLang(points.get(0));
+        LatLng starT = convertToLatLang(points.get(0));
         LatLng enD;
         //devide route by parts
         while (AllPoints > 0) {
@@ -80,17 +80,17 @@ public class GoogleRouteBuilder {
             // if quantity of intermediate points less then maxCountOfWayPoints
             if (AllPoints / params.getMaxCountOfWaypoints() < 1) {
                 latL = new LatLng[AllPoints % params.getMaxCountOfWaypoints()];
-                enD = ConvertToLatLang(points.get(points.size() - 1));
+                enD = convertToLatLang(points.get(points.size() - 1));
             }
             // if quantity of intermediate points more then maxCountOfWayPoints
             else {
                 latL = new LatLng[params.getMaxCountOfWaypoints()];
                 //add endpoint geoposition
-                enD = ConvertToLatLang(points.get(startPosition + latL.length));
+                enD = convertToLatLang(points.get(startPosition + latL.length));
             }
             //add geoposition for clear array of  intermediate points from ArrayList
             for (int i = startPosition; i < startPosition + latL.length; i++) {
-                latL[leng_point++] = ConvertToLatLang(points.get(i));
+                latL[leng_point++] = convertToLatLang(points.get(i));
             }
             //build route
             buildDirection(starT, latL, enD, ListPoints);
@@ -112,46 +112,9 @@ public class GoogleRouteBuilder {
      * @return return list  of route's points
      */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates start, ArrayList<GeoCoordinates> points, GeoCoordinates end) {
-        ArrayList<GeoCoordinates> ListPoints = new ArrayList<>();
-        int AllPoints = points.size();
-        int startPosition = 0;
-        if (AllPoints == 0) {
-            log.error("Array of route points is empty.Check input Data");
-            throw new ArrayIndexOutOfBoundsException();
-        }
-        //add start point of route
-        ListPoints.add(start);
-        LatLng starT = ConvertToLatLang(start);
-        LatLng enD;
-        //devide route by parts
-        while (AllPoints > 0) {
-            //array of intermediate points(not more maxCountOfWayPoints)
-            LatLng[] latL;
-            int leng_point = 0;
-            // if quantity of intermediate points less then maxCountOfWayPoints
-            if (AllPoints / params.getMaxCountOfWaypoints() < 1) {
-                latL = new LatLng[AllPoints % params.getMaxCountOfWaypoints()];
-                enD = ConvertToLatLang(end);
-            }
-            // if quantity of intermediate points more then maxCountOfWayPoints
-            else {
-                latL = new LatLng[params.getMaxCountOfWaypoints()];
-                //add endpoint geoposition
-                enD = ConvertToLatLang(points.get(startPosition + latL.length));
-            }
-            //add geoposition for clear array of  intermediate points from ArrayList
-            for (int i = startPosition; i < startPosition + latL.length; i++) {
-                latL[leng_point++] = ConvertToLatLang(points.get(i));
-            }
-            //build route
-            buildDirection(starT, latL, enD, ListPoints);
-            startPosition += latL.length + 1;
-            //condition of 'while'
-            AllPoints -= latL.length + 1;
-            starT = ConvertToLatLang(end);
-        }
-        ListPoints.add(end);
-        return ListPoints;
+        points.add(0, start);
+        points.add(end);
+        return buildRoute(points);
     }
 
     /**
@@ -163,7 +126,7 @@ public class GoogleRouteBuilder {
      */
     private ArrayList<GeoCoordinates> buildDirection(LatLng StartPoint, LatLng endPoint) {
         ArrayList<GeoCoordinates> listPoint = new ArrayList<>();
-        listPoint.add(ConvertToGeoCoordinates(StartPoint));
+        listPoint.add(convertToGeoCoordinates(StartPoint));
         try {
             //Standart Google API method
             DirectionsResult result = DirectionsApi.newRequest(GOOGLE_CONTEXT)
@@ -172,22 +135,21 @@ public class GoogleRouteBuilder {
                     .mode(TravelMode.WALKING)
                     .await();
             if (result.routes.length == 0) {
-                log.error("Array of route is empty.Check input Data");
-                throw new ArrayIndexOutOfBoundsException();
+                log.error("Array of route is empty.Check input Data", new ArrayIndexOutOfBoundsException());
             }
             //get steps with geoposition
             for (DirectionsStep step : result.routes[0].legs[0].steps) {
-                DecodePolyine(step.polyline, listPoint);
-                listPoint.add(ConvertToGeoCoordinates(step.endLocation));
+                decodePolyline(step.polyline, listPoint);
+                listPoint.add(convertToGeoCoordinates(step.endLocation));
             }
-            listPoint.add(ConvertToGeoCoordinates(endPoint));
+            listPoint.add(convertToGeoCoordinates(endPoint));
         } catch (ApiException e) {
-            log.error("Not valid API=key");
+            log.error("Not valid API=key", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.error("Interrupt Thread");
+            log.error("Interrupt Thread", e);
         } catch (IOException e) {
-            log.error("IOException");
+            log.error("IOException", e);
         }
         return listPoint;
     }
@@ -204,9 +166,8 @@ public class GoogleRouteBuilder {
     private void buildDirection(LatLng StartPoint, LatLng[] waypoints,
                                 LatLng endPoint, ArrayList<GeoCoordinates> Points) {
         if (waypoints.length > params.getMaxCountOfWaypoints()) {
-            log.error("Quantity of waypoints more  than " + params.getMaxCountOfWaypoints());
-            log.error("Check  buildRoute() method");
-            throw new IndexOutOfBoundsException();
+            log.error("Quantity of waypoints more  than " + params.getMaxCountOfWaypoints(), new IndexOutOfBoundsException());
+
         }
         try {
             //Standart Google API method
@@ -214,24 +175,22 @@ public class GoogleRouteBuilder {
                     .origin(StartPoint)
                     .destination(endPoint)
                     .mode(TravelMode.WALKING)
-                    .waypoints(ConvertToWaypoints(waypoints))//add waypoints
+                    .waypoints(convertToWaypoints(waypoints))//add waypoints
                     .await();
             //get steps with geoposition
             if (result.routes.length == 0) {
-                log.error("Array of route is empty.Check input Data");
-                throw new ArrayIndexOutOfBoundsException();
+                log.error("Array of route is empty.Check input Data", new ArrayIndexOutOfBoundsException());
             }
             for (DirectionsStep step : result.routes[0].legs[0].steps) {
-                DecodePolyine(step.polyline, Points);
-                Points.add(ConvertToGeoCoordinates(step.endLocation));
+                decodePolyline(step.polyline, Points);
+                Points.add(convertToGeoCoordinates(step.endLocation));
             }
         } catch (ApiException e) {
-            log.error("Not valid API=key");
+            log.error("Not valid API=key", e);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Interrupt Thread");
+            log.error("Interrupt Thread", e);
         } catch (IOException e) {
-            log.error("IOException");
+            log.error("IOException", e);
         }
     }
 
@@ -241,7 +200,7 @@ public class GoogleRouteBuilder {
      * @param point - point  in LatLng type
      * @return return  point  in GeoCoordinates type
      */
-    private GeoCoordinates ConvertToGeoCoordinates(LatLng point) {
+    private GeoCoordinates convertToGeoCoordinates(LatLng point) {
         String[] st = point.toString().split(",");
         return new GeoCoordinates(Double.valueOf(st[1]), Double.valueOf(st[0]));
     }
@@ -253,7 +212,7 @@ public class GoogleRouteBuilder {
      * @return array of  points  in Waypoint type
      */
 
-    private DirectionsApiRequest.Waypoint[] ConvertToWaypoints(LatLng[] waypoints) {
+    private DirectionsApiRequest.Waypoint[] convertToWaypoints(LatLng[] waypoints) {
         DirectionsApiRequest.Waypoint[] lat = new DirectionsApiRequest.Waypoint[waypoints.length];
         for (int i = 0; i < waypoints.length; i++) {
             lat[i] = new DirectionsApiRequest.Waypoint(waypoints[i], false);
@@ -267,9 +226,9 @@ public class GoogleRouteBuilder {
      * @param polyline - array of  points  in LatLng type
      * @param list     -  list of  route's points
      */
-    private void DecodePolyine(EncodedPolyline polyline, ArrayList<GeoCoordinates> list) {
+    private void decodePolyline(EncodedPolyline polyline, ArrayList<GeoCoordinates> list) {
         for (LatLng lang : polyline.decodePath()) {
-            list.add(ConvertToGeoCoordinates(lang));
+            list.add(convertToGeoCoordinates(lang));
         }
     }
 
@@ -279,8 +238,9 @@ public class GoogleRouteBuilder {
      * @param point - point  in GeoCoordinates type
      * @return return  point  in LatLng type
      */
-    private LatLng ConvertToLatLang(GeoCoordinates point) {
+    private LatLng convertToLatLang(GeoCoordinates point) {
         return new LatLng(point.getY(), point.getX());
     }
+
 }
 
