@@ -111,5 +111,15 @@ function calculateAndDisplayRoute(data) {
     polyline.setMap(map);
     map.setCenter(new google.maps.LatLng(data[data.length - 1][0], data[data.length - 1][1]), 13);
     shapes.push(polyline);
+    var startPoint = new google.maps.Marker({
+        position: path[0],
+        map: map,
+        label: 'A'
+    });
+    var endPoint = new google.maps.Marker({
+        position: path[path.length - 1],
+        map: map,
+        label: 'B'
+    });
 }
 
