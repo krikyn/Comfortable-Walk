@@ -71,7 +71,7 @@ function sendData() {
         $.ajax({
             type: "POST",
             contentType: "application/json",
-            url: "/sendData",
+            url: "http://localhost:9091/build",
             data: JSON.stringify(search),
             dataType: 'json',
             cache: false,
@@ -80,8 +80,7 @@ function sendData() {
             success: function (data) {
                 document.getElementsByClassName('loader')[0].style.visibility = "hidden";
                 console.log(data);
-                points = data;
-                calculateAndDisplayRoute(directionsService, directionsDisplay);
+                calculateAndDisplayRoute(data);
             }
         });
         return false;
@@ -98,28 +97,19 @@ function initMap() {
     directionsDisplay.setMap(map);
 }
 
-function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-    var waypts = [];
-    var originPoint = document.getElementById('fromPointLat').value + ", " + document.getElementById('fromPointLng').value;
-    var destinationPoint = document.getElementById('toPointLat').value + ", " + document.getElementById('toPointLng').value;
-    for (var i = 0; i < points.length; i++) {
-        waypts.push({
-            location: points[i]
-        });
-        console.log(waypts)
-    }
-    directionsService.route({
-        origin: originPoint,
-        destination: destinationPoint,
-        waypoints: waypts,
-        optimizeWaypoints: true,
-        travelMode: 'WALKING'
-    }, function (response, status) {
-        if (status === 'OK') {
-            directionsDisplay.setDirections(response);
-        } else {
-            window.alert('Directions request failed due to ' + status);
-        }
+function calculateAndDisplayRoute(data) {
+    const map = new google.maps.Map(document.getElementById("googleMap"), {
+        center: {lat: 59.946079, lng: 30.318713},
+        zoom: 12,
     });
+    var shapes = [];
+    var path = [];
+    for (var i = 0; i < data.length - 1; i++) {
+        path.push(new google.maps.LatLng(data[i][0], data[i][1]))
+    }
+    var polyline = new google.maps.Polyline({path: path, strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2});
+    polyline.setMap(map);
+    map.setCenter(new google.maps.LatLng(data[data.length - 1][0], data[data.length - 1][1]), 13);
+    shapes.push(polyline);
 }
 

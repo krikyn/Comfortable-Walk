@@ -22,6 +22,7 @@ spring:
 google:
   api:
     key: "AIzaSyBw3Bcepmq4q_VtqIohTNDBHPJnMiNw9yY"
+    distance-key: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:
   file: data_collector.log

@@ -5,6 +5,9 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Class for accessing constants participating in the path finding algorithm
+ */
 @Configuration
 @Data
 public class AlgorithmParameters {
@@ -41,4 +44,7 @@ public class AlgorithmParameters {
 
     @Value("${algorithm.routeFieldFactor}")
     private double routeFieldFactor; //насколько учитывается потенциальная карта исходного маршрута в работе алгоритма
+
+    @Value("${algorithm.maxIterationsNum}")
+    private double maxIterationsNum; //максимальное количество итераций в алгоритме, при превышении которого, выдается обычный гугловский маршрут
 }

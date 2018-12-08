@@ -19,12 +19,13 @@ algorithm:
   minDistBetweenStartEnd: 0
   scale: 20
   maxCountOfWaypoints: 21
-  distanceType: EUCLIDEAN
+  distanceType: CHEBYSHEVA
   normalFactorH: 1
   normalFactorG: 1
   weatherFieldFactor: -1
   placesFieldFactor: 1
-  routeFieldFactor: 0.1
+  routeFieldFactor: 1
+  maxIterationsNum: 100000
   ApiKey: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:

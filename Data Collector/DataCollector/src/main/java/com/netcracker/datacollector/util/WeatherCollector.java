@@ -27,6 +27,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class for get data from weather radar
+ *
+ * @author Kirill.Vakhrushev
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -35,48 +40,29 @@ public class WeatherCollector {
     private final WeatherPotentialMapRepository repository;
     private final RadarProperties radarProperties;
 
-    public void run() {
+    final int defaultNumPointsX = 21;
+    final int defaultNumPointsY = 20;
+
+    /**
+     * Method for get data from weather radar and rewrite weather potential map in DB
+     */
+    public void collect() {
 
         String fileExtension = "PNG";
 
-        //На случай, если радар начнет опять снимки в произвольное время делать
+        //На случай, если радар делает снимки в произвольное время
 
         ImageAddress imageAddress = new ImageAddress();
         BufferedImage image = downloadImageFromRadarAlternative(imageAddress);
         if (image == null) return;
 
-        //saveImageFromRadar(fileExtension, imageAddress.getImageURI(), image);
+        saveImageFromRadar(fileExtension, imageAddress.getImageURI(), image);
 
         BufferedImage negativeImage = uploadNegativeImage();
         if (negativeImage == null) return;
 
         File fileAfterProcessing = new File("processed-images/processed" + imageAddress.getImageURI());
         BufferedImage imageAfterProcessing = image.getSubimage(140, 135, 220, 220);
-
-        //Работает только с фиксированным временем, а теперь радар стал случайным образом делать снимки
-
-        /*String[] parameters = setCurrentImageURLAndURI(fileExtension);
-        String imageURI = parameters[0];
-        String imageURL = parameters[1];
-
-        log.info("URI: " + imageURI);
-        log.info("URL: " + imageURL);
-
-        BufferedImage image = downloadImageFromRadar(imageURL);
-        if (image == null) return;
-
-        saveImageFromRadar(fileExtension, imageURI, image);
-
-        BufferedImage negativeImage = uploadNegativeImage();
-        if (negativeImage == null) return;
-
-
-        LocalDateTime date = LocalDateTime.now(ZoneId.of("UTC"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("_yyyy_MM_dd_HH_");
-        String processedImageURI = date.format(formatter) + ((date.getMinute() / 10)) + "0";
-
-        File fileAfterProcessing = new File("processed-images/processed" + processedImageURI + ".PNG");
-        BufferedImage imageAfterProcessing = image.getSubimage(140, 135, 220, 220);*/
 
 
         Map<Integer, Integer> weatherTypes = new HashMap<>();
@@ -91,7 +77,7 @@ public class WeatherCollector {
 
 
         //потенциальное поле разбитое на клетки 1 на 1 км, всего получается 20 на 21 клетка
-        int[][] map = new int[21][20];
+        int[][] map = new int[defaultNumPointsX][defaultNumPointsY];
 
         SelectionPotentialMapFromImage(imageAfterProcessing, weatherTypes, map);
 
@@ -187,20 +173,21 @@ public class WeatherCollector {
 
     private BufferedImage downloadImageFromRadarAlternative(ImageAddress imageAddress) {
         String radarPage;
+        final int nameLen = 35;
+
         try {
             radarPage = getContentOfHTTPPage("http://weather.rshu.ru/radar/", "UTF-8");
         } catch (IOException e) {
             log.error("The radar's site is not available");
             return null;
         }
+
         //http://weather.rshu.ru/radar/data/P_100_26061_2018_11_27_2039_MRL.PNG
         String prefix = "<img id=\"radar\" src=\"data/";
         int pos = radarPage.indexOf(prefix);
-        imageAddress.setImageURI(radarPage.substring(pos + prefix.length(), pos + prefix.length() + 35));
 
-        //Pattern pattern = Pattern.compile("<img id=\"radar\" src=\"data/(.*?)\"");
-        //Matcher matcher = pattern.matcher(radarPage);
-        //imageURI = matcher.group(1);
+        imageAddress.setImageURI(radarPage.substring(pos + prefix.length(), pos + prefix.length() + nameLen));
+
         imageAddress.setImageURL(radarProperties.getRadarURL() + imageAddress.imageURI);
 
         log.info("URI: " + imageAddress.getImageURI());
