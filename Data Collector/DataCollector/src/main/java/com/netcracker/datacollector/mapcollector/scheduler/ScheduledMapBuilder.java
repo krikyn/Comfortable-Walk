@@ -31,7 +31,7 @@ public class ScheduledMapBuilder {
     /**
      * Builds maps at specified intervals of time (by default once in 1 hour).
      */
-    @Scheduled(fixedDelay = MILLIS_PER_MINUTE * 60)
+    //@Scheduled(fixedDelay = MILLIS_PER_MINUTE * 60)
     public void buildMaps() {
         int scaleFor50m = 20;
         //Строит и загружает базовые карты размером 1 на 1 км

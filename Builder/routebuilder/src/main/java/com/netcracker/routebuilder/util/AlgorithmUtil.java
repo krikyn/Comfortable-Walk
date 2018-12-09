@@ -4,7 +4,7 @@ import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 
 /**
- * Util tools for algorithm
+ * bean tools for algorithm
  *
  * @author Kirill.Vakhrushev
  */

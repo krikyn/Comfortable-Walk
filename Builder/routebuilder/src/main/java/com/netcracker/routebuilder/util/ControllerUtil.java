@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 
 /**
- * Util tools for controllers
+ * bean tools for controllers
  *
  * @author Kirill.Vakhrushev
  */
