@@ -25,15 +25,6 @@ public class GoogleRouteBuilderTest {
 
     }
 
-    @Test
-    public void ExecuteApiKeyTest() {
-        AlgorithmParameters PARAMS = new AlgorithmParameters();
-        PARAMS.setScale(20);
-        //InvalidApiKey
-        PARAMS.setApiKey("AAAABBBBCCC");
-        GoogleRouteBuilder gBuilder = new GoogleRouteBuilder(PARAMS);
-        gBuilder.buildRoute(new GeoCoordinates(30.351127, 59.8824512), new GeoCoordinates(30.265784, 59.93799));
-    }
 
     @Test
     public void ExecuteListRouteTest() {
