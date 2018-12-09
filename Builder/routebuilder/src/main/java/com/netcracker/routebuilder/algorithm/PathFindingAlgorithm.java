@@ -4,6 +4,7 @@ import com.netcracker.routebuilder.data.bean.Cell;
 import com.netcracker.routebuilder.data.bean.FieldCoordinates;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
+import com.netcracker.routebuilder.util.enums.DistanceType;
 import com.netcracker.routebuilder.util.enums.RouteProperty;
 import com.netcracker.routebuilder.util.AlgorithmUtil;
 import lombok.RequiredArgsConstructor;
@@ -58,9 +59,9 @@ public class PathFindingAlgorithm {
      */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties, int[][] mapWithRoute) {
         log.info("--Start of the algorithm--");
-        log.info("Distance between Starting and ending point: " + EuclideanDist(startPoint, endPoint));
+        log.info("Distance between Starting and ending point: " + calcEuclideanDist(startPoint, endPoint));
 
-        if (EuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
+        if (calcEuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
             return googleRouteBuilder.buildRoute(startPoint, endPoint);
         }
@@ -109,7 +110,7 @@ public class PathFindingAlgorithm {
             }
 
             Cell curCell = nodes.poll();
-            System.out.println(curCell.getGx() + " - " + curCell.getHx());
+            //System.out.println(curCell.getGx() + " - " + curCell.getHx());
 
             if (curCell.getFieldCoordinates().equals(endNode.getFieldCoordinates())) {
                 ArrayList<GeoCoordinates> route = routeRestoration(curCell, mapWithRoute);
@@ -145,6 +146,13 @@ public class PathFindingAlgorithm {
 
         log.warn("The algorithm did not find the path, standard Google route will be used");
         return googleRouteBuilder.buildRoute(startPoint, endPoint);
+    }
+
+    /**
+     *  Method for setting distance type in params
+     */
+    public void setDistanceType(DistanceType distanceType){
+        params.setDistanceType(distanceType);
     }
 
     private static Double calcGxBetweenPoints(ArrayList<ArrayList<Cell>> potentialField, Cell from, Cell to) {
@@ -187,36 +195,36 @@ public class PathFindingAlgorithm {
     private Double calcDistToDestinationCell(Cell from, Cell to) {
         switch (params.getDistanceType()) {
             case EUCLIDEAN:
-                return EuclideanDist(from, to);
+                return calcEuclideanDist(from, to);
             case CHEBYSHEVA:
-                return ChebyshevDist(from, to);
+                return calcChebyshevDist(from, to);
             case MANHATTAN:
-                return ManhattanDistance(from, to);
+                return calcManhattanDistance(from, to);
             case COMPOSIT:
-                return 0d;
+                return calcEuclideanDist(from, to);
             default:
                 log.error("Wrong distance type in the parameters. Euclidean distance will be used");
-                return EuclideanDist(from, to);
+                return calcEuclideanDist(from, to);
         }
     }
 
-    private static Double ManhattanDistance(Cell from, Cell to) {
+    private static Double calcManhattanDistance(Cell from, Cell to) {
         return (double) Math.abs(from.getFieldCoordinates().getX() - to.getFieldCoordinates().getX()) +
                 Math.abs(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY());
     }
 
-    private static Double ChebyshevDist(Cell from, Cell to) {
+    private static Double calcChebyshevDist(Cell from, Cell to) {
         return (double) Math.max(Math.abs(from.getFieldCoordinates().getX() - to.getFieldCoordinates().getX()),
                 Math.abs(from.getFieldCoordinates().getY() - to.getFieldCoordinates().getY()));
     }
 
     //ответ в метрах
-    private static Double EuclideanDist(Cell from, Cell to) {
-        return EuclideanDist(from.getGeoCoordinates(), to.getGeoCoordinates());
+    private static Double calcEuclideanDist(Cell from, Cell to) {
+        return calcEuclideanDist(from.getGeoCoordinates(), to.getGeoCoordinates());
     }
 
     //ответ в метрах
-    private static Double EuclideanDist(GeoCoordinates from, GeoCoordinates to) {
+    private static Double calcEuclideanDist(GeoCoordinates from, GeoCoordinates to) {
         return Math.sqrt(Math.pow(((from.getX() - to.getX()) / LON_1_KM) * 1000, 2) +
                 Math.pow(((from.getY() - to.getY()) / LAT_1_KM) * 1000, 2));
     }

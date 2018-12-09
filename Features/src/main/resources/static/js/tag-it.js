@@ -24,6 +24,34 @@
 *   jQuery v1.4+
 *   jQuery UI v1.8+
 */
+$(document).ready(function () {
+    $("#myTags").tagit({
+        allowDuplicates: false,
+        showAutocompleteOnFocus: true,
+        itemName: "placeId",
+        fieldName: "placeName",
+        availableTags: [
+            "AMUSEMENT PARK",
+            "BAKERY",
+            "BAR",
+            "BOOK STORE",
+            "CAFE",
+            "CLOTHING STORE",
+            "ELECTRONICS STORE",
+            "GROCERY OR SUPERMARKET",
+            "LAUNDRY",
+            "MOVIE THEATER",
+            "MUSEUM",
+            "PARK",
+            "PHARMACY",
+            "POST OFFICE",
+            "RESTAURANT",
+            "SHOPPING MALL",
+            "STADIUM",
+            "ZOO"
+        ]
+    });
+});
 (function($) {
 
     $.widget('ui.tagit', {

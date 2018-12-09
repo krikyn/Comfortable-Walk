@@ -24,7 +24,7 @@ public class ScheduledPlaceCollector {
 
     private final PlaceGrabber placeGrabber;
 
-    @Scheduled(fixedDelay = MILLIS_PER_MINUTE)
+    //@Scheduled(fixedDelay = MILLIS_PER_MINUTE)
     public void getPlacesFromGoogleMaps() {
         placeGrabber.collect();
         log.info("Place grabbed successfully. ", LocalDateTime.now());

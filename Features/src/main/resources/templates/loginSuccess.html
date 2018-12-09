@@ -15,36 +15,6 @@
     <link rel="stylesheet" type="text/css"
           href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
     <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#myTags").tagit({
-                allowDuplicates: false,
-                showAutocompleteOnFocus: true,
-                itemName: "placeId",
-                fieldName: "placeName",
-                availableTags: [
-                    "AMUSEMENT PARK",
-                    "BAKERY",
-                    "BAR",
-                    "BOOK STORE",
-                    "CAFE",
-                    "CLOTHING STORE",
-                    "ELECTRONICS STORE",
-                    "GROCERY OR SUPERMARKET",
-                    "LAUNDRY",
-                    "MOVIE THEATER",
-                    "MUSEUM",
-                    "PARK",
-                    "PHARMACY",
-                    "POST OFFICE",
-                    "RESTAURANT",
-                    "SHOPPING MALL",
-                    "STADIUM",
-                    "ZOO"
-                ]
-            });
-        });
-    </script>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -64,7 +34,6 @@
             </ul>
             <img th:src="${picture}" width="30px">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
             </ul>
             <a th:href="@{/logout}" class="btn btn-outline-primary navbar-btn ml-md-2">Log out<br></a>
         </div>
