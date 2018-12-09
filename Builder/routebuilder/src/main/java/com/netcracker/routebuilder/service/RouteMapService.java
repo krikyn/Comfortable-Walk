@@ -19,7 +19,7 @@ import static com.netcracker.routebuilder.util.AlgorithmUtil.convertGeoToFieldCo
 import static com.netcracker.routebuilder.util.AlgorithmUtil.initField;
 
 /**
- * Class of Routing Map with properties  <b>PARAMS</b>.
+ * Class of Routing Map with properties  <b>route_list</b> и <b>PARAMS</b>.
  *
  * @author Kisliakov Grigori
  * @version 1.0
@@ -43,22 +43,12 @@ public class RouteMapService {
 
     public int[][] buildMap(GeoCoordinates start, GeoCoordinates end) {
         int[][] field = initField(PARAMS.getScale());
-        ArrayList<GeoCoordinates> geoCord = new GoogleRouteBuilder(PARAMS).buildRoute(start, end);
-        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCord);
+        ArrayList<GeoCoordinates> geoCoord = new GoogleRouteBuilder(PARAMS).buildRoute(start,end);
+        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCoord);
         makeRoutePotentialMap(routeMap, field);
         return field;
 
     }
-
-    public int[][] buildMap2(GeoCoordinates start, GeoCoordinates end) {
-        int[][] field = initField(PARAMS.getScale());
-        ArrayList<GeoCoordinates> geoCord = new GoogleRouteBuilder(PARAMS).buildRoute(start, end);
-        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCord);
-        makeRoutePotentialMap2(routeMap, field);
-        return field;
-
-    }
-
     /**
      * Build potential map,put it in list of  route_list
      *
@@ -72,35 +62,16 @@ public class RouteMapService {
             for (int j = 0; j < field[i].length; j++) {
                 value = addValueOfCell(i, j, routeMap);
                 if (value != 0) {
-                    if (field[i][j] != 100) {
-                        field[i][j] = 100;
-                        checkField(field, routeMap, value, 100);
+                    if (field[i][j]==0) {
+                        field[i][j] = 3400;
+                        checkField(field, routeMap, value, 3400);
                     }
 
                 }
             }
 
         }
-        addDecreasingValuesOnMap(field, 100);
-
-    }
-
-    private void makeRoutePotentialMap2(ArrayList<FieldCoordinates> routeMap, int[][] field) {
-        int value;
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field[i].length; j++) {
-                value = addValueOfCell(i, j, routeMap);
-                if (value != 0) {
-                    if (field[i][j] != 100) {
-                        field[i][j] = 100;
-                        checkField(field, routeMap, value, 100);
-                    }
-
-                }
-            }
-
-        }
-        addDecreasingValuesOnMap2(field, 100);
+        addDecreasingValuesOnMap(field, 800);
 
     }
 
@@ -122,88 +93,58 @@ public class RouteMapService {
         return 0;
     }
 
-    private void findNeighbours2(final int cellRow, final int cellCol, final int maxRow, final int maxCol, int radius, int[][] result, List<Integer> values) {
-        //Проход по заданному радиусу вокруг основной ячейки
-        for (int rowNum = cellRow - radius; rowNum <= (cellRow + radius); rowNum++) {
-            for (int colNum = cellCol - radius; colNum <= (cellCol + radius); colNum++) {
-                if (!((rowNum == cellRow) && (colNum == cellCol))) {
-                    if (rowNum < maxRow && colNum < maxCol) { //Проверка границ карты
-                        //Запись значений из диапазона убывания во внешний радиус
-                        if ((rowNum == cellRow - radius) || (rowNum == cellRow + radius)) {
-                            if ((result[rowNum][colNum] != 100) && (values.get(radius - 1)) > result[rowNum][colNum])
-                                result[rowNum][colNum] = values.get(radius - 1);
-                        } else if (colNum == cellCol - radius || colNum == cellCol + radius) {
-                            if ((result[rowNum][colNum] != 100) && (values.get(radius - 1)) > result[rowNum][colNum])
-                                result[rowNum][colNum] = values.get(radius - 1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Add decreasing values around route's cells on potential route map
      *
      * @param field - array of route potential map
-     * @param value - value of route point's potential
+     * @param decreaseValue - value of decreasing
      */
-    private void addDecreasingValuesOnMap(int[][] field, int value) {
+    private void addDecreasingValuesOnMap(int[][] field, int decreaseValue) {
+        ArrayList<FieldCoordinates> fCoord= new ArrayList<>();
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                if (field[i][j] == value) {
-                    List<Integer> values = decreaseValue(value);
-                    int maxRadius = values.get(values.size() - 1); // decreasing radius
-                    for (int rad = 1; rad <= maxRadius; rad++) {
-                        findNeighbours(i, j, field.length, field[i].length, rad, field, values); // find all neighboring cells
-                    }
+                if (field[i][j] !=0) {
+                    fCoord.add(new FieldCoordinates(i,j));
                 }
+
             }
+        }
+        for (FieldCoordinates coordinate:fCoord) {
+            int i=coordinate.getX();
+            int j=coordinate.getY();
+            List<Integer> values = decreaseValue(decreaseValue);
+            int maxRadius = values.get(values.size() - 1); // decreasing radius
+            for (int rad = 1; rad <= maxRadius; rad++) {
+                findNeighbours(i, j, field.length, field[i].length, rad, field, values); // find all neighboring cells
+            }
+
         }
     }
 
-    /**
-     * Add decreasing values around route's cells on potential route map
-     *
-     * @param field - array of route potential map
-     * @param value - value of route point's potential
-     */
-    private void addDecreasingValuesOnMap2(int[][] field, int value) {
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field[i].length; j++) {
-                if (field[i][j] == value) {
-                    List<Integer> values = decreaseValue(value);
-                    int maxRadius = values.get(values.size() - 1); // decreasing radius
-                    for (int rad = 1; rad <= maxRadius; rad++) {
-                        findNeighbours2(i, j, field.length, field[i].length, rad, field, values); // find all neighboring cells
-                    }
-                }
-            }
-        }
-    }
 
     /**
-     * Convert list of route's coordinates into list of route potential map's coordinate
+     * Convert list of route's coordinates into list of route potential map's coordinate and check doubles.
      *
      * @param geoList - list of route's coordinates
      * @return list of route potential map's coordinate
      */
 
     private ArrayList<FieldCoordinates> convertRouteListToFieldList(ArrayList<GeoCoordinates> geoList) {
-        ArrayList<FieldCoordinates> field = new ArrayList<>();
+        ArrayList<FieldCoordinates> fieldCoord = new ArrayList<>();
         for (GeoCoordinates geo : geoList) {
             FieldCoordinates fieldCoordinate = convertGeoToFieldCoordinates(geo, PARAMS.getScale());
-            if (!field.isEmpty()) {
-                if (field.get(field.size() - 1).equals(fieldCoordinate)) {
+            if (!fieldCoord.isEmpty()) {
+                if (fieldCoord.get(fieldCoord.size() - 1).equals(fieldCoordinate)) {
                     continue;
 
                 }
 
             }
-            field.add(fieldCoordinate);
+            fieldCoord.add(fieldCoordinate);
+            System.out.println(fieldCoordinate.getX()+":"+fieldCoordinate.getY());
 
         }
-        return field;
+        return fieldCoord;
 
 
     }
@@ -251,17 +192,17 @@ public class RouteMapService {
      * @param prev         - previous point of route
      * @param constValue   - value of constant X or Y (dependence of boolean value)
      * @param count        - value for route point on route potential map
-     * @param isHorizontal - if true -draw horizontal line. if false -draw vertical line )
+     * @param isHorizontal - if true - draw horizontal line. if false -draw vertical line )
      */
     private void addStraightLine(int[][] field, int next, int prev, int constValue, int count, boolean isHorizontal) {
-        int[] varible = identifyMaxAndMinCoordinate(next, prev);
+        int[] variable = identifyMaxAndMinCoordinate(next, prev);
 
         if (isHorizontal) {
-            for (int i = varible[0] + 1; i < varible[1]; i++) {
+            for (int i = variable[0] + 1; i < variable[1]; i++) {
                 field[i][constValue] = count;
             }
         } else {
-            for (int j = varible[0] + 1; j < varible[1]; j++) {
+            for (int j = variable[0] + 1; j < variable[1]; j++) {
                 field[constValue][j] = count;
             }
         }
@@ -279,13 +220,49 @@ public class RouteMapService {
     private void addDiagonalOnMap(int[][] field, FieldCoordinates next, FieldCoordinates prev, int count) {
         int[] x = identifyMaxAndMinCoordinate(next.getX(), prev.getX());
         int[] y = identifyMaxAndMinCoordinate(next.getY(), prev.getY());
-        int yCounter = y[0] + 1;
-        for (int i = x[0] + 1; i < x[1]; i++) {
-            if (yCounter != y[1]) {
-                field[i][yCounter] = count;
-                yCounter++;
+        int yCounter;
+        if((prev.getX()==x[0])){
+            if((prev.getY()==y[0])) {
+                yCounter = y[0] + 1;
+                for (int i = prev.getX() + 1; i < x[1]; i++) {
+                    if (yCounter != y[1]) {
+                        field[i][yCounter] = count;
+                        yCounter++;
+                    }
+                }
+            }
+            else{
+                yCounter = y[1] - 1;
+                for (int i = prev.getX() + 1; i < x[1]; i++) {
+                    if (yCounter != y[1]) {
+                        field[i][yCounter] = count;
+                        yCounter--;
+                    }
+                }
             }
         }
+        else{
+            if((prev.getY()==y[0])) {
+                yCounter = y[0] + 1;
+                for (int i = prev.getX() - 1; i > x[0]; i++) {
+                    if (yCounter != y[1]) {
+                        field[i][yCounter] = count;
+                        yCounter++;
+                    }
+                }
+            }
+            else{
+                yCounter = y[1] - 1;
+                for (int i = prev.getX() - 1; i > x[0]; i++) {
+                    if (yCounter != y[1]) {
+                        field[i][yCounter] = count;
+                        yCounter--;
+                    }
+                }
+            }
+
+        }
+
 
     }
 
@@ -300,14 +277,29 @@ public class RouteMapService {
     private void addCurvedLineOnMap(int[][] field, FieldCoordinates next, FieldCoordinates prev, int count) {
         int[] x = identifyMaxAndMinCoordinate(next.getX(), prev.getX());
         int[] y = identifyMaxAndMinCoordinate(next.getY(), prev.getY());
-
-        for (int j = y[0] + 1; j <= y[1]; j++) {
-            field[x[0]][j] = count;
+        int k;
+        if(prev.getX()!=x[0]){
+            for (int i = prev.getX() - 1; i > x[0]; i--) {
+                field[i][prev.getY()] = count;
+            }
+            k=x[0]-1;
         }
-        for (int i = x[0] + 1; i < x[1]; i++) {
-            field[i][y[1]] = count;
+        else{
+            for (int i = prev.getX() + 1; i < x[1]; i++) {
+                field[i][prev.getY()] = count;
+            }
+            k=x[1]-1;
         }
-
+        if(prev.getY()!=y[0]){
+            for (int j = prev.getY() - 1; j >= y[0]; j--) {
+                field[k][j] = count;
+            }
+        }
+        else{
+            for (int j = prev.getY() + 1; j <= y[1]; j++) {
+                field[k][j] = count;
+            }
+        }
     }
 
     /**
@@ -315,20 +307,15 @@ public class RouteMapService {
      *
      * @param coord1 - first x coordinate for compare
      * @param coord2 - second x coordinate for compare
-     * @return
+     * @return - sorted array
      */
     private int[] identifyMaxAndMinCoordinate(int coord1, int coord2) {
         int[] coordinates = new int[2];
-        if (coord1 > coord2) {
-            coordinates[1] = coord1;
-            coordinates[0] = coord2;
-        } else {
-            coordinates[0] = coord1;
-            coordinates[1] = coord2;
-
-        }
+        coordinates[0] = Math.min(coord1,coord2);
+        coordinates[1] = Math.max(coord1,coord2);
 
         return coordinates;
 
     }
+
 }
