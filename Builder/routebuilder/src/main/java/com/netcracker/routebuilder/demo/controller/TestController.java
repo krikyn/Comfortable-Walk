@@ -139,19 +139,6 @@ public class TestController {
         return "loading map image...";
     }
 
-    @GetMapping("/route-map2")
-    public @ResponseBody
-    String returnRoute2Map() {
-        GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
-        GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
-        GeoCoordinates northPoint = new GeoCoordinates(30.4277723, 59.841273);
-
-        DrawMap drawMap = new DrawMap();
-        drawMap.draw(routeMapService.buildMap2(domitory, northPoint));
-
-        return "loading map image...";
-    }
-
     @GetMapping("/weather-map")
     public @ResponseBody
     String returnWeatherMap() {
