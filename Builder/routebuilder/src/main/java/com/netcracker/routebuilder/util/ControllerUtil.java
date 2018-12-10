@@ -39,12 +39,22 @@ public class ControllerUtil {
      * @param response two-dimensional array where to write a list of coordinates of points of the constructed route
      */
     public static void generateResponse(ArrayList<GeoCoordinates> route, double[][] response) {
+
+        double xCoordSum = 0d;
+        double yCoordSum = 0d;
+
         for (int i = 0; i < route.size(); i++) {
             response[i][0] = route.get(i).getY();
             response[i][1] = route.get(i).getX();
+
+            yCoordSum += response[i][0];
+            xCoordSum += response[i][1];
         }
-        //Переменная для центра
-        response[route.size()][0] = 61.946079;
-        response[route.size()][1] = 32.318713;
+
+        //Переменная для центра, берем сумму всех значений по одной координате и делим на их количество,
+        // получаем среднюю координату
+        response[route.size()][0] = yCoordSum / route.size();
+        response[route.size()][0] = yCoordSum / route.size();
+        response[route.size()][1] = xCoordSum / route.size();
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import static com.netcracker.routebuilder.util.ControllerUtil.extractRouteProperties;
 import static com.netcracker.routebuilder.util.ControllerUtil.generateResponse;
@@ -51,6 +52,8 @@ public class AlgorithmController {
         GeoCoordinates to = new GeoCoordinates(Double.valueOf(path.getToPointLng()), Double.valueOf(path.getToPointLat()));
 
         ArrayList<GeoCoordinates> route = pathFindingAlgorithm.buildRoute(from, to, routeProperties, mapWithRoute);
+        ArrayList<GeoCoordinates> routeAfterProcessing = new ArrayList<>();
+
 
         double[][] response = new double[route.size() + 1][2];
         generateResponse(route, response);
