@@ -266,7 +266,6 @@ public class PathFindingAlgorithm {
         //route.add(curNode.getGeoCoordinates());
 
         while (curNode.getParent() != null) {
-            System.out.println(curNode.getGeoCoordinates().getY() + "," + curNode.getGeoCoordinates().getX());
             curNode = curNode.getParent();
             route.add(curNode.getGeoCoordinates());
             mapWithRoute[curNode.getFieldCoordinates().getX()][curNode.getFieldCoordinates().getY()] = 100;
