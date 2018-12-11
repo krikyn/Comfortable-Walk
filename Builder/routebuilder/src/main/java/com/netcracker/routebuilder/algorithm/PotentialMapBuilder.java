@@ -41,8 +41,16 @@ public class PotentialMapBuilder {
      */
     public int[][] assemblePotentialMap(GeoCoordinates start, GeoCoordinates end, ArrayList<RouteProperty> includedProperties) {
         if (includedProperties.isEmpty()) {
-            log.info("Route property list is empty, a zero potential map will be used");
-            return zeroMapService.getField();
+            int[][] field = initField(params.getScale());
+
+            int[][] routeField = routeMapService.buildMap(start, end);
+            fieldNormalization100(routeField);
+            combineFields(field, routeField, params.getRouteFieldFactor());
+
+            fieldNormalization100(field);
+            return field;
+            //log.info("Route property list is empty, a zero potential map will be used");
+            //return zeroMapService.getField();
         } else {
             int[][] field = initField(params.getScale());
 
