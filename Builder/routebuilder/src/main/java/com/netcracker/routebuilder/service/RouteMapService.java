@@ -141,7 +141,6 @@ public class RouteMapService {
 
             }
             fieldCoord.add(fieldCoordinate);
-            System.out.println(fieldCoordinate.getX()+":"+fieldCoordinate.getY());
 
         }
         return fieldCoord;

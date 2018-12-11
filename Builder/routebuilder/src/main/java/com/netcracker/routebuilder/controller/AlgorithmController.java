@@ -17,6 +17,7 @@ import java.util.function.Predicate;
 import static com.netcracker.routebuilder.util.ControllerUtil.extractRouteProperties;
 import static com.netcracker.routebuilder.util.ControllerUtil.generateResponse;
 import static com.netcracker.routebuilder.util.AlgorithmUtil.initField;
+import static com.netcracker.routebuilder.util.ControllerUtil.removeUnnecessaryBranches;
 
 /**
  * Controller for path finding algorithm
@@ -51,8 +52,8 @@ public class AlgorithmController {
         GeoCoordinates from = new GeoCoordinates(Double.valueOf(path.getFromPointLng()), Double.valueOf(path.getFromPointLat()));
         GeoCoordinates to = new GeoCoordinates(Double.valueOf(path.getToPointLng()), Double.valueOf(path.getToPointLat()));
 
-        ArrayList<GeoCoordinates> route = pathFindingAlgorithm.buildRoute(from, to, routeProperties, mapWithRoute);
-        ArrayList<GeoCoordinates> routeAfterProcessing = new ArrayList<>();
+        ArrayList<GeoCoordinates> originalRoute = pathFindingAlgorithm.buildRoute(from, to, routeProperties, mapWithRoute);
+        ArrayList<GeoCoordinates> route = removeUnnecessaryBranches(originalRoute);
 
 
         double[][] response = new double[route.size() + 1][2];

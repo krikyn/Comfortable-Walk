@@ -111,13 +111,15 @@ public class TestController {
     @GetMapping("/test")
     public @ResponseBody
     String buildRoute() {
-        GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
-        GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+        //GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
+        //GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
 
         ArrayList<RouteProperty> routeProperties = new ArrayList<>();//Arrays.asList(RouteProperty.values()));
         int[][] mapWithRoute = initField(20);
 
-        pathFindingAlgorithm.buildRoute(domitory, university, routeProperties, mapWithRoute);
+        pathFindingAlgorithm.buildRoute(starayDerevn, novayDerevn, routeProperties, mapWithRoute);
 
         DrawMap drawMap = new DrawMap();
         drawMap.draw(mapWithRoute);
@@ -126,15 +128,41 @@ public class TestController {
 
     }
 
-    @GetMapping("/route-map")
+    @GetMapping("/test-with-SHOPPING_MALL")
     public @ResponseBody
     String returnRouteMap() {
-        GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
-        GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
-        GeoCoordinates northPoint = new GeoCoordinates(30.4277723, 59.841273);
+        //GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
+        //GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
+
+        ArrayList<RouteProperty> routeProperties = new ArrayList<>(Arrays.asList(RouteProperty.values()));
+        //ArrayList<RouteProperty> routeProperties = new ArrayList<>();
+        //routeProperties.add(RouteProperty.SHOPPING_MALL);
+        int[][] mapWithRoute = initField(20);
+
+        pathFindingAlgorithm.buildRoute(starayDerevn, novayDerevn, routeProperties, mapWithRoute);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(routeMapService.buildMap(domitory, northPoint));
+        drawMap.draw(mapWithRoute);
+
+        return "loading map image...";
+    }
+
+    @GetMapping("/SHOPPING_MALL")
+    public @ResponseBody
+    String returnShoppingMall() {
+
+        //GeoCoordinates domitory = new GeoCoordinates(30.3011164, 59.972426);
+        //GeoCoordinates university = new GeoCoordinates(30.3060693, 59.957182);
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
+
+        ArrayList<RouteProperty> properties = new ArrayList<>();
+        properties.add(RouteProperty.SHOPPING_MALL);
+
+        DrawMap drawMap = new DrawMap();
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(starayDerevn,novayDerevn, properties));
 
         return "loading map image...";
     }
@@ -169,10 +197,13 @@ public class TestController {
     public @ResponseBody
     String returnallMap() {
 
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
+
         ArrayList<RouteProperty> properties = new ArrayList<>(Arrays.asList(RouteProperty.values()));
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(starayDerevn, novayDerevn, properties));
 
         return "loading map image...";
     }

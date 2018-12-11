@@ -59,7 +59,8 @@ public class PathFindingAlgorithm {
      */
     public ArrayList<GeoCoordinates> buildRoute(GeoCoordinates startPoint, GeoCoordinates endPoint, ArrayList<RouteProperty> routeProperties, int[][] mapWithRoute) {
         log.info("--Start of the algorithm--");
-        log.info("Distance between Starting and ending point: " + calcEuclideanDist(startPoint, endPoint));
+        double distBetweanAandB = calcEuclideanDist(startPoint, endPoint);
+        log.info("Distance between Starting and ending point: " + distBetweanAandB);
 
         if (calcEuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
@@ -93,7 +94,10 @@ public class PathFindingAlgorithm {
         Cell firstPoint = potentialField.get(startCell.getX()).get(startCell.getY());
 
         Double firstPointH = calcDistToDestinationCell(startNode, endNode);
-        firstPoint.updateParameters(null, (double) firstPoint.getValue(), firstPointH);
+        firstPoint.updateParameters(
+                null,
+                firstPoint.getValue() * params.getNormalFactorG(),
+                firstPointH * params.getNormalFactorH());
 
         nodes.add(firstPoint);
         log.info("The route search begins");
@@ -102,6 +106,22 @@ public class PathFindingAlgorithm {
 
         while (!nodes.isEmpty()) {
 
+            Cell curCell = nodes.poll();
+
+            if (curCell.equals(endNode)) {
+                log.info("The algorithm found the best way");
+                ArrayList<GeoCoordinates> route = routeRestoration(curCell, mapWithRoute);
+                log.info("Iterations number: " + iterationsNum);
+
+                return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
+            }
+
+
+            if (calcEuclideanDist(curCell, endNode) > distBetweanAandB * params.getMaxAllowableIncrease()) {
+                nodes.remove(curCell);
+                continue;
+            }
+
             iterationsNum++;
 
             if (iterationsNum > params.getMaxIterationsNum()) {
@@ -109,32 +129,33 @@ public class PathFindingAlgorithm {
                 return googleRouteBuilder.buildRoute(startPoint, endPoint);
             }
 
-            Cell curCell = nodes.poll();
-            //System.out.println(curCell.getGx() + " - " + curCell.getHx());
-
-            if (curCell.getFieldCoordinates().equals(endNode.getFieldCoordinates())) {
-                ArrayList<GeoCoordinates> route = routeRestoration(curCell, mapWithRoute);
-                log.info("The algorithm found the best way");
-                log.info("Iterations number: " + iterationsNum);
-
-                return googleRouteBuilder.buildRoute(startPoint, route, endPoint);
-            }
-
             curCell.setClosed(true);
 
             for (int offsetX = -1; offsetX <= 1; offsetX++) {
                 for (int offsetY = -1; offsetY <= 1; offsetY++) {
+
+                    //пропускаем изначальную ячейку
+                    if (offsetX == 0 && offsetY == 0) {
+                        continue;
+                    }
+
                     int newX = curCell.getFieldCoordinates().getX() + offsetX;
                     int newY = curCell.getFieldCoordinates().getY() + offsetY;
 
                     if (newX >= 0 && newY >= 0 && newX < numPointsX && newY < numPointsY) {
                         Cell nextCell = potentialField.get(newX).get(newY);
 
-                        Double tentativeScore = curCell.getGx() + calcDistToDestinationCell(curCell, nextCell); //calcGxBetweenPoints(potentialField, curCell, nextCell);
+                        //this is next cell gx
+                        Double tentativeScore = curCell.getValue() +
+                                nextCell.getValue() * params.getNormalFactorG() +
+                                calcDistToDestinationCell(curCell, nextCell) * params.getNormalFactorG();
 
-                        if (!nextCell.isClosed() || tentativeScore < nextCell.getGx()) {
-                            nextCell.updateParameters(curCell,
-                                    tentativeScore, calcDistToDestinationCell(curCell, endNode));
+                        if (!nextCell.isClosed() && tentativeScore < nextCell.getGx()) {
+                            nextCell.updateParameters(
+                                    curCell,
+                                    tentativeScore,
+                                    calcDistToDestinationCell(curCell, endNode) * params.getNormalFactorH());
+
                             if (!nodes.contains(nextCell)) {
                                 nodes.add(nextCell);
                             }
@@ -149,9 +170,9 @@ public class PathFindingAlgorithm {
     }
 
     /**
-     *  Method for setting distance type in params
+     * Method for setting distance type in params
      */
-    public void setDistanceType(DistanceType distanceType){
+    public void setDistanceType(DistanceType distanceType) {
         params.setDistanceType(distanceType);
     }
 

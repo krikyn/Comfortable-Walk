@@ -64,7 +64,7 @@ public class AlgorithmUtil {
 
         for (int[] aB : b) {
             for (int anAB : aB) {
-                maxValue = Math.max(maxValue, anAB);
+                maxValue = Math.max(maxValue, Math.abs(anAB));
             }
         }
 
