@@ -56,6 +56,10 @@ function sendData() {
         //stop submit the form, we will post it manually.
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (document.getElementById('autocompleteFrom').value === "" || document.getElementById('autocompleteTo').value === "") {
+            alert("A and B points should not be empty!");
+            return false;
+        }
         let places = "";
         for (let i = 0; i < document.getElementsByName('placeName').length; i++) {
             places = document.getElementsByName('placeName')[i].value + "," + places;
@@ -100,7 +104,7 @@ function initMap() {
 function calculateAndDisplayRoute(data) {
     const map = new google.maps.Map(document.getElementById("googleMap"), {
         center: {lat: 59.946079, lng: 30.318713},
-        zoom: 12,
+        zoom: 14,
     });
     var shapes = [];
     var path = [];
@@ -109,7 +113,7 @@ function calculateAndDisplayRoute(data) {
     }
     var polyline = new google.maps.Polyline({path: path, strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2});
     polyline.setMap(map);
-    map.setCenter(new google.maps.LatLng(data[data.length - 1][0], data[data.length - 1][1]), 13);
+    map.setCenter(new google.maps.LatLng(data[data.length - 1][0], data[data.length - 1][1]), 14);
     shapes.push(polyline);
     var startPoint = new google.maps.Marker({
         position: path[0],
