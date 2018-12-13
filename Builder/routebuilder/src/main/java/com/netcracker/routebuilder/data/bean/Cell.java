@@ -60,6 +60,22 @@ public class Cell {
     }
 
     /**
+     *  Overridden equal method using field coordinates field for comparing
+     *
+     * @param o object for equal
+     * @return is that object the same
+     */
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (!(o instanceof Cell)) return false;
+
+        Cell cell = (Cell) o;
+
+        return fieldCoordinates == cell.getFieldCoordinates();
+    }
+
+    /**
      * Сell availability recognition
      */
     public boolean isClosed() {

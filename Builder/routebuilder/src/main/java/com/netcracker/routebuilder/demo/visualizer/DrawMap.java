@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to visualize potential maps
- * TODO: доделать, ЧЕРНОВОЙ ТЕСТОВЫЙ ВАРИАНТ
+ * Class to visualize potential maps, only for presentation
  *
  * @author Kirill.Vakhrushev
  */
@@ -43,8 +42,13 @@ public class DrawMap {
         }
 
         void fillCell(int x, int y, int value) {
+
             fillCells.add(new Point(y, x));
-            ColorCells.add(new Color(value, 0, 0, 210));
+            if (value >= 0) {
+                ColorCells.add(new Color(0, 0, value, 210));
+            } else {
+                ColorCells.add(new Color(-value, 0, 0, 210));
+            }
         }
 
     }
@@ -59,7 +63,7 @@ public class DrawMap {
         double maxValue = 0;
         for (int i = 0; i < 401; i++) {
             for (int j = 0; j < 381; j++) {
-                maxValue = Math.max(maxValue, map[i][j]);
+                maxValue = Math.max(maxValue, Math.abs(map[i][j]));
             }
         }
 
@@ -82,6 +86,7 @@ public class DrawMap {
 
             for (int i = 0; i < 401; i++) {
                 for (int j = 0; j < 381; j++) {
+                    //log.warn("color value: " + map[i][j] + " - " + biggestValue);
                     grid.fillCell(i, j, (int) ((map[i][j] / biggestValue) * 255d));
                 }
             }

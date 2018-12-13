@@ -25,11 +25,52 @@ public class ControllerUtil {
         String[] arrayOfWords = path.getPlaceName().toUpperCase().split(",");
         for (String arrayOfWord : arrayOfWords) {
             try {
-                routeProperties.add(RouteProperty.valueOf(arrayOfWord));
+                if (!arrayOfWord.replace(" ", "").equals("")) {
+                    routeProperties.add(RouteProperty.valueOf(arrayOfWord));
+                }
             } catch (IllegalArgumentException e) {
                 log.error("Error with parsing places in the controller", e);
             }
         }
+    }
+
+    /**
+     * Method for removing unnecessary branches in the route
+     *
+     * @param originalRoute original route gotten from algorithm
+     * @return route
+     */
+    public static ArrayList<GeoCoordinates> removeUnnecessaryBranches(ArrayList<GeoCoordinates> originalRoute) {
+
+        GeoCoordinates zeroCoord = new GeoCoordinates(0d, 0d);
+
+        for (GeoCoordinates coord : originalRoute) {
+            if (coord.equals(zeroCoord)) {
+                continue;
+            }
+            int first = originalRoute.indexOf(coord);
+            int last = originalRoute.lastIndexOf(coord);
+
+            if (first != last) {
+                for (int i = first; i < last; i++) {
+                    originalRoute.set(i, zeroCoord);
+                }
+            }
+        }
+
+        ArrayList<GeoCoordinates> resultRoute = new ArrayList<>();
+        int numDeleted = 0;
+
+        for (GeoCoordinates coord : originalRoute) {
+            if (!coord.equals(zeroCoord)) {
+                resultRoute.add(coord);
+            } else {
+                numDeleted++;
+            }
+        }
+
+        log.info("Delete unnecessary branches: " + numDeleted);
+        return resultRoute;
     }
 
     /**
@@ -53,7 +94,6 @@ public class ControllerUtil {
 
         //Переменная для центра, берем сумму всех значений по одной координате и делим на их количество,
         // получаем среднюю координату
-        response[route.size()][0] = yCoordSum / route.size();
         response[route.size()][0] = yCoordSum / route.size();
         response[route.size()][1] = xCoordSum / route.size();
     }

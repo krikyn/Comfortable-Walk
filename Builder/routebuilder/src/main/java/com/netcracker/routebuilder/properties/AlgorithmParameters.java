@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class AlgorithmParameters {
 
     @Value("${algorithm.maxAllowableIncrease}")
-    private int maxAllowableIncrease; //Во сколько раз маршрут нашего алгоритма может превышать длину гугловского маршрута
+    private double maxAllowableIncrease; //Во сколько раз маршрут нашего алгоритма может превышать длину гугловского маршрута
 
     @Value("${algorithm.minDistBetweenStartEnd}")
     private int minDistBetweenStartEnd; //Если расстояние между точками начала и конца меньше, то сразу используется гугловский алгоритм

@@ -15,17 +15,17 @@ spring:
     show-sql: true
 
 algorithm:
-  maxAllowableIncrease: 3
-  minDistBetweenStartEnd: 0
+  maxAllowableIncrease: 1.5
+  minDistBetweenStartEnd: 100
   scale: 20
   maxCountOfWaypoints: 21
   distanceType: CHEBYSHEVA
-  normalFactorH: 1
+  normalFactorH: 2
   normalFactorG: 1
-  weatherFieldFactor: -1
-  placesFieldFactor: 1
-  routeFieldFactor: 1
-  maxIterationsNum: 100000
+  weatherFieldFactor: 1
+  placesFieldFactor: -1
+  routeFieldFactor: -0.4
+  maxIterationsNum: 10000
   ApiKey: "AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0"
 
 logging:
