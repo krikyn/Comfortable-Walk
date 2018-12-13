@@ -62,6 +62,11 @@ public class PathFindingAlgorithm {
         double distBetweanAandB = calcEuclideanDist(startPoint, endPoint);
         log.info("Distance between Starting and ending point: " + distBetweanAandB);
 
+        if (routeProperties.size() == 0) {
+            log.warn("No additional route parameters, give the standard Google route");
+            return googleRouteBuilder.buildRoute(startPoint, endPoint);
+        }
+
         if (calcEuclideanDist(startPoint, endPoint) < params.getMinDistBetweenStartEnd()) {
             log.warn("Starting and ending point too close, give the standard Google route");
             return googleRouteBuilder.buildRoute(startPoint, endPoint);

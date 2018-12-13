@@ -171,11 +171,14 @@ public class TestController {
     public @ResponseBody
     String returnWeatherMap() {
 
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
+
         ArrayList<RouteProperty> properties = new ArrayList<>();
         properties.add(RouteProperty.GOOD_WEATHER);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(starayDerevn, novayDerevn, properties));
 
         return "loading map image...";
     }
@@ -184,11 +187,14 @@ public class TestController {
     public @ResponseBody
     String returnParkMap() {
 
+        GeoCoordinates starayDerevn = new GeoCoordinates(30.2531536, 59.988038);
+        GeoCoordinates novayDerevn = new GeoCoordinates(30.2941023, 59.99126);
+
         ArrayList<RouteProperty> properties = new ArrayList<>();
         properties.add(RouteProperty.PARK);
 
         DrawMap drawMap = new DrawMap();
-        drawMap.draw(potentialMapBuilder.assemblePotentialMap(new GeoCoordinates(0d, 0d), new GeoCoordinates(0d, 0d), properties));
+        drawMap.draw(potentialMapBuilder.assemblePotentialMap(starayDerevn, novayDerevn, properties));
 
         return "loading map image...";
     }
