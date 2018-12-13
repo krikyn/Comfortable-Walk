@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to visualize potential maps
- * TODO: доделать, ЧЕРНОВОЙ ТЕСТОВЫЙ ВАРИАНТ
+ * Class to visualize potential maps, only for presentation
  *
  * @author Kirill.Vakhrushev
  */
