@@ -1,5 +1,8 @@
 package com.netcracker.routebuilder.util.implementation;
 
+import com.netcracker.routebuilder.algorithm.GoogleRouteBuilder;
+import com.netcracker.routebuilder.algorithm.PathFindingAlgorithm;
+import com.netcracker.routebuilder.algorithm.PotentialMapBuilder;
 import com.netcracker.routebuilder.data.bean.GeoCoordinates;
 import com.netcracker.routebuilder.service.RouteMapService;
 import com.netcracker.routebuilder.properties.AlgorithmParameters;
@@ -33,6 +36,16 @@ public class RouteMapServiceTest {
         assertTrue(checkNotNull);
 
     }
+    @Test
+    public void TestPath(){
+        GeoCoordinates start = new GeoCoordinates( 30.302138,59.972115);
+        GeoCoordinates end = new GeoCoordinates(30.370588,60.008896);
+        AlgorithmParameters parameters = new AlgorithmParameters();
+        AlgorithmParameters PARAMS = new AlgorithmParameters();
+        PARAMS.setScale(20);
+        PARAMS.setApiKey("AIzaSyDsx7KAWwgcWwWdvaVbjLRfWwnqrqoShN0");
+        PARAMS.setMaxCountOfWaypoints(21);
 
+    }
 
 }

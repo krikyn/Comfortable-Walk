@@ -24,7 +24,7 @@ import java.util.ArrayList;
 @Component
 public class GoogleRouteBuilder {
     /**
-     * field of Google GeoApiContext need to build route
+     * field of Google GeoApiContex need to build route
      */
     private final GeoApiContext GOOGLE_CONTEXT;
     /**
@@ -63,6 +63,7 @@ public class GoogleRouteBuilder {
 
     public ArrayList<GeoCoordinates> buildRoute(ArrayList<GeoCoordinates> points) {
         ArrayList<GeoCoordinates> listPoints = new ArrayList<>();
+        points = checkEquals(points);
         int allPoints = points.size();
         int startPosition = 0;
         if (allPoints == 0) {
@@ -79,28 +80,31 @@ public class GoogleRouteBuilder {
             LatLng[] latL;
             int length_point = 0;
             // if quantity of intermediate points less then maxCountOfWayPoints
-            if (allPoints / params.getMaxCountOfWaypoints() < 1) {
+            if (allPoints / (params.getMaxCountOfWaypoints() + 1) < 1) {
                 finish = convertToLatLang(points.get(points.size() - 1));
-                latL = new LatLng[allPoints % params.getMaxCountOfWaypoints()];
+                latL = new LatLng[allPoints % (params.getMaxCountOfWaypoints() + 1)];
 
             }
             // if quantity of intermediate points more or equals then maxCountOfWayPoints
             else {
-                if (allPoints == 21) {
-                    latL = new LatLng[params.getMaxCountOfWaypoints() - 1];
+                if (allPoints == 22) {
+                    latL = new LatLng[params.getMaxCountOfWaypoints()];
 
                 } else {
                     latL = new LatLng[params.getMaxCountOfWaypoints()];
 
                 }
                 //add endpoint geoposition
-                finish = convertToLatLang(points.get(startPosition + latL.length));
+                finish = convertToLatLang(points.get(startPosition + latL.length + 1));
             }
             //add geopositions for clear array of  intermediate points from ArrayList
             for (int i = startPosition; i < startPosition + latL.length; i++) {
                 latL[length_point++] = convertToLatLang(points.get(i));
+
             }
+
             //build route
+
             buildDirection(firstPoint, latL, finish, listPoints);
             startPosition += latL.length + 1;
             allPoints -= latL.length + 1;
@@ -142,7 +146,7 @@ public class GoogleRouteBuilder {
                     .mode(TravelMode.WALKING)
                     .await();
             if (result.routes.length == 0) {
-                log.error("Array of route is empty.Check input Data", new ArrayIndexOutOfBoundsException());
+                log.error("Array of route is empty.Google return null route", new ArrayIndexOutOfBoundsException());
             }
             //get steps with geoposition
             for (DirectionsStep step : result.routes[0].legs[0].steps) {
@@ -171,11 +175,11 @@ public class GoogleRouteBuilder {
      * @param points     - list of finish route's points
      */
     private void buildDirection(LatLng startPoint, LatLng[] wayPoints,
-                                LatLng endPoint, ArrayList<GeoCoordinates> points) {
+                               LatLng endPoint, ArrayList<GeoCoordinates> points) {
         if (wayPoints.length > params.getMaxCountOfWaypoints()) {
-            log.error("Quantity of waypoints more  than " + params.getMaxCountOfWaypoints(), new IndexOutOfBoundsException());
-
+            log.error("Array of route is empty.Google return null route", new ArrayIndexOutOfBoundsException());
         }
+
         try {
             //Standart Google API method
             DirectionsResult result = DirectionsApi.newRequest(GOOGLE_CONTEXT)
@@ -186,11 +190,17 @@ public class GoogleRouteBuilder {
                     .await();
             //get steps with geoposition
             if (result.routes.length == 0) {
-                log.error("Array of route is empty.Check input Data", new ArrayIndexOutOfBoundsException());
-            }
-            for (DirectionsStep step : result.routes[0].legs[0].steps) {
-                decodePolyline(step.polyline, points);
-                points.add(convertToGeoCoordinates(step.endLocation));
+                log.error("Array of route is empty.Check input Data.Something with intermediate points");
+                log.error("Build route with  start and end point");
+
+                points.addAll(buildDirection(startPoint, endPoint));
+
+            } else {
+                for (DirectionsStep step : result.routes[0].legs[0].steps) {
+                    decodePolyline(step.polyline, points);
+                    points.add(convertToGeoCoordinates(step.endLocation));
+                }
+
             }
         } catch (ApiException e) {
             log.error("Not valid API=key", e);
@@ -237,6 +247,23 @@ public class GoogleRouteBuilder {
         for (LatLng lang : polyline.decodePath()) {
             list.add(convertToGeoCoordinates(lang));
         }
+    }
+
+    /**
+     * Method check list of route point.Equals value delete.
+     *
+     * @param geoCoord - list of route points
+     * @return list of scanning route points
+     */
+    private ArrayList<GeoCoordinates> checkEquals(ArrayList<GeoCoordinates> geoCoord) {
+        ArrayList<GeoCoordinates> list = new ArrayList<>();
+        for (int i = 0; i < geoCoord.size(); i++) {
+            if ((i != 0) && (geoCoord.get(i).equals(geoCoord.get(i - 1)))) {
+                continue;
+            }
+            list.add(geoCoord.get(i));
+        }
+        return list;
     }
 
     /**

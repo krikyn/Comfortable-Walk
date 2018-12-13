@@ -43,12 +43,13 @@ public class RouteMapService {
 
     public int[][] buildMap(GeoCoordinates start, GeoCoordinates end) {
         int[][] field = initField(PARAMS.getScale());
-        ArrayList<GeoCoordinates> geoCoord = new GoogleRouteBuilder(PARAMS).buildRoute(start,end);
-        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCoord);
+        ArrayList<GeoCoordinates> geoCoordinates = new GoogleRouteBuilder(PARAMS).buildRoute(start, end);
+        ArrayList<FieldCoordinates> routeMap = convertRouteListToFieldList(geoCoordinates);
         makeRoutePotentialMap(routeMap, field);
         return field;
 
     }
+
     /**
      * Build potential map,put it in list of  route_list
      *
@@ -62,7 +63,7 @@ public class RouteMapService {
             for (int j = 0; j < field[i].length; j++) {
                 value = addValueOfCell(i, j, routeMap);
                 if (value != 0) {
-                    if (field[i][j]==0) {
+                    if (field[i][j] == 0) {
                         field[i][j] = 3400;
                         checkField(field, routeMap, value, 3400);
                     }
@@ -96,22 +97,22 @@ public class RouteMapService {
     /**
      * Add decreasing values around route's cells on potential route map
      *
-     * @param field - array of route potential map
+     * @param field         - array of route potential map
      * @param decreaseValue - value of decreasing
      */
     private void addDecreasingValuesOnMap(int[][] field, int decreaseValue) {
-        ArrayList<FieldCoordinates> fCoord= new ArrayList<>();
+        ArrayList<FieldCoordinates> fCoord = new ArrayList<>();
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                if (field[i][j] !=0) {
-                    fCoord.add(new FieldCoordinates(i,j));
+                if (field[i][j] != 0) {
+                    fCoord.add(new FieldCoordinates(i, j));
                 }
 
             }
         }
-        for (FieldCoordinates coordinate:fCoord) {
-            int i=coordinate.getX();
-            int j=coordinate.getY();
+        for (FieldCoordinates coordinate : fCoord) {
+            int i = coordinate.getX();
+            int j = coordinate.getY();
             List<Integer> values = decreaseValue(decreaseValue);
             int maxRadius = values.get(values.size() - 1); // decreasing radius
             for (int rad = 1; rad <= maxRadius; rad++) {
@@ -141,7 +142,6 @@ public class RouteMapService {
 
             }
             fieldCoord.add(fieldCoordinate);
-            
 
         }
         return fieldCoord;
@@ -221,8 +221,8 @@ public class RouteMapService {
         int[] x = identifyMaxAndMinCoordinate(next.getX(), prev.getX());
         int[] y = identifyMaxAndMinCoordinate(next.getY(), prev.getY());
         int yCounter;
-        if((prev.getX()==x[0])){
-            if((prev.getY()==y[0])) {
+        if ((prev.getX() == x[0])) {
+            if ((prev.getY() == y[0])) {
                 yCounter = y[0] + 1;
                 for (int i = prev.getX() + 1; i < x[1]; i++) {
                     if (yCounter != y[1]) {
@@ -230,19 +230,17 @@ public class RouteMapService {
                         yCounter++;
                     }
                 }
-            }
-            else{
+            } else {
                 yCounter = y[1] - 1;
-                for (int i = prev.getX() + 1; i < x[1]; i++) {
+                for (int i = prev.getX() + 1; i < x[1]; i--) {
                     if (yCounter != y[1]) {
                         field[i][yCounter] = count;
                         yCounter--;
                     }
                 }
             }
-        }
-        else{
-            if((prev.getY()==y[0])) {
+        } else {
+            if ((prev.getY() == y[0])) {
                 yCounter = y[0] + 1;
                 for (int i = prev.getX() - 1; i > x[0]; i++) {
                     if (yCounter != y[1]) {
@@ -250,10 +248,9 @@ public class RouteMapService {
                         yCounter++;
                     }
                 }
-            }
-            else{
+            } else {
                 yCounter = y[1] - 1;
-                for (int i = prev.getX() - 1; i > x[0]; i++) {
+                for (int i = prev.getX() - 1; i > x[0]; i--) {
                     if (yCounter != y[1]) {
                         field[i][yCounter] = count;
                         yCounter--;
@@ -278,24 +275,22 @@ public class RouteMapService {
         int[] x = identifyMaxAndMinCoordinate(next.getX(), prev.getX());
         int[] y = identifyMaxAndMinCoordinate(next.getY(), prev.getY());
         int k;
-        if(prev.getX()!=x[0]){
+        if (prev.getX() != x[0]) {
             for (int i = prev.getX() - 1; i > x[0]; i--) {
                 field[i][prev.getY()] = count;
             }
-            k=x[0]-1;
-        }
-        else{
+            k = x[0] - 1;
+        } else {
             for (int i = prev.getX() + 1; i < x[1]; i++) {
                 field[i][prev.getY()] = count;
             }
-            k=x[1]-1;
+            k = x[1] - 1;
         }
-        if(prev.getY()!=y[0]){
+        if (prev.getY() != y[0]) {
             for (int j = prev.getY() - 1; j >= y[0]; j--) {
                 field[k][j] = count;
             }
-        }
-        else{
+        } else {
             for (int j = prev.getY() + 1; j <= y[1]; j++) {
                 field[k][j] = count;
             }
@@ -307,16 +302,14 @@ public class RouteMapService {
      *
      * @param coord1 - first x coordinate for compare
      * @param coord2 - second x coordinate for compare
-     * @return - sorted array
+     * @return max and min value of statements
      */
     private int[] identifyMaxAndMinCoordinate(int coord1, int coord2) {
         int[] coordinates = new int[2];
-        coordinates[0] = Math.min(coord1,coord2);
-        coordinates[1] = Math.max(coord1,coord2);
+        coordinates[0] = Math.min(coord1, coord2);
+        coordinates[1] = Math.max(coord1, coord2);
 
         return coordinates;
 
     }
-
-
 }
